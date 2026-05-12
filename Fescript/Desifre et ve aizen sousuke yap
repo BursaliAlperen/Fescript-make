@@ -750,7 +750,7 @@ local function playBodyAnimation(style, duration)
 	AnimController:SetState(states[style] or style or "Idle", duration or 0.8)
 	local id=ANIMS[style]
 	if not id or not humanoid then return end
-	local animator=humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator",humanoid)
+	local animator=humanoid:FindFirstChildOfClass("Animator") or humanoid:WaitForChild("Animator",2)
 	if AnimController.Track then pcall(function()AnimController.Track:Stop(0.08)end)end
 	local anim=Instance.new("Animation")
 	anim.AnimationId="rbxassetid://"..id
