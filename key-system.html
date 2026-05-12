@@ -18,7 +18,7 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial
 <div id="result" class="key" style="display:none"></div>
 <button id="copy" style="display:none">COPY KEY</button>
 <a id="scriptLink" class="btn" style="display:none" href="/aizen/script">OPEN SCRIPT ACCESS</a>
-<small id="hint">Routes: /aizen/key1 through /aizen/key50. The Roblox gate requests one exact key from the 50-key pool.</small>
+<small id="hint">Routes: /aizen/key1 through /aizen/key50. Every visit gives one random key from the 50-key pool.</small>
 </main>
 <script>
 const keys=["AIZEN-PRISM-01", "KYOKA-MIRROR-02", "HADO90-VOID-03", "REIATSU-CROWN-04", "RAIKOHO-SPARK-05", "SHUNPO-PHASE-06", "SOUL-KING-07", "GOTEI-SHADOW-08", "SENKAIMON-EDGE-09", "ULTRA-HYPNOSIS-10", "BLACK-COFFIN-11", "PURE-ILLUSION-12", "VOID-SIGIL-13", "ROYAL-REIATSU-14", "LIGHTNING-ARC-15", "FLASH-STEP-16", "SPIRIT-THREAD-17", "GLASS-BREAK-18", "MANGA-CUT-19", "ASCENDANT-20", "ETERNAL-LOTUS-21", "MOONLESS-22", "PURPLE-SEAL-23", "WHITE-EDGE-24", "STORM-LANCE-25", "AFTERIMAGE-26", "CAPTAIN-AURA-27", "FIFTH-SEAT-28", "HYPNOTIC-BLADE-29", "CALM-KING-30", "SILENT-THRONE-31", "DARK-PALACE-32", "COFFIN-BLOOM-33", "FINAL-CHANT-34", "RAI-IMPACT-35", "BLUR-WALK-36", "CRYSTAL-SOUL-37", "VOID-GATE-38", "ABSOLUTE-39", "NO-ESCAPE-40", "WELCOME-LORD-41", "SWORD-SHINE-42", "NIGHT-ORCHID-43", "PRESSURE-44", "THUNDER-45", "STEP-BEYOND-46", "FALL-KNEEL-47", "KINGS-ORDER-48", "LAST-SIGHT-49", "PERFECT-AIZEN-50"]
@@ -29,21 +29,16 @@ const routeMatch=path.match(/\/key([1-9]|[1-4][0-9]|50)(?:\/|$)/);
 const routeNumber=routeMatch?Number(routeMatch[1]):1;
 const validSet=new Set(keys);
 const requested=(params.get('key')||'').toUpperCase().replace(/\s+/g,'');
-const routeKey=keys[routeNumber-1]||keys[0];
-let exactKey=validSet.has(requested)?requested:routeKey;
-let history=[];
-try{history=JSON.parse(localStorage.getItem('aizenKeyHistory')||'[]')}catch(e){history=[]}
-const last=history[0];
+let exactKey=validSet.has(requested)?requested:keys[Math.floor(Math.random()*keys.length)];
 title.textContent=mode==='script'?'AIZEN SCRIPT ACCESS':`AIZEN KEY ${routeNumber} ACCESS`;
-desc.textContent=mode==='script'?'Pass the steps to reach script access. Refresh starts over.':'Pass the steps to reveal the exact key requested by Roblox. Refresh starts over.';
-smart.innerHTML=mode==='script'?'Smart scan: script access mode detected. Complete the steps first.':`Smart scan: route <b>/aizen/key${routeNumber}</b> detected. ${validSet.has(requested)?'A Roblox-requested exact key was detected in the URL.':'No exact URL key was provided, so this page will provide the key matched to this route.'} ${last?`Last completed route: <b>${last.route}</b>, key: <b>${last.key}</b>.`:''}`;
+desc.textContent=mode==='script'?'Pass the steps to reach script access. Refresh starts over.':'Pass the steps to reveal one random key from the 50-key pool. Refresh starts over.';
+smart.innerHTML=mode==='script'?'Smart scan: script access mode detected. Complete the steps first.':`Smart scan: route <b>/aizen/key${routeNumber}</b> detected. ${validSet.has(requested)?'A valid URL key override was detected.':'Random 1/50 key generation is ready. No 24-hour memory is used.'}`;
 const stepNames=['Wait 5 seconds','Confirm website visit','Scan requested key route','Final security check','Reveal exact key'];
 let step=0,value='';
 steps.innerHTML=stepNames.map((s,i)=>`<div class="step" id="s${i}">${i+1}. ${s}</div>`).join('');
 function finish(){
-  value=mode==='script'?'SCRIPT ACCESS UNLOCKED — return to Roblox and paste the exact requested key.':exactKey;
+  value=mode==='script'?'SCRIPT ACCESS UNLOCKED — return to Roblox and paste any fresh website key.':exactKey;
   result.textContent=value;result.style.display='block';copy.style.display='inline-block';if(mode==='key')scriptLink.style.display='inline-block';action.style.display='none';
-  if(mode==='key'){history.unshift({route:`/aizen/key${routeNumber}`,key:value,at:new Date().toISOString()});history=history.slice(0,5);try{localStorage.setItem('aizenKeyHistory',JSON.stringify(history))}catch(e){}}
 }
 function next(){
   if(step>0)document.getElementById('s'+(step-1)).classList.add('done');

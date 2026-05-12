@@ -40,10 +40,8 @@ cleanupBin.Name = "Aizen_VFX"
 cleanupBin.Parent = workspace
 local KEY_BASE_URL="https://robloxglop.onrender.com/aizen"
 local KEY_LIST={"AIZEN-PRISM-01","KYOKA-MIRROR-02","HADO90-VOID-03","REIATSU-CROWN-04","RAIKOHO-SPARK-05","SHUNPO-PHASE-06","SOUL-KING-07","GOTEI-SHADOW-08","SENKAIMON-EDGE-09","ULTRA-HYPNOSIS-10","BLACK-COFFIN-11","PURE-ILLUSION-12","VOID-SIGIL-13","ROYAL-REIATSU-14","LIGHTNING-ARC-15","FLASH-STEP-16","SPIRIT-THREAD-17","GLASS-BREAK-18","MANGA-CUT-19","ASCENDANT-20","ETERNAL-LOTUS-21","MOONLESS-22","PURPLE-SEAL-23","WHITE-EDGE-24","STORM-LANCE-25","AFTERIMAGE-26","CAPTAIN-AURA-27","FIFTH-SEAT-28","HYPNOTIC-BLADE-29","CALM-KING-30","SILENT-THRONE-31","DARK-PALACE-32","COFFIN-BLOOM-33","FINAL-CHANT-34","RAI-IMPACT-35","BLUR-WALK-36","CRYSTAL-SOUL-37","VOID-GATE-38","ABSOLUTE-39","NO-ESCAPE-40","WELCOME-LORD-41","SWORD-SHINE-42","NIGHT-ORCHID-43","PRESSURE-44","THUNDER-45","STEP-BEYOND-46","FALL-KNEEL-47","KINGS-ORDER-48","LAST-SIGHT-49","PERFECT-AIZEN-50"}
-local REQUIRED_KEY_INDEX=rng:NextInteger(1,#KEY_LIST)
-local REQUIRED_KEY=KEY_LIST[REQUIRED_KEY_INDEX]
-local REQUIRED_KEY_ROUTE=REQUIRED_KEY_INDEX
-local KEY_WEBSITE=KEY_BASE_URL.."/key"..tostring(REQUIRED_KEY_ROUTE).."?key="..REQUIRED_KEY
+local KEY_ROUTE=rng:NextInteger(1,#KEY_LIST)
+local KEY_WEBSITE=KEY_BASE_URL.."/key"..tostring(KEY_ROUTE)
 local KEY_SET={}
 for _,key in ipairs(KEY_LIST) do KEY_SET[key]=true end
 local TRANSLATIONS={en={button="EN",title="Aizen FE",loading="script loading...",pick="Enter access key",ready="Welcome.",chat="welcome",tip="Z Kyoka X Hado90 C Raikoho V Shunpo B Reiatsu"}}
@@ -76,13 +74,13 @@ local function createKeyGate(onUnlock)
 	local card=Instance.new("Frame");card.AnchorPoint=Vector2.new(0.5,0.5);card.Position=UDim2.fromScale(0.5,0.5);card.Size=UDim2.fromOffset(520,286);card.BackgroundColor3=Color3.fromRGB(13,8,26);card.BorderSizePixel=0;card.Parent=shade;Instance.new("UICorner",card).CornerRadius=UDim.new(0,18)
 	local stroke=Instance.new("UIStroke");stroke.Color=ACCENT;stroke.Thickness=2;stroke.Parent=card
 	local title=Instance.new("TextLabel");title.BackgroundTransparency=1;title.Position=UDim2.fromOffset(24,20);title.Size=UDim2.new(1,-48,0,42);title.Font=Enum.Font.GothamBlack;title.Text="AIZEN FE ACCESS";title.TextColor3=WHITE;title.TextScaled=true;title.Parent=card
-	local info=Instance.new("TextLabel");info.BackgroundTransparency=1;info.Position=UDim2.fromOffset(28,66);info.Size=UDim2.new(1,-56,0,38);info.Font=Enum.Font.GothamSemibold;info.Text="This session needs the exact requested key from the website.";info.TextColor3=GOLD;info.TextScaled=true;info.Parent=card
+	local info=Instance.new("TextLabel");info.BackgroundTransparency=1;info.Position=UDim2.fromOffset(28,66);info.Size=UDim2.new(1,-56,0,38);info.Font=Enum.Font.GothamSemibold;info.Text="Get one random website key from the 50-key pool on startup.";info.TextColor3=GOLD;info.TextScaled=true;info.Parent=card
 	local box=Instance.new("TextBox");box.PlaceholderText="PASTE THE REQUESTED KEY";box.Text="";box.ClearTextOnFocus=false;box.Position=UDim2.fromOffset(34,116);box.Size=UDim2.new(1,-68,0,44);box.Font=Enum.Font.GothamBlack;box.TextScaled=true;box.TextColor3=WHITE;box.BackgroundColor3=Color3.fromRGB(25,16,42);box.Parent=card;Instance.new("UICorner",box).CornerRadius=UDim.new(0,10)
-	local get=Instance.new("TextButton");get.Text="GET KEY "..tostring(REQUIRED_KEY_ROUTE);get.Position=UDim2.fromOffset(34,174);get.Size=UDim2.new(0.48,-38,0,42);get.Font=Enum.Font.GothamBlack;get.TextScaled=true;get.TextColor3=WHITE;get.BackgroundColor3=ACCENT;get.Parent=card;Instance.new("UICorner",get).CornerRadius=UDim.new(0,10)
+	local get=Instance.new("TextButton");get.Text="GET RANDOM KEY";get.Position=UDim2.fromOffset(34,174);get.Size=UDim2.new(0.48,-38,0,42);get.Font=Enum.Font.GothamBlack;get.TextScaled=true;get.TextColor3=WHITE;get.BackgroundColor3=ACCENT;get.Parent=card;Instance.new("UICorner",get).CornerRadius=UDim.new(0,10)
 	local unlock=get:Clone();unlock.Text="UNLOCK";unlock.Position=UDim2.new(0.52,4,0,174);unlock.Parent=card
 	local status=info:Clone();status.Position=UDim2.fromOffset(28,218);status.Size=UDim2.new(1,-56,0,58);status.Text="";status.TextColor3=WHITE;status.Parent=card
-	get.MouseButton1Click:Connect(function()if setclipboard then setclipboard(KEY_WEBSITE)end;status.Text="Copied exact key page: "..KEY_WEBSITE end)
-	unlock.MouseButton1Click:Connect(function()local key=string.upper((box.Text or ""):gsub("%s+",""));if key==REQUIRED_KEY then gui:Destroy();onUnlock()elseif KEY_SET[key] then status.Text="Valid key family, wrong session key. Open GET KEY "..tostring(REQUIRED_KEY_ROUTE).." and copy the exact requested key." else status.Text="Invalid key. Open GET KEY "..tostring(REQUIRED_KEY_ROUTE).." and complete the website steps." end end)
+	get.MouseButton1Click:Connect(function()if setclipboard then setclipboard(KEY_WEBSITE)end;status.Text="Copied key page: "..KEY_WEBSITE end)
+	unlock.MouseButton1Click:Connect(function()local key=string.upper((box.Text or ""):gsub("%s+",""));if KEY_SET[key] then gui:Destroy();onUnlock() else status.Text="Invalid key. Open GET RANDOM KEY and complete the website steps." end end)
 end
 local function sendChatMessage(message)
 	if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
