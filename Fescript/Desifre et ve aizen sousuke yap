@@ -26,11 +26,14 @@ local MESH_KURO_4 = "rbxassetid://128230494080708"
 local MESH_RAIKOHO = "rbxassetid://100825735481540"
 local AURA_TEXTURE = "rbxassetid://140516321078827"
 local rng = Random.new()
+local CF,ANGLES,RAD=CFrame.new,CFrame.Angles,math.rad
+local function Clerp(a,b,t)return a:Lerp(b,t)end
 local activeCooldowns = {}
 local selectedLanguage = "tr"
 local airwalkActive = false
 local airwalkDirection = Vector3.zero
 local lastJumpRequest = 0
+local ANIMS={kyoka=54584713,coffin=48138189,raikoho=93648331,shunpo=193307200,reiatsu=220910360}
 local AnimController = {Motors = {}, BaseC0 = {}, State = "Idle", StateEndsAt = 0, Sine = 0, Alpha = 0, Connected = false}
 local cleanupBin = Instance.new("Folder")
 cleanupBin.Name = "Aizen_VFX"
@@ -315,15 +318,22 @@ local function beamBetween(name, startPosition, endPosition, color, width, lifet
 	return part
 end
 local function meshVFX(name, meshId, cframe, scale, color, lifetime, startTransparency)
-	local part = makePart(name, Vector3.new(1, 1, 1), cframe, color or ACCENT, Enum.Material.Neon, startTransparency or 0.08)
-	local mesh = Instance.new("SpecialMesh")
-	mesh.MeshType = Enum.MeshType.FileMesh
-	mesh.MeshId = meshId
-	mesh.Scale = scale or Vector3.new(8, 8, 8)
-	mesh.Parent = part
-	tween(part, lifetime or 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transparency = 1})
-	tween(mesh, lifetime or 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Scale = (scale or Vector3.new(8, 8, 8)) * 1.22})
-	Debris:AddItem(part, (lifetime or 0.45) + 0.08)
+	local life=lifetime or 0.45
+	local part=makePart(name,Vector3.new(2,2,2),cframe,color or ACCENT,Enum.Material.Neon,startTransparency or 0.04)
+	part.Shape=Enum.PartType.Ball
+	local mesh=Instance.new("SpecialMesh")
+	mesh.MeshType=Enum.MeshType.FileMesh
+	mesh.MeshId=meshId
+	mesh.Scale=scale or Vector3.new(8,8,8)
+	mesh.Parent=part
+	local light=Instance.new("PointLight")
+	light.Color=color or ACCENT
+	light.Brightness=4
+	light.Range=26
+	light.Parent=part
+	tween(part,life,Enum.EasingStyle.Quint,Enum.EasingDirection.Out,{Transparency=1})
+	tween(mesh,life,Enum.EasingStyle.Quint,Enum.EasingDirection.Out,{Scale=(scale or Vector3.new(8,8,8))*1.28})
+	Debris:AddItem(part,life+0.08)
 	return part
 end
 local function blackSpeedLines(origin, direction, count, lifetime)
@@ -726,14 +736,24 @@ local function installProceduralAnimationEngine()
 	end
 end
 local function playBodyAnimation(style, duration)
-	local states = {
-		kyoka = "Mock",
-		coffin = "Kurohitsugi",
-		raikoho = "Raikoho",
-		shunpo = "Shunpo",
-		reiatsu = "Reiatsu",
-	}
+	local states={kyoka="Mock",coffin="Kurohitsugi",raikoho="Raikoho",shunpo="Shunpo",reiatsu="Reiatsu"}
 	AnimController:SetState(states[style] or style or "Idle", duration or 0.8)
+	local id=ANIMS[style]
+	if not id or not humanoid then return end
+	local animator=humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator",humanoid)
+	if AnimController.Track then pcall(function()AnimController.Track:Stop(0.08)end)end
+	local anim=Instance.new("Animation")
+	anim.AnimationId="rbxassetid://"..id
+	local ok,track=pcall(function()return animator:LoadAnimation(anim)end)
+	if not ok then anim:Destroy() return end
+	track.Priority=Enum.AnimationPriority.Action4
+	track:Play(0.12)
+	track:AdjustSpeed(1)
+	AnimController.Track=track
+	task.delay(duration or 0.8,function()
+		pcall(function()track:Stop(0.16)end)
+		anim:Destroy()
+	end)
 end
 local function distortionBarrier(duration, radius, pulseCount)
 	local sphere = makePart("RobloxGlop Purple Space Barrier", Vector3.new(radius, radius, radius), root.CFrame, ACCENT, Enum.Material.ForceField, 0.78)
