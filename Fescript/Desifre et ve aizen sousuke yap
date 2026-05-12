@@ -38,7 +38,7 @@ local AnimController = {Motors = {}, BaseC0 = {}, State = "Idle", StateEndsAt = 
 local cleanupBin = Instance.new("Folder")
 cleanupBin.Name = "Aizen_VFX"
 cleanupBin.Parent = workspace
-local KEY_WEBSITE="https://robloxglop.com/key-system.html"
+local KEY_WEBSITE="https://robloxglop.onrender.com/aizen/key"
 local KEY_LIST={"YOKOSO-AIZEN-01","KYOKA-GLASS-02","HADO90-COFFIN-03","REIATSU-KING-04","RAIKOHO-STORM-05","SHUNPO-BLUR-06","AIZEN-SOUL-07","GOTEI-VOID-08","BANKAI-NONE-09","ULTRA-AIZEN-10"}
 local KEY_SET={}
 for _,key in ipairs(KEY_LIST) do KEY_SET[key]=true end
