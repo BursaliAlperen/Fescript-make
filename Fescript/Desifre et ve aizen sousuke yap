@@ -39,10 +39,10 @@ local cleanupBin = Instance.new("Folder")
 cleanupBin.Name = "Aizen_VFX"
 cleanupBin.Parent = workspace
 local KEY_WEBSITE="https://robloxglop.onrender.com/aizen/key"
-local KEY_LIST={"YOKOSO-AIZEN-01","KYOKA-GLASS-02","HADO90-COFFIN-03","REIATSU-KING-04","RAIKOHO-STORM-05","SHUNPO-BLUR-06","AIZEN-SOUL-07","GOTEI-VOID-08","BANKAI-NONE-09","ULTRA-AIZEN-10"}
+local KEY_LIST={"WELCOME-AIZEN-01","KYOKA-GLASS-02","HADO90-COFFIN-03","REIATSU-KING-04","RAIKOHO-STORM-05","SHUNPO-BLUR-06","AIZEN-SOUL-07","GOTEI-VOID-08","BANKAI-NONE-09","ULTRA-AIZEN-10"}
 local KEY_SET={}
 for _,key in ipairs(KEY_LIST) do KEY_SET[key]=true end
-local TRANSLATIONS={en={button="EN",title="Aizen FE",loading="script loading...",pick="Enter access key",ready="Yokoso.",chat="yokoso",tip="Z Kyoka X Hado90 C Raikoho V Shunpo B Reiatsu"}}
+local TRANSLATIONS={en={button="EN",title="Aizen FE",loading="script loading...",pick="Enter access key",ready="Welcome.",chat="welcome",tip="Z Kyoka X Hado90 C Raikoho V Shunpo B Reiatsu"}}
 local function refreshCharacter(newCharacter)
 	character = newCharacter
 	humanoid = character:WaitForChild("Humanoid")
@@ -129,9 +129,9 @@ end
 local function flash(color, fadeIn, hold, fadeOut)
 	return
 end
-local function yokosoText()
-	local g=Instance.new("ScreenGui") g.Name="Yokoso_Text" g.IgnoreGuiInset=true g.ResetOnSpawn=false g.Parent=playerGui
-	local t=Instance.new("TextLabel") t.BackgroundTransparency=1 t.Size=UDim2.fromScale(1,1) t.Font=Enum.Font.GothamBlack t.Text="YOKOSO" t.TextColor3=WHITE t.TextStrokeColor3=ACCENT t.TextStrokeTransparency=0.12 t.TextScaled=true t.TextTransparency=1 t.Parent=g
+local function welcomeText()
+	local g=Instance.new("ScreenGui") g.Name="Welcome_Text" g.IgnoreGuiInset=true g.ResetOnSpawn=false g.Parent=playerGui
+	local t=Instance.new("TextLabel") t.BackgroundTransparency=1 t.Size=UDim2.fromScale(1,1) t.Font=Enum.Font.GothamBlack t.Text="WELCOME" t.TextColor3=WHITE t.TextStrokeColor3=ACCENT t.TextStrokeTransparency=0.12 t.TextScaled=true t.TextTransparency=1 t.Parent=g
 	tween(t,0.35,Enum.EasingStyle.Quint,Enum.EasingDirection.Out,{TextTransparency=0})
 	task.delay(1.05,function()tween(t,0.45,Enum.EasingStyle.Sine,Enum.EasingDirection.In,{TextTransparency=1,TextStrokeTransparency=1}) Debris:AddItem(g,0.55)end)
 end
@@ -933,7 +933,7 @@ end
 local function kyokaSuigetsu()
 	cutsceneBars(0.9)
 	cinematicCutscene("KYOKA SUIGETSU", "You were never looking at me.", 0.82)
-	sideMangaCaption([[Yokoso...
+	sideMangaCaption([[Welcome...
 Look closer.]], 1.25)
 	playBodyAnimation("kyoka", 0.9)
 	flash(ACCENT, 0.18, 0.45)
@@ -1420,7 +1420,7 @@ local function deathReset()
 	end)
 end
 local function startKit()
-	yokosoText()
+	welcomeText()
 	installRemoteSinks()
 	installProceduralAnimationEngine()
 	installTools()

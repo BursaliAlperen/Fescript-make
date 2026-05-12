@@ -9,7 +9,7 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial
 </head>
 <body>
 <main class="card">
-<h1 id="title">YOKOSO</h1>
+<h1 id="title">WELCOME</h1>
 <p id="desc" class="muted">Complete every access step. Refreshing this page restarts the process.</p>
 <div class="steps" id="steps"></div>
 <button id="action">START STEP 1</button>
@@ -19,7 +19,7 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial
 <small id="hint">Key route: /aizen/key • Script route: /aizen/script</small>
 </main>
 <script>
-const keys=["YOKOSO-AIZEN-01","KYOKA-GLASS-02","HADO90-COFFIN-03","REIATSU-KING-04","RAIKOHO-STORM-05","SHUNPO-BLUR-06","AIZEN-SOUL-07","GOTEI-VOID-08","BANKAI-NONE-09","ULTRA-AIZEN-10"];
+const keys=["WELCOME-AIZEN-01","KYOKA-GLASS-02","HADO90-COFFIN-03","REIATSU-KING-04","RAIKOHO-STORM-05","SHUNPO-BLUR-06","AIZEN-SOUL-07","GOTEI-VOID-08","BANKAI-NONE-09","ULTRA-AIZEN-10"];
 const mode=location.pathname.toLowerCase().includes('/script')?'script':'key';
 const stepNames=['Wait 5 seconds','Confirm website visit','Generate access token','Final security check'];
 let step=0,value='';
