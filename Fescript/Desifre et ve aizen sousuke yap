@@ -31,6 +31,7 @@ local selectedLanguage = "tr"
 local airwalkActive = false
 local airwalkDirection = Vector3.zero
 local lastJumpRequest = 0
+local AnimController = {Motors = {}, BaseC0 = {}, State = "Idle", StateEndsAt = 0, Sine = 0, Alpha = 0, Connected = false}
 local cleanupBin = Instance.new("Folder")
 cleanupBin.Name = "RobloxGlop_Aizen_FE_VFX"
 cleanupBin.Parent = workspace
