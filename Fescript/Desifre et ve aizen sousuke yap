@@ -571,21 +571,23 @@ function AnimController:TargetPose(state)
         targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(4 + breathe * 2), 0, RAD(5))
         targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(4 - breathe * 2), 0, RAD(-5))
     elseif state == "Walk" then
-        targets.root = CF(0, math.abs(stride) * 0.05, 0) * ANGLES(RAD(-4), 0, RAD(stride * 2))
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(3), RAD(stride * 5), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-3), RAD(-stride * 3), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(strideBack * 24), 0, RAD(7))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(stride * 24), 0, RAD(-7))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(stride * 35), 0, 0)
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(strideBack * 35), 0, 0)
+        local softStep = math.sin(sine * 0.72)
+        targets.root = CF(0, math.abs(stride) * 0.025, 0) * ANGLES(RAD(-1.5), 0, RAD(softStep * 0.7))
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(1.5), RAD(softStep * 1.8), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-1.4), RAD(-softStep * 1.2), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-6 + breathe * 1.2), RAD(0), RAD(10 + softStep * 1.4))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-6 - breathe * 1.2), RAD(0), RAD(-10 + softStep * 1.4))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(stride * 18), 0, RAD(-1.5))
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(strideBack * 18), 0, RAD(1.5))
     elseif state == "Run" then
-        targets.root = CF(0, math.abs(stride) * 0.08, 0) * ANGLES(RAD(-12), 0, RAD(stride * 4))
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(8), RAD(stride * 8), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), RAD(-stride * 5), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(strideBack * 44), 0, RAD(10))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(stride * 44), 0, RAD(-10))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(stride * 55), 0, 0)
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(strideBack * 55), 0, 0)
+        local dashStep = math.sin(sine * 1.18)
+        targets.root = CF(0, math.abs(stride) * 0.045, 0) * ANGLES(RAD(-8), 0, RAD(dashStep * 1.8))
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(5), RAD(dashStep * 3.5), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-6), RAD(-dashStep * 2), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-24 + strideBack * 8), RAD(0), RAD(22))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-24 + stride * 8), RAD(0), RAD(-22))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(stride * 34), 0, RAD(-2))
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(strideBack * 34), 0, RAD(2))
     elseif state == "Jump" then
         targets.root = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
         targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
@@ -735,6 +737,115 @@ local function blackCoffinMangaBurst(center, count)
         Debris:AddItem(blade, 0.58)
     end
 end
+local function sideMangaCaption(text, duration)
+    if not root then
+        return
+    end
+
+    local gui = Instance.new("BillboardGui")
+    gui.Name = "RobloxGlop_RightSide_Manga_Box"
+    gui.AlwaysOnTop = true
+    gui.Size = UDim2.fromOffset(155, 92)
+    gui.StudsOffsetWorldSpace = root.CFrame.RightVector * 4 + Vector3.new(0, 2.4, 0)
+    gui.Parent = root
+
+    local frame = Instance.new("Frame")
+    frame.BackgroundColor3 = Color3.fromRGB(250, 246, 236)
+    frame.BorderSizePixel = 0
+    frame.Size = UDim2.fromScale(1, 1)
+    frame.Parent = gui
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.new(0, 0, 0)
+    stroke.Thickness = 5
+    stroke.Parent = frame
+
+    local label = Instance.new("TextLabel")
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.GothamBlack
+    label.Position = UDim2.fromOffset(8, 7)
+    label.Size = UDim2.new(1, -16, 1, -14)
+    label.Text = text
+    label.TextColor3 = Color3.new(0, 0, 0)
+    label.TextScaled = true
+    label.TextWrapped = true
+    label.Parent = frame
+
+    tween(frame, 0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out, {Rotation = rng:NextNumber(-2, 2)})
+    task.delay(duration or 1.2, function()
+        tween(frame, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {BackgroundTransparency = 1})
+        tween(label, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {TextTransparency = 1})
+        Debris:AddItem(gui, 0.24)
+    end)
+end
+
+local function kurohitsugiBox(center, lifetime)
+    local specs = {
+        {Vector3.new(13, 0.22, 13), CF(0, 0.1, 0)},
+        {Vector3.new(13, 0.22, 13), CF(0, 18, 0)},
+        {Vector3.new(0.22, 18, 13), CF(6.5, 9, 0)},
+        {Vector3.new(0.22, 18, 13), CF(-6.5, 9, 0)},
+        {Vector3.new(13, 18, 0.22), CF(0, 9, 6.5)},
+        {Vector3.new(13, 18, 0.22), CF(0, 9, -6.5)},
+    }
+
+    for i, spec in ipairs(specs) do
+        local panel = makePart("Hado 90 Black Coffin Box Face", spec[1], center * spec[2], i <= 2 and DARK or Color3.fromRGB(18, 7, 31), Enum.Material.ForceField, 0.48)
+        tween(panel, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transparency = 0.18})
+        task.delay(lifetime or 0.78, function()
+            tween(panel, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1})
+            Debris:AddItem(panel, 0.34)
+        end)
+    end
+
+    for i = 1, 12 do
+        local angle = (math.pi * 2 / 12) * i
+        local startPosition = (center * CF(math.cos(angle) * 6.7, 0.2, math.sin(angle) * 6.7)).Position
+        local endPosition = (center * CF(math.cos(angle) * 6.7, 18, math.sin(angle) * 6.7)).Position
+        beamBetween("Kurohitsugi White Edge", startPosition, endPosition, WHITE, 0.07, lifetime or 0.78)
+    end
+end
+
+local function markAndFlingTarget(model, origin, power)
+    if not model or model == character then
+        return
+    end
+
+    local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
+    local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
+    if not enemyHumanoid or not enemyRoot or enemyHumanoid.Health <= 0 then
+        return
+    end
+
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "RobloxGlop Reiatsu Victim Mark"
+    highlight.FillColor = Color3.fromRGB(255, 35, 35)
+    highlight.OutlineColor = WHITE
+    highlight.FillTransparency = 0.25
+    highlight.OutlineTransparency = 0
+    highlight.Parent = model
+    Debris:AddItem(highlight, 0.85)
+
+    for _, descendant in ipairs(model:GetDescendants()) do
+        if descendant:IsA("BasePart") then
+            descendant.LocalTransparencyModifier = math.max(descendant.LocalTransparencyModifier, 0.38)
+            task.delay(0.72, function()
+                if descendant then
+                    descendant.LocalTransparencyModifier = 0
+                end
+            end)
+        end
+    end
+
+    local direction = enemyRoot.Position - origin
+    if direction.Magnitude < 0.1 then
+        direction = root.CFrame.LookVector
+    end
+    enemyRoot.AssemblyLinearVelocity = direction.Unit * (power or 78) + Vector3.new(0, 36, 0)
+    enemyHumanoid:TakeDamage(math.max(6, enemyHumanoid.MaxHealth * 0.1))
+    orb(enemyRoot.Position + Vector3.new(0, 1.5, 0), 1.3, Color3.fromRGB(255, 35, 35), 0.38)
+end
+
 
 local function cooldown(tool, seconds)
     if activeCooldowns[tool] then
@@ -778,6 +889,8 @@ end
 
 local function kyokaSuigetsu()
     cutsceneBars(0.9)
+    sideMangaCaption([[Yokoso...
+Look closer.]], 1.25)
     mangaPanel("YOKOSO", "watashi no Soul Society", 1.05)
     playBodyAnimation("kyoka", 0.9)
     flash(ACCENT, 0.18, 0.45)
@@ -803,6 +916,8 @@ end
 
 local function kurohitsugi()
     cutsceneBars(1.25)
+    sideMangaCaption([[Hado 90
+Black Coffin]], 1.35)
     mangaPanel("HADO 90", "Kurohitsugi — Kara Tabut", 1.2)
     playBodyAnimation("coffin", 1.05)
     flash(DARK, 0.3, 0.7)
@@ -812,6 +927,7 @@ local function kurohitsugi()
 
     local center = root.CFrame * CFrame.new(0, 0, -14)
     sigil(center * CFrame.Angles(math.rad(90), 0, 0), 9, DARK, 0.9, 20)
+    kurohitsugiBox(center, 1.05)
 
     local pillars = {}
     for i = 1, 16 do
@@ -833,6 +949,12 @@ local function kurohitsugi()
         orb(center.Position + Vector3.new(0, 9, 0), 5.2, Color3.fromRGB(52, 17, 91), 0.6)
         blackCoffinMangaBurst(center, 34)
         distortionBarrier(0.7, 19, 5)
+        for _, model in ipairs(workspace:GetChildren()) do
+            local enemyRoot = model:IsA("Model") and (model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso"))
+            if enemyRoot and (enemyRoot.Position - center.Position).Magnitude <= 11 then
+                markAndFlingTarget(model, center.Position, 92)
+            end
+        end
         for i = 1, 32 do
             local slashStart = center.Position + Vector3.new(rng:NextNumber(-6, 6), rng:NextNumber(2, 19), rng:NextNumber(-6, 6))
             local slashEnd = slashStart + Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(-7, 1), rng:NextNumber(-4, 4))
@@ -848,6 +970,8 @@ local function kurohitsugi()
 end
 
 local function raikoho()
+    sideMangaCaption([[Raikoho
+Pierce.]], 0.95)
     mangaPanel("RAIKOHO", "Thunder roar, white lightning", 0.85)
     playBodyAnimation("raikoho", 0.72)
     flash(LIGHTNING, 0.24, 0.35)
@@ -881,6 +1005,7 @@ local function raikoho()
 end
 
 local function shunpo()
+    sideMangaCaption("Too slow.", 0.75)
     mangaPanel("SHUNPO", "One step beyond perception", 0.62)
     playBodyAnimation("shunpo", 0.48)
     makeSound("Shunpo", "rbxassetid://9126098978", 0.5, 1.45, root)
@@ -909,6 +1034,8 @@ end
 
 local function reiatsuCrush()
     cutsceneBars(0.85)
+    sideMangaCaption([[Do not
+approach.]], 1.1)
     mangaPanel("REIATSU", "Kneel before RobloxGlop Aizen", 0.95)
     playBodyAnimation("reiatsu", 0.9)
     distortionBarrier(0.95, 16, 6)
@@ -992,7 +1119,7 @@ local function installPassiveDominion()
 
         local foundThreat = false
         for _, model in ipairs(workspace:GetChildren()) do
-            if model:IsA("Model") and model ~= character and not Players:GetPlayerFromCharacter(model) then
+            if model:IsA("Model") and model ~= character then
                 local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
                 local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
                 if enemyHumanoid and enemyRoot and enemyHumanoid.Health > 0 then
@@ -1001,10 +1128,9 @@ local function installPassiveDominion()
                         foundThreat = true
                         if os.clock() - (damaged[enemyHumanoid] or 0) > 0.8 then
                             damaged[enemyHumanoid] = os.clock()
-                            enemyHumanoid:TakeDamage(math.max(8, enemyHumanoid.MaxHealth * 0.18))
-                            enemyRoot.AssemblyLinearVelocity = (enemyRoot.Position - root.Position).Unit * 42 + Vector3.new(0, 16, 0)
+                            markAndFlingTarget(model, root.Position, 64)
                             beamBetween("Passive Reiatsu Compression", root.Position + Vector3.new(0, 2, 0), enemyRoot.Position + Vector3.new(0, 1.5, 0), ACCENT, 0.16, 0.22)
-                            orb(enemyRoot.Position + Vector3.new(0, 1.5, 0), 1.1, DARK, 0.35)
+                            sideMangaCaption("Stay back.", 0.55)
                         end
                     end
                 end
