@@ -157,6 +157,12 @@ end
 local function flash(color, fadeIn, hold, fadeOut)
 	return
 end
+local function yokosoText()
+	local g=Instance.new("ScreenGui") g.Name="Yokoso_Text" g.IgnoreGuiInset=true g.ResetOnSpawn=false g.Parent=playerGui
+	local t=Instance.new("TextLabel") t.BackgroundTransparency=1 t.Size=UDim2.fromScale(1,1) t.Font=Enum.Font.GothamBlack t.Text="YOKOSO" t.TextColor3=WHITE t.TextStrokeColor3=ACCENT t.TextStrokeTransparency=0.12 t.TextScaled=true t.TextTransparency=1 t.Parent=g
+	tween(t,0.35,Enum.EasingStyle.Quint,Enum.EasingDirection.Out,{TextTransparency=0})
+	task.delay(1.05,function()tween(t,0.45,Enum.EasingStyle.Sine,Enum.EasingDirection.In,{TextTransparency=1,TextStrokeTransparency=1}) Debris:AddItem(g,0.55)end)
+end
 local function cameraPulse(power, duration)
 	local camera = workspace.CurrentCamera
 	if not camera then
@@ -681,6 +687,9 @@ function AnimController:Update(dt)
 		root.AssemblyLinearVelocity = Vector3.new(0, math.sin(os.clock() * 3) * 1.5, 0)
 		root.CFrame = root.CFrame:Lerp(root.CFrame + Vector3.new(0, math.sin(os.clock() * 3) * 0.03, 0), 0.4)
 	end
+	if not locked and (self.State == "Idle" or self.State == "Walk" or self.State == "Run") then
+		return
+	end
 	local alpha = locked and 0.18 or 0.08
 	if self.State == "Walk" or self.State == "Run" then
 		alpha = 0.22
@@ -700,16 +709,6 @@ function AnimController:Update(dt)
 	self:ApplyPose(self:TargetPose(self.State), alpha)
 end
 local function installProceduralAnimationEngine()
-	local animate = character:FindFirstChild("Animate")
-	if animate then
-		animate.Disabled = true
-	end
-	local animator = humanoid:FindFirstChildOfClass("Animator")
-	if animator then
-		for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
-			track:Stop(0)
-		end
-	end
 	AnimController:RefreshMotors()
 	if not AnimController.Connected then
 		AnimController.Connected = true
@@ -1492,6 +1491,7 @@ local function deathReset()
 		AnimController:SetState("Idle")
 	end)
 end
+yokosoText()
 installRemoteSinks()
 installProceduralAnimationEngine()
 installTools()
