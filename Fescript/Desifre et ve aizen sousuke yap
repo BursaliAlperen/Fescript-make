@@ -35,1448 +35,1448 @@ local cleanupBin = Instance.new("Folder")
 cleanupBin.Name = "RobloxGlop_Aizen_FE_VFX"
 cleanupBin.Parent = workspace
 local TRANSLATIONS = {
-    tr = {
-        button = "TR",
-        title = "RobloxGlop FE Aizen",
-        loading = "script loading...",
-        pick = "Dil seç ve hoş geldin ritüelini başlat",
-        ready = "Yokoso. Aizen modu aktif.",
-        chat = "yokoso",
-        tip = "Toollar eklendi: Z Kyoka | X Kurohitsugi | C Raikoho | V Shunpo | B Reiatsu",
-    },
-    en = {
-        button = "EN",
-        title = "RobloxGlop FE Aizen",
-        loading = "script loading...",
-        pick = "Choose language and start the welcome ritual",
-        ready = "Yokoso. Aizen mode is active.",
-        chat = "yokoso",
-        tip = "Tools installed: Z Kyoka | X Kurohitsugi | C Raikoho | V Shunpo | B Reiatsu",
-    },
-    es = {
-        button = "ES",
-        title = "RobloxGlop FE Aizen",
-        loading = "cargando script...",
-        pick = "Elige idioma e inicia el ritual de bienvenida",
-        ready = "Yokoso. Modo Aizen activo.",
-        chat = "yokoso",
-        tip = "Herramientas listas: Z Kyoka | X Kurohitsugi | C Raikoho | V Shunpo | B Reiatsu",
-    },
-    pt = {
-        button = "PT",
-        title = "RobloxGlop FE Aizen",
-        loading = "carregando script...",
-        pick = "Escolha o idioma e inicie o ritual",
-        ready = "Yokoso. Modo Aizen ativo.",
-        chat = "yokoso",
-        tip = "Ferramentas prontas: Z Kyoka | X Kurohitsugi | C Raikoho | V Shunpo | B Reiatsu",
-    },
-    jp = {
-        button = "JP",
-        title = "RobloxGlop FE Aizen",
-        loading = "script loading...",
-        pick = "言語を選んで歓迎を開始",
-        ready = "ようこそ。Aizen mode active.",
-        chat = "yokoso",
-        tip = "Tools: Z Kyoka | X Kurohitsugi | C Raikoho | V Shunpo | B Reiatsu",
-    },
+	tr = {
+		button = "TR",
+		title = "RobloxGlop FE Aizen",
+		loading = "script loading...",
+		pick = "Dil seç ve hoş geldin ritüelini başlat",
+		ready = "Yokoso. Aizen modu aktif.",
+		chat = "yokoso",
+		tip = "Toollar eklendi: Z Kyoka | X Kurohitsugi | C Raikoho | V Shunpo | B Reiatsu",
+	},
+	en = {
+		button = "EN",
+		title = "RobloxGlop FE Aizen",
+		loading = "script loading...",
+		pick = "Choose language and start the welcome ritual",
+		ready = "Yokoso. Aizen mode is active.",
+		chat = "yokoso",
+		tip = "Tools installed: Z Kyoka | X Kurohitsugi | C Raikoho | V Shunpo | B Reiatsu",
+	},
+	es = {
+		button = "ES",
+		title = "RobloxGlop FE Aizen",
+		loading = "cargando script...",
+		pick = "Elige idioma e inicia el ritual de bienvenida",
+		ready = "Yokoso. Modo Aizen activo.",
+		chat = "yokoso",
+		tip = "Herramientas listas: Z Kyoka | X Kurohitsugi | C Raikoho | V Shunpo | B Reiatsu",
+	},
+	pt = {
+		button = "PT",
+		title = "RobloxGlop FE Aizen",
+		loading = "carregando script...",
+		pick = "Escolha o idioma e inicie o ritual",
+		ready = "Yokoso. Modo Aizen ativo.",
+		chat = "yokoso",
+		tip = "Ferramentas prontas: Z Kyoka | X Kurohitsugi | C Raikoho | V Shunpo | B Reiatsu",
+	},
+	jp = {
+		button = "JP",
+		title = "RobloxGlop FE Aizen",
+		loading = "script loading...",
+		pick = "言語を選んで歓迎を開始",
+		ready = "ようこそ。Aizen mode active.",
+		chat = "yokoso",
+		tip = "Tools: Z Kyoka | X Kurohitsugi | C Raikoho | V Shunpo | B Reiatsu",
+	},
 }
 local function refreshCharacter(newCharacter)
-    character = newCharacter
-    humanoid = character:WaitForChild("Humanoid")
-    root = character:WaitForChild("HumanoidRootPart")
+	character = newCharacter
+	humanoid = character:WaitForChild("Humanoid")
+	root = character:WaitForChild("HumanoidRootPart")
 end
 player.CharacterAdded:Connect(refreshCharacter)
 local function tween(instance, time, style, direction, properties)
-    local info = TweenInfo.new(time, style or Enum.EasingStyle.Quad, direction or Enum.EasingDirection.Out)
-    local animation = TweenService:Create(instance, info, properties)
-    animation:Play()
-    return animation
+	local info = TweenInfo.new(time, style or Enum.EasingStyle.Quad, direction or Enum.EasingDirection.Out)
+	local animation = TweenService:Create(instance, info, properties)
+	animation:Play()
+	return animation
 end
 local function notify(title, text, duration)
-    task.spawn(function()
-        pcall(function()
-            StarterGui:SetCore("SendNotification", {
-                Title = title,
-                Text = text,
-                Duration = duration or 5,
-            })
-        end)
-    end)
+	task.spawn(function()
+		pcall(function()
+			StarterGui:SetCore("SendNotification", {
+				Title = title,
+				Text = text,
+				Duration = duration or 5,
+			})
+		end)
+	end)
 end
 local function sendChatMessage(message)
-    if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
-        local channels = TextChatService:FindFirstChild("TextChannels")
-        local general = channels and channels:FindFirstChild("RBXGeneral")
-        if general then
-            local ok = pcall(function()
-                general:SendAsync(message)
-            end)
-            if ok then
-                return true
-            end
-        end
-    end
-    local events = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents")
-    local sayMessage = events and events:FindFirstChild("SayMessageRequest")
-    if sayMessage then
-        sayMessage:FireServer(message, "All")
-        return true
-    end
-    return false
+	if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+		local channels = TextChatService:FindFirstChild("TextChannels")
+		local general = channels and channels:FindFirstChild("RBXGeneral")
+		if general then
+			local ok = pcall(function()
+				general:SendAsync(message)
+			end)
+			if ok then
+				return true
+			end
+		end
+	end
+	local events = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents")
+	local sayMessage = events and events:FindFirstChild("SayMessageRequest")
+	if sayMessage then
+		sayMessage:FireServer(message, "All")
+		return true
+	end
+	return false
 end
 local function makePart(name, size, cframe, color, material, transparency)
-    local part = Instance.new("Part")
-    part.Name = name
-    part.Anchored = true
-    part.CanCollide = false
-    part.CanTouch = false
-    part.CanQuery = false
-    part.CastShadow = false
-    part.Size = size
-    part.CFrame = cframe
-    part.Color = color
-    part.Material = material or Enum.Material.Neon
-    part.Transparency = transparency or 0
-    part.Parent = cleanupBin
-    return part
+	local part = Instance.new("Part")
+	part.Name = name
+	part.Anchored = true
+	part.CanCollide = false
+	part.CanTouch = false
+	part.CanQuery = false
+	part.CastShadow = false
+	part.Size = size
+	part.CFrame = cframe
+	part.Color = color
+	part.Material = material or Enum.Material.Neon
+	part.Transparency = transparency or 0
+	part.Parent = cleanupBin
+	return part
 end
 local function makeSound(name, soundId, volume, speed, parent)
-    local sound = Instance.new("Sound")
-    sound.Name = name
-    sound.SoundId = soundId
-    sound.Volume = volume or 0.6
-    sound.PlaybackSpeed = speed or 1
-    sound.RollOffMaxDistance = 110
-    sound.Parent = parent or root
-    sound:Play()
-    Debris:AddItem(sound, 6)
-    return sound
+	local sound = Instance.new("Sound")
+	sound.Name = name
+	sound.SoundId = soundId
+	sound.Volume = volume or 0.6
+	sound.PlaybackSpeed = speed or 1
+	sound.RollOffMaxDistance = 110
+	sound.Parent = parent or root
+	sound:Play()
+	Debris:AddItem(sound, 6)
+	return sound
 end
 local function flash(color, intensity, duration)
-    local effect = Instance.new("ColorCorrectionEffect")
-    effect.Name = "AizenFlash"
-    effect.TintColor = color
-    effect.Brightness = intensity
-    effect.Contrast = 0.25
-    effect.Saturation = -0.05
-    effect.Parent = Lighting
-    tween(effect, duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {
-        Brightness = 0,
-        Contrast = 0,
-        Saturation = 0,
-        TintColor = Color3.new(1, 1, 1),
-    })
-    Debris:AddItem(effect, duration + 0.15)
+	local effect = Instance.new("ColorCorrectionEffect")
+	effect.Name = "AizenFlash"
+	effect.TintColor = color
+	effect.Brightness = intensity
+	effect.Contrast = 0.25
+	effect.Saturation = -0.05
+	effect.Parent = Lighting
+	tween(effect, duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {
+		Brightness = 0,
+		Contrast = 0,
+		Saturation = 0,
+		TintColor = Color3.new(1, 1, 1),
+	})
+	Debris:AddItem(effect, duration + 0.15)
 end
 local function screenFade(color, fadeIn, hold, fadeOut)
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "RobloxGlop_Cutscene_Fade"
-    gui.IgnoreGuiInset = true
-    gui.ResetOnSpawn = false
-    gui.Parent = playerGui
-    local frame = Instance.new("Frame")
-    frame.BackgroundColor3 = color or Color3.new(0, 0, 0)
-    frame.BackgroundTransparency = 1
-    frame.BorderSizePixel = 0
-    frame.Size = UDim2.fromScale(1, 1)
-    frame.Parent = gui
-    tween(frame, fadeIn or 0.16, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {BackgroundTransparency = 0.18})
-    task.delay((fadeIn or 0.16) + (hold or 0.08), function()
-        tween(frame, fadeOut or 0.2, Enum.EasingStyle.Sine, Enum.EasingDirection.In, {BackgroundTransparency = 1})
-        Debris:AddItem(gui, (fadeOut or 0.2) + 0.05)
-    end)
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "RobloxGlop_Cutscene_Fade"
+	gui.IgnoreGuiInset = true
+	gui.ResetOnSpawn = false
+	gui.Parent = playerGui
+	local frame = Instance.new("Frame")
+	frame.BackgroundColor3 = color or Color3.new(0, 0, 0)
+	frame.BackgroundTransparency = 1
+	frame.BorderSizePixel = 0
+	frame.Size = UDim2.fromScale(1, 1)
+	frame.Parent = gui
+	tween(frame, fadeIn or 0.16, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {BackgroundTransparency = 0.18})
+	task.delay((fadeIn or 0.16) + (hold or 0.08), function()
+		tween(frame, fadeOut or 0.2, Enum.EasingStyle.Sine, Enum.EasingDirection.In, {BackgroundTransparency = 1})
+		Debris:AddItem(gui, (fadeOut or 0.2) + 0.05)
+	end)
 end
 local function cameraPulse(power, duration)
-    local camera = workspace.CurrentCamera
-    if not camera then
-        return
-    end
-    local start = os.clock()
-    local original = camera.CFrame
-    local connection
-    connection = RunService.RenderStepped:Connect(function()
-        local alpha = (os.clock() - start) / duration
-        if alpha >= 1 then
-            camera.CFrame = original
-            connection:Disconnect()
-            return
-        end
-        local falloff = 1 - alpha
-        local shake = Vector3.new(
-            rng:NextNumber(-power, power),
-            rng:NextNumber(-power, power),
-            rng:NextNumber(-power, power)
-        ) * falloff
-        camera.CFrame = camera.CFrame * CFrame.new(shake)
-    end)
+	local camera = workspace.CurrentCamera
+	if not camera then
+		return
+	end
+	local start = os.clock()
+	local original = camera.CFrame
+	local connection
+	connection = RunService.RenderStepped:Connect(function()
+		local alpha = (os.clock() - start) / duration
+		if alpha >= 1 then
+			camera.CFrame = original
+			connection:Disconnect()
+			return
+		end
+		local falloff = 1 - alpha
+		local shake = Vector3.new(
+			rng:NextNumber(-power, power),
+			rng:NextNumber(-power, power),
+			rng:NextNumber(-power, power)
+		) * falloff
+		camera.CFrame = camera.CFrame * CFrame.new(shake)
+	end)
 end
 local function cutsceneBars(duration)
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "Aizen_Cinema_Bars"
-    gui.IgnoreGuiInset = true
-    gui.ResetOnSpawn = false
-    gui.Parent = playerGui
-    local top = Instance.new("Frame")
-    top.BackgroundColor3 = Color3.new(0, 0, 0)
-    top.BorderSizePixel = 0
-    top.Size = UDim2.new(1, 0, 0, 0)
-    top.Position = UDim2.fromScale(0, 0)
-    top.Parent = gui
-    local bottom = top:Clone()
-    bottom.Position = UDim2.new(0, 0, 1, 0)
-    bottom.AnchorPoint = Vector2.new(0, 1)
-    bottom.Parent = gui
-    tween(top, 0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Size = UDim2.new(1, 0, 0.12, 0)})
-    tween(bottom, 0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Size = UDim2.new(1, 0, 0.12, 0)})
-    task.delay(duration, function()
-        tween(top, 0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {Size = UDim2.new(1, 0, 0, 0)})
-        tween(bottom, 0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {Size = UDim2.new(1, 0, 0, 0)})
-        Debris:AddItem(gui, 0.35)
-    end)
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "Aizen_Cinema_Bars"
+	gui.IgnoreGuiInset = true
+	gui.ResetOnSpawn = false
+	gui.Parent = playerGui
+	local top = Instance.new("Frame")
+	top.BackgroundColor3 = Color3.new(0, 0, 0)
+	top.BorderSizePixel = 0
+	top.Size = UDim2.new(1, 0, 0, 0)
+	top.Position = UDim2.fromScale(0, 0)
+	top.Parent = gui
+	local bottom = top:Clone()
+	bottom.Position = UDim2.new(0, 0, 1, 0)
+	bottom.AnchorPoint = Vector2.new(0, 1)
+	bottom.Parent = gui
+	tween(top, 0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Size = UDim2.new(1, 0, 0.12, 0)})
+	tween(bottom, 0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Size = UDim2.new(1, 0, 0.12, 0)})
+	task.delay(duration, function()
+		tween(top, 0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {Size = UDim2.new(1, 0, 0, 0)})
+		tween(bottom, 0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {Size = UDim2.new(1, 0, 0, 0)})
+		Debris:AddItem(gui, 0.35)
+	end)
 end
 local function cinematicCutscene(title, subtitle, duration)
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "RobloxGlop_AAA_Cutscene_Sweep"
-    gui.IgnoreGuiInset = true
-    gui.ResetOnSpawn = false
-    gui.Parent = playerGui
-    local sweep = Instance.new("Frame")
-    sweep.BackgroundColor3 = DARK
-    sweep.BackgroundTransparency = 0.18
-    sweep.BorderSizePixel = 0
-    sweep.Position = UDim2.new(-0.25, 0, 0.18, 0)
-    sweep.Rotation = -7
-    sweep.Size = UDim2.new(0, 0, 0, 118)
-    sweep.Parent = gui
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = ACCENT
-    stroke.Thickness = 2
-    stroke.Transparency = 0.25
-    stroke.Parent = sweep
-    local label = Instance.new("TextLabel")
-    label.BackgroundTransparency = 1
-    label.Font = Enum.Font.GothamBlack
-    label.Position = UDim2.fromOffset(28, 12)
-    label.Size = UDim2.new(1, -56, 0, 54)
-    label.Text = title
-    label.TextColor3 = WHITE
-    label.TextScaled = true
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Parent = sweep
-    local sub = Instance.new("TextLabel")
-    sub.BackgroundTransparency = 1
-    sub.Font = Enum.Font.GothamSemibold
-    sub.Position = UDim2.fromOffset(32, 68)
-    sub.Size = UDim2.new(1, -64, 0, 34)
-    sub.Text = subtitle
-    sub.TextColor3 = GOLD
-    sub.TextScaled = true
-    sub.TextXAlignment = Enum.TextXAlignment.Left
-    sub.Parent = sweep
-    tween(sweep, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Position = UDim2.new(0.08, 0, 0.18, 0), Size = UDim2.new(0.84, 0, 0, 118)})
-    task.delay(duration or 0.75, function()
-        tween(sweep, 0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {Position = UDim2.new(1.05, 0, 0.18, 0), BackgroundTransparency = 1})
-        tween(label, 0.15, Enum.EasingStyle.Sine, Enum.EasingDirection.In, {TextTransparency = 1})
-        tween(sub, 0.15, Enum.EasingStyle.Sine, Enum.EasingDirection.In, {TextTransparency = 1})
-        Debris:AddItem(gui, 0.28)
-    end)
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "RobloxGlop_AAA_Cutscene_Sweep"
+	gui.IgnoreGuiInset = true
+	gui.ResetOnSpawn = false
+	gui.Parent = playerGui
+	local sweep = Instance.new("Frame")
+	sweep.BackgroundColor3 = DARK
+	sweep.BackgroundTransparency = 0.18
+	sweep.BorderSizePixel = 0
+	sweep.Position = UDim2.new(-0.25, 0, 0.18, 0)
+	sweep.Rotation = -7
+	sweep.Size = UDim2.new(0, 0, 0, 118)
+	sweep.Parent = gui
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = ACCENT
+	stroke.Thickness = 2
+	stroke.Transparency = 0.25
+	stroke.Parent = sweep
+	local label = Instance.new("TextLabel")
+	label.BackgroundTransparency = 1
+	label.Font = Enum.Font.GothamBlack
+	label.Position = UDim2.fromOffset(28, 12)
+	label.Size = UDim2.new(1, -56, 0, 54)
+	label.Text = title
+	label.TextColor3 = WHITE
+	label.TextScaled = true
+	label.TextXAlignment = Enum.TextXAlignment.Left
+	label.Parent = sweep
+	local sub = Instance.new("TextLabel")
+	sub.BackgroundTransparency = 1
+	sub.Font = Enum.Font.GothamSemibold
+	sub.Position = UDim2.fromOffset(32, 68)
+	sub.Size = UDim2.new(1, -64, 0, 34)
+	sub.Text = subtitle
+	sub.TextColor3 = GOLD
+	sub.TextScaled = true
+	sub.TextXAlignment = Enum.TextXAlignment.Left
+	sub.Parent = sweep
+	tween(sweep, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Position = UDim2.new(0.08, 0, 0.18, 0), Size = UDim2.new(0.84, 0, 0, 118)})
+	task.delay(duration or 0.75, function()
+		tween(sweep, 0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {Position = UDim2.new(1.05, 0, 0.18, 0), BackgroundTransparency = 1})
+		tween(label, 0.15, Enum.EasingStyle.Sine, Enum.EasingDirection.In, {TextTransparency = 1})
+		tween(sub, 0.15, Enum.EasingStyle.Sine, Enum.EasingDirection.In, {TextTransparency = 1})
+		Debris:AddItem(gui, 0.28)
+	end)
 end
 local function ring(cframe, radius, color, lifetime, thickness)
-    local part = makePart("Spiritual Pressure Ring", Vector3.new(radius, thickness or 0.18, radius), cframe, color, Enum.Material.Neon, 0.18)
-    part.Shape = Enum.PartType.Cylinder
-    tween(part, lifetime, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {
-        Size = Vector3.new(radius * 2.1, thickness or 0.18, radius * 2.1),
-        Transparency = 1,
-    })
-    Debris:AddItem(part, lifetime + 0.1)
-    return part
+	local part = makePart("Spiritual Pressure Ring", Vector3.new(radius, thickness or 0.18, radius), cframe, color, Enum.Material.Neon, 0.18)
+	part.Shape = Enum.PartType.Cylinder
+	tween(part, lifetime, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {
+		Size = Vector3.new(radius * 2.1, thickness or 0.18, radius * 2.1),
+		Transparency = 1,
+	})
+	Debris:AddItem(part, lifetime + 0.1)
+	return part
 end
 local function orb(position, radius, color, lifetime)
-    local part = makePart("Reiatsu Orb", Vector3.new(radius, radius, radius), CFrame.new(position), color, Enum.Material.Neon, 0.05)
-    part.Shape = Enum.PartType.Ball
-    tween(part, lifetime, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out, {
-        Size = Vector3.new(radius * 2.8, radius * 2.8, radius * 2.8),
-        Transparency = 1,
-    })
-    Debris:AddItem(part, lifetime + 0.05)
-    return part
+	local part = makePart("Reiatsu Orb", Vector3.new(radius, radius, radius), CFrame.new(position), color, Enum.Material.Neon, 0.05)
+	part.Shape = Enum.PartType.Ball
+	tween(part, lifetime, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out, {
+		Size = Vector3.new(radius * 2.8, radius * 2.8, radius * 2.8),
+		Transparency = 1,
+	})
+	Debris:AddItem(part, lifetime + 0.05)
+	return part
 end
 local function beamBetween(name, startPosition, endPosition, color, width, lifetime)
-    local midpoint = (startPosition + endPosition) / 2
-    local distance = (startPosition - endPosition).Magnitude
-    local part = makePart(name, Vector3.new(width, width, distance), CFrame.new(midpoint, endPosition), color, Enum.Material.Neon, 0.08)
-    tween(part, lifetime, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, {
-        Size = Vector3.new(width * 0.15, width * 0.15, distance),
-        Transparency = 1,
-    })
-    Debris:AddItem(part, lifetime + 0.05)
-    return part
+	local midpoint = (startPosition + endPosition) / 2
+	local distance = (startPosition - endPosition).Magnitude
+	local part = makePart(name, Vector3.new(width, width, distance), CFrame.new(midpoint, endPosition), color, Enum.Material.Neon, 0.08)
+	tween(part, lifetime, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, {
+		Size = Vector3.new(width * 0.15, width * 0.15, distance),
+		Transparency = 1,
+	})
+	Debris:AddItem(part, lifetime + 0.05)
+	return part
 end
 local function meshVFX(name, meshId, cframe, scale, color, lifetime, startTransparency)
-    local part = makePart(name, Vector3.new(1, 1, 1), cframe, color or ACCENT, Enum.Material.Neon, startTransparency or 0.08)
-    local mesh = Instance.new("SpecialMesh")
-    mesh.MeshType = Enum.MeshType.FileMesh
-    mesh.MeshId = meshId
-    mesh.Scale = scale or Vector3.new(8, 8, 8)
-    mesh.Parent = part
-    tween(part, lifetime or 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transparency = 1})
-    tween(mesh, lifetime or 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Scale = (scale or Vector3.new(8, 8, 8)) * 1.22})
-    Debris:AddItem(part, (lifetime or 0.45) + 0.08)
-    return part
+	local part = makePart(name, Vector3.new(1, 1, 1), cframe, color or ACCENT, Enum.Material.Neon, startTransparency or 0.08)
+	local mesh = Instance.new("SpecialMesh")
+	mesh.MeshType = Enum.MeshType.FileMesh
+	mesh.MeshId = meshId
+	mesh.Scale = scale or Vector3.new(8, 8, 8)
+	mesh.Parent = part
+	tween(part, lifetime or 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transparency = 1})
+	tween(mesh, lifetime or 0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Scale = (scale or Vector3.new(8, 8, 8)) * 1.22})
+	Debris:AddItem(part, (lifetime or 0.45) + 0.08)
+	return part
 end
 local function blackSpeedLines(origin, direction, count, lifetime)
-    local right = direction:Cross(Vector3.new(0, 1, 0))
-    if right.Magnitude < 0.1 then
-        right = Vector3.new(1, 0, 0)
-    end
-    right = right.Unit
-    for i = 1, count do
-        local offset = right * rng:NextNumber(-4, 4) + Vector3.new(0, rng:NextNumber(-2, 3), 0)
-        local startPosition = origin + offset - direction.Unit * rng:NextNumber(1, 4)
-        local endPosition = startPosition + direction.Unit * rng:NextNumber(8, 18)
-        task.delay(i * 0.006, function()
-            beamBetween("Black Flash Step Line", startPosition, endPosition, Color3.new(0, 0, 0), rng:NextNumber(0.045, 0.11), lifetime or 0.22)
-        end)
-    end
+	local right = direction:Cross(Vector3.new(0, 1, 0))
+	if right.Magnitude < 0.1 then
+		right = Vector3.new(1, 0, 0)
+	end
+	right = right.Unit
+	for i = 1, count do
+		local offset = right * rng:NextNumber(-4, 4) + Vector3.new(0, rng:NextNumber(-2, 3), 0)
+		local startPosition = origin + offset - direction.Unit * rng:NextNumber(1, 4)
+		local endPosition = startPosition + direction.Unit * rng:NextNumber(8, 18)
+		task.delay(i * 0.006, function()
+			beamBetween("Black Flash Step Line", startPosition, endPosition, Color3.new(0, 0, 0), rng:NextNumber(0.045, 0.11), lifetime or 0.22)
+		end)
+	end
 end
 local function hadoGroundLoop(center, duration)
-    local start = os.clock()
-    local connection
-    connection = RunService.RenderStepped:Connect(function()
-        if os.clock() - start > duration then
-            connection:Disconnect()
-            return
-        end
-        if rng:NextNumber() < 0.42 then
-            local offset = Vector3.new(rng:NextNumber(-7, 7), 0, rng:NextNumber(-7, 7))
-            local base = center.Position + offset
-            beamBetween("Hado 90 Ground Lightning", base, base + Vector3.new(rng:NextNumber(-1, 1), rng:NextNumber(5, 12), rng:NextNumber(-1, 1)), ACCENT, 0.09, 0.18)
-            orb(base + Vector3.new(0, 0.25, 0), rng:NextNumber(0.45, 0.9), Color3.fromRGB(95, 24, 170), 0.22)
-        end
-    end)
-    for i = 1, 8 do
-        task.delay(i * 0.08, function()
-            ring(center * CFrame.Angles(math.rad(90), 0, 0), 3.5 + i * 1.4, i % 2 == 0 and ACCENT or Color3.fromRGB(60, 0, 120), 0.42, 0.08)
-        end)
-    end
+	local start = os.clock()
+	local connection
+	connection = RunService.RenderStepped:Connect(function()
+		if os.clock() - start > duration then
+			connection:Disconnect()
+			return
+		end
+		if rng:NextNumber() < 0.42 then
+			local offset = Vector3.new(rng:NextNumber(-7, 7), 0, rng:NextNumber(-7, 7))
+			local base = center.Position + offset
+			beamBetween("Hado 90 Ground Lightning", base, base + Vector3.new(rng:NextNumber(-1, 1), rng:NextNumber(5, 12), rng:NextNumber(-1, 1)), ACCENT, 0.09, 0.18)
+			orb(base + Vector3.new(0, 0.25, 0), rng:NextNumber(0.45, 0.9), Color3.fromRGB(95, 24, 170), 0.22)
+		end
+	end)
+	for i = 1, 8 do
+		task.delay(i * 0.08, function()
+			ring(center * CFrame.Angles(math.rad(90), 0, 0), 3.5 + i * 1.4, i % 2 == 0 and ACCENT or Color3.fromRGB(60, 0, 120), 0.42, 0.08)
+		end)
+	end
 end
 local function kurohitsugiMeshSequence(center)
-    local ids = {MESH_KURO_1, MESH_KURO_2, MESH_KURO_3, MESH_KURO_4}
-    for i, meshId in ipairs(ids) do
-        task.delay((i - 1) * 0.16, function()
-            meshVFX("Kurohitsugi Mesh Phase " .. i, meshId, center * CF(0, 0.25, 0), Vector3.new(11 + i * 1.3, 11 + i * 1.3, 11 + i * 1.3), i == 1 and GOLD or ACCENT, 0.3, i == 1 and 0.05 or 0.16)
-        end)
-    end
+	local ids = {MESH_KURO_1, MESH_KURO_2, MESH_KURO_3, MESH_KURO_4}
+	for i, meshId in ipairs(ids) do
+		task.delay((i - 1) * 0.16, function()
+			meshVFX("Kurohitsugi Mesh Phase " .. i, meshId, center * CF(0, 0.25, 0), Vector3.new(11 + i * 1.3, 11 + i * 1.3, 11 + i * 1.3), i == 1 and GOLD or ACCENT, 0.3, i == 1 and 0.05 or 0.16)
+		end)
+	end
 end
 local function giantPurpleExplosion(position)
-    screenFade(Color3.fromRGB(35, 0, 58), 0.08, 0.08, 0.24)
-    for i = 1, 14 do
-        task.delay(i * 0.025, function()
-            ring(CFrame.new(position) * CFrame.Angles(math.rad(90), 0, 0), 4 + i * 2.2, i % 2 == 0 and ACCENT or WHITE, 0.55, 0.12)
-            orb(position + Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(0, 7), rng:NextNumber(-4, 4)), 1.3 + i * 0.18, i % 3 == 0 and WHITE or ACCENT, 0.45)
-        end)
-    end
-    for i = 1, 32 do
-        local startPosition = position + Vector3.new(rng:NextNumber(-10, 10), rng:NextNumber(1, 16), rng:NextNumber(-10, 10))
-        local endPosition = position + Vector3.new(rng:NextNumber(-18, 18), rng:NextNumber(-2, 20), rng:NextNumber(-18, 18))
-        task.delay(i * 0.01, function()
-            beamBetween("Final Kurohitsugi Explosion Line", startPosition, endPosition, i % 2 == 0 and WHITE or ACCENT, 0.16, 0.38)
-        end)
-    end
+	screenFade(Color3.fromRGB(35, 0, 58), 0.08, 0.08, 0.24)
+	for i = 1, 14 do
+		task.delay(i * 0.025, function()
+			ring(CFrame.new(position) * CFrame.Angles(math.rad(90), 0, 0), 4 + i * 2.2, i % 2 == 0 and ACCENT or WHITE, 0.55, 0.12)
+			orb(position + Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(0, 7), rng:NextNumber(-4, 4)), 1.3 + i * 0.18, i % 3 == 0 and WHITE or ACCENT, 0.45)
+		end)
+	end
+	for i = 1, 32 do
+		local startPosition = position + Vector3.new(rng:NextNumber(-10, 10), rng:NextNumber(1, 16), rng:NextNumber(-10, 10))
+		local endPosition = position + Vector3.new(rng:NextNumber(-18, 18), rng:NextNumber(-2, 20), rng:NextNumber(-18, 18))
+		task.delay(i * 0.01, function()
+			beamBetween("Final Kurohitsugi Explosion Line", startPosition, endPosition, i % 2 == 0 and WHITE or ACCENT, 0.16, 0.38)
+		end)
+	end
 end
 local function sigil(cframe, radius, color, lifetime, spokes)
-    ring(cframe, radius, color, lifetime, 0.08)
-    for i = 1, spokes or 12 do
-        local angle = (math.pi * 2 / (spokes or 12)) * i
-        local startPosition = (cframe * CFrame.new(math.cos(angle) * radius * 0.15, 0, math.sin(angle) * radius * 0.15)).Position
-        local endPosition = (cframe * CFrame.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)).Position
-        task.delay(i * 0.01, function()
-            beamBetween("Reiatsu Sigil Line", startPosition, endPosition, color, 0.06, lifetime * 0.7)
-        end)
-    end
+	ring(cframe, radius, color, lifetime, 0.08)
+	for i = 1, spokes or 12 do
+		local angle = (math.pi * 2 / (spokes or 12)) * i
+		local startPosition = (cframe * CFrame.new(math.cos(angle) * radius * 0.15, 0, math.sin(angle) * radius * 0.15)).Position
+		local endPosition = (cframe * CFrame.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)).Position
+		task.delay(i * 0.01, function()
+			beamBetween("Reiatsu Sigil Line", startPosition, endPosition, color, 0.06, lifetime * 0.7)
+		end)
+	end
 end
 local function petalBurst(origin, count, color, lifetime)
-    for i = 1, count do
-        local petal = makePart("Kyoka Petal", Vector3.new(0.08, 0.02, 0.35), CFrame.new(origin), color, Enum.Material.Neon, 0.15)
-        local spread = Vector3.new(rng:NextNumber(-9, 9), rng:NextNumber(1, 7), rng:NextNumber(-9, 9))
-        petal.CFrame = CFrame.new(origin, origin + spread) * CFrame.Angles(rng:NextNumber(-3, 3), rng:NextNumber(-3, 3), rng:NextNumber(-3, 3))
-        tween(petal, lifetime, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {
-            CFrame = petal.CFrame + spread,
-            Transparency = 1,
-        })
-        Debris:AddItem(petal, lifetime + 0.1)
-    end
+	for i = 1, count do
+		local petal = makePart("Kyoka Petal", Vector3.new(0.08, 0.02, 0.35), CFrame.new(origin), color, Enum.Material.Neon, 0.15)
+		local spread = Vector3.new(rng:NextNumber(-9, 9), rng:NextNumber(1, 7), rng:NextNumber(-9, 9))
+		petal.CFrame = CFrame.new(origin, origin + spread) * CFrame.Angles(rng:NextNumber(-3, 3), rng:NextNumber(-3, 3), rng:NextNumber(-3, 3))
+		tween(petal, lifetime, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {
+			CFrame = petal.CFrame + spread,
+			Transparency = 1,
+		})
+		Debris:AddItem(petal, lifetime + 0.1)
+	end
 end
 local function bladeTrail(duration)
-    local hand = character:FindFirstChild("RightHand") or character:FindFirstChild("Right Arm")
-    if not hand then
-        return
-    end
-    local attachment0 = Instance.new("Attachment")
-    attachment0.Name = "AizenTrailStart"
-    attachment0.Position = Vector3.new(0, -0.7, 0)
-    attachment0.Parent = hand
-    local attachment1 = Instance.new("Attachment")
-    attachment1.Name = "AizenTrailEnd"
-    attachment1.Position = Vector3.new(0, -2.2, 0)
-    attachment1.Parent = hand
-    local trail = Instance.new("Trail")
-    trail.Name = "Kyoka Suigetsu Afterimage"
-    trail.Attachment0 = attachment0
-    trail.Attachment1 = attachment1
-    trail.Color = ColorSequence.new(GOLD, ACCENT)
-    trail.LightEmission = 1
-    trail.Lifetime = 0.22
-    trail.MinLength = 0.05
-    trail.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0.02),
-        NumberSequenceKeypoint.new(1, 1),
-    })
-    trail.Parent = hand
-    Debris:AddItem(trail, duration)
-    Debris:AddItem(attachment0, duration)
-    Debris:AddItem(attachment1, duration)
+	local hand = character:FindFirstChild("RightHand") or character:FindFirstChild("Right Arm")
+	if not hand then
+		return
+	end
+	local attachment0 = Instance.new("Attachment")
+	attachment0.Name = "AizenTrailStart"
+	attachment0.Position = Vector3.new(0, -0.7, 0)
+	attachment0.Parent = hand
+	local attachment1 = Instance.new("Attachment")
+	attachment1.Name = "AizenTrailEnd"
+	attachment1.Position = Vector3.new(0, -2.2, 0)
+	attachment1.Parent = hand
+	local trail = Instance.new("Trail")
+	trail.Name = "Kyoka Suigetsu Afterimage"
+	trail.Attachment0 = attachment0
+	trail.Attachment1 = attachment1
+	trail.Color = ColorSequence.new(GOLD, ACCENT)
+	trail.LightEmission = 1
+	trail.Lifetime = 0.22
+	trail.MinLength = 0.05
+	trail.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.02),
+		NumberSequenceKeypoint.new(1, 1),
+	})
+	trail.Parent = hand
+	Debris:AddItem(trail, duration)
+	Debris:AddItem(attachment0, duration)
+	Debris:AddItem(attachment1, duration)
 end
 local function ghostClone(offset, lifetime)
-    local wasArchivable = character.Archivable
-    character.Archivable = true
-    local clone = character:Clone()
-    character.Archivable = wasArchivable
-    clone.Name = "Kyoka Suigetsu Illusion"
-    clone.Parent = cleanupBin
-    for _, descendant in ipairs(clone:GetDescendants()) do
-        if descendant:IsA("BasePart") then
-            descendant.Anchored = true
-            descendant.CanCollide = false
-            descendant.CanTouch = false
-            descendant.CanQuery = false
-            descendant.Material = Enum.Material.ForceField
-            descendant.Color = ACCENT
-            descendant.Transparency = 0.35
-            tween(descendant, lifetime, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 1})
-        elseif descendant:IsA("Decal") or descendant:IsA("Texture") then
-            descendant.Transparency = 0.8
-        elseif descendant:IsA("Script") or descendant:IsA("LocalScript") then
-            descendant:Destroy()
-        end
-    end
-    clone:PivotTo(root.CFrame * CFrame.new(offset))
-    Debris:AddItem(clone, lifetime + 0.1)
-    return clone
+	local wasArchivable = character.Archivable
+	character.Archivable = true
+	local clone = character:Clone()
+	character.Archivable = wasArchivable
+	clone.Name = "Kyoka Suigetsu Illusion"
+	clone.Parent = cleanupBin
+	for _, descendant in ipairs(clone:GetDescendants()) do
+		if descendant:IsA("BasePart") then
+			descendant.Anchored = true
+			descendant.CanCollide = false
+			descendant.CanTouch = false
+			descendant.CanQuery = false
+			descendant.Material = Enum.Material.ForceField
+			descendant.Color = ACCENT
+			descendant.Transparency = 0.35
+			tween(descendant, lifetime, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 1})
+		elseif descendant:IsA("Decal") or descendant:IsA("Texture") then
+			descendant.Transparency = 0.8
+		elseif descendant:IsA("Script") or descendant:IsA("LocalScript") then
+			descendant:Destroy()
+		end
+	end
+	clone:PivotTo(root.CFrame * CFrame.new(offset))
+	Debris:AddItem(clone, lifetime + 0.1)
+	return clone
 end
 local function publicPose(label, duration, velocity)
-    if not humanoid or not root then
-        return
-    end
-    humanoid.AutoRotate = false
-    humanoid.Jump = true
-    if velocity then
-        root.AssemblyLinearVelocity = velocity
-    end
-    local marker = Instance.new("BillboardGui")
-    marker.Name = "RobloxGlop Public Aizen Pose"
-    marker.Size = UDim2.fromOffset(300, 54)
-    marker.StudsOffset = Vector3.new(0, 4.5, 0)
-    marker.AlwaysOnTop = true
-    marker.Parent = root
-    local labelGui = Instance.new("TextLabel")
-    labelGui.BackgroundTransparency = 1
-    labelGui.Size = UDim2.fromScale(1, 1)
-    labelGui.Font = Enum.Font.GothamBlack
-    labelGui.Text = "RobloxGlop • " .. label
-    labelGui.TextColor3 = WHITE
-    labelGui.TextStrokeColor3 = Color3.new(0, 0, 0)
-    labelGui.TextStrokeTransparency = 0.05
-    labelGui.TextScaled = true
-    labelGui.Parent = marker
-    tween(labelGui, duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {TextTransparency = 1, TextStrokeTransparency = 1})
-    Debris:AddItem(marker, duration + 0.1)
-    task.delay(math.min(duration, 0.85), function()
-        if humanoid then
-            humanoid.AutoRotate = true
-        end
-    end)
+	if not humanoid or not root then
+		return
+	end
+	humanoid.AutoRotate = false
+	humanoid.Jump = true
+	if velocity then
+		root.AssemblyLinearVelocity = velocity
+	end
+	local marker = Instance.new("BillboardGui")
+	marker.Name = "RobloxGlop Public Aizen Pose"
+	marker.Size = UDim2.fromOffset(300, 54)
+	marker.StudsOffset = Vector3.new(0, 4.5, 0)
+	marker.AlwaysOnTop = true
+	marker.Parent = root
+	local labelGui = Instance.new("TextLabel")
+	labelGui.BackgroundTransparency = 1
+	labelGui.Size = UDim2.fromScale(1, 1)
+	labelGui.Font = Enum.Font.GothamBlack
+	labelGui.Text = "RobloxGlop • " .. label
+	labelGui.TextColor3 = WHITE
+	labelGui.TextStrokeColor3 = Color3.new(0, 0, 0)
+	labelGui.TextStrokeTransparency = 0.05
+	labelGui.TextScaled = true
+	labelGui.Parent = marker
+	tween(labelGui, duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {TextTransparency = 1, TextStrokeTransparency = 1})
+	Debris:AddItem(marker, duration + 0.1)
+	task.delay(math.min(duration, 0.85), function()
+		if humanoid then
+			humanoid.AutoRotate = true
+		end
+	end)
 end
 local function getMotor(name)
-    for _, descendant in ipairs(character:GetDescendants()) do
-        if descendant:IsA("Motor6D") and descendant.Name == name then
-            return descendant
-        end
-    end
-    return nil
+	for _, descendant in ipairs(character:GetDescendants()) do
+		if descendant:IsA("Motor6D") and descendant.Name == name then
+			return descendant
+		end
+	end
+	return nil
 end
 local function captureMotor(name, ...)
-    local aliases = {...}
-    local motor = getMotor(name)
-    for _, alias in ipairs(aliases) do
-        motor = motor or getMotor(alias)
-    end
-    return motor
+	local aliases = {...}
+	local motor = getMotor(name)
+	for _, alias in ipairs(aliases) do
+		motor = motor or getMotor(alias)
+	end
+	return motor
 end
 function AnimController:RefreshMotors()
-    self.Motors = {
-        root = captureMotor("RootJoint", "Root"),
-        waist = captureMotor("Waist"),
-        neck = captureMotor("Neck"),
-        rightShoulder = captureMotor("RightShoulder", "Right Shoulder"),
-        leftShoulder = captureMotor("LeftShoulder", "Left Shoulder"),
-        rightHip = captureMotor("RightHip", "Right Hip"),
-        leftHip = captureMotor("LeftHip", "Left Hip"),
-    }
-    self.BaseC0 = {}
-    for key, motor in pairs(self.Motors) do
-        if motor then
-            self.BaseC0[key] = motor.C0
-            motor.Transform = CFrame.new()
-        end
-    end
+	self.Motors = {
+		root = captureMotor("RootJoint", "Root"),
+		waist = captureMotor("Waist"),
+		neck = captureMotor("Neck"),
+		rightShoulder = captureMotor("RightShoulder", "Right Shoulder"),
+		leftShoulder = captureMotor("LeftShoulder", "Left Shoulder"),
+		rightHip = captureMotor("RightHip", "Right Hip"),
+		leftHip = captureMotor("LeftHip", "Left Hip"),
+	}
+	self.BaseC0 = {}
+	for key, motor in pairs(self.Motors) do
+		if motor then
+			self.BaseC0[key] = motor.C0
+			motor.Transform = CFrame.new()
+		end
+	end
 end
 function AnimController:SetState(newState, duration)
-    self.State = newState
-    self.StateEndsAt = duration and (os.clock() + duration) or 0
+	self.State = newState
+	self.StateEndsAt = duration and (os.clock() + duration) or 0
 end
 function AnimController:AutoState()
-    if not humanoid or not root then
-        return "Idle"
-    end
-    if airwalkActive then
-        return "Airwalk"
-    end
-    local state = humanoid:GetState()
-    if state == Enum.HumanoidStateType.Jumping then
-        return "Jump"
-    end
-    if state == Enum.HumanoidStateType.Freefall then
-        return root.AssemblyLinearVelocity.Y > 0 and "Jump" or "Fall"
-    end
-    local moving = humanoid.MoveDirection.Magnitude > 0.08
-    local speed = Vector3.new(root.AssemblyLinearVelocity.X, 0, root.AssemblyLinearVelocity.Z).Magnitude
-    if moving and speed > 18 then
-        return "Run"
-    end
-    if moving then
-        return "Walk"
-    end
-    return "Idle"
+	if not humanoid or not root then
+		return "Idle"
+	end
+	if airwalkActive then
+		return "Airwalk"
+	end
+	local state = humanoid:GetState()
+	if state == Enum.HumanoidStateType.Jumping then
+		return "Jump"
+	end
+	if state == Enum.HumanoidStateType.Freefall then
+		return root.AssemblyLinearVelocity.Y > 0 and "Jump" or "Fall"
+	end
+	local moving = humanoid.MoveDirection.Magnitude > 0.08
+	local speed = Vector3.new(root.AssemblyLinearVelocity.X, 0, root.AssemblyLinearVelocity.Z).Magnitude
+	if moving and speed > 18 then
+		return "Run"
+	end
+	if moving then
+		return "Walk"
+	end
+	return "Idle"
 end
 function AnimController:TargetPose(state)
-    local sine = self.Sine
-    local breathe = math.sin(sine * 1.7)
-    local stride = math.sin(sine)
-    local strideBack = math.sin(sine + math.pi)
-    local targets = {}
-    if state == "Idle" then
-        targets.root = CF(0, 0, 0) * ANGLES(RAD(-2 + breathe * 1.2), 0, RAD(breathe * 0.6))
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(1 + breathe * 1.5), RAD(breathe * 1.2), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-1 - breathe * 0.8), 0, 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(4 + breathe * 2), 0, RAD(5))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(4 - breathe * 2), 0, RAD(-5))
-    elseif state == "Walk" then
-        local phase = sine * 1.08
-        local step = math.sin(phase)
-        local stepBack = -step
-        local rightPlant = math.max(0, math.cos(phase))
-        local leftPlant = math.max(0, -math.cos(phase))
-        targets.root = CF(0, (rightPlant + leftPlant) * 0.012, 0) * ANGLES(RAD(-0.8), 0, 0)
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(0.8), RAD(step * 0.8), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-0.7), RAD(-step * 0.45), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 9 - 2), 0, RAD(2))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 9 - 2), 0, RAD(-2))
-        targets.rightHip = CF(0, rightPlant * 0.035, step * -0.045) * ANGLES(RAD(step * 20), 0, 0)
-        targets.leftHip = CF(0, leftPlant * 0.035, stepBack * -0.045) * ANGLES(RAD(stepBack * 20), 0, 0)
-    elseif state == "Run" then
-        local phase = sine * 1.52
-        local step = math.sin(phase)
-        local stepBack = -step
-        local rightPlant = math.max(0, math.cos(phase))
-        local leftPlant = math.max(0, -math.cos(phase))
-        targets.root = CF(0, (rightPlant + leftPlant) * 0.024, 0) * ANGLES(RAD(-6.5), 0, 0)
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(3.2), RAD(step * 1.6), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-5.5), RAD(-step * 0.8), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 20 - 10), 0, RAD(5))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 20 - 10), 0, RAD(-5))
-        targets.rightHip = CF(0, rightPlant * 0.05, step * -0.08) * ANGLES(RAD(step * 38), 0, 0)
-        targets.leftHip = CF(0, leftPlant * 0.05, stepBack * -0.08) * ANGLES(RAD(stepBack * 38), 0, 0)
-    elseif state == "Jump" then
-        targets.root = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-34), 0, RAD(16))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-34), 0, RAD(-16))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(18), 0, 0)
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
-    elseif state == "Fall" then
-        targets.root = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(8), 0, 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(18), 0, RAD(45))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(18), 0, RAD(-45))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
-    elseif state == "Airwalk" then
-        local drift = math.sin(sine * 1.35)
-        targets.root = CF(0, drift * 0.08, 0) * ANGLES(RAD(-4), 0, RAD(drift * 1.2))
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(-3), RAD(drift * 2), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(5), RAD(-drift * 1.5), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-18 + breathe * 2), 0, RAD(34))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-18 - breathe * 2), 0, RAD(-34))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-10 + drift * 4), 0, RAD(8))
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-10 - drift * 4), 0, RAD(-8))
-    elseif state == "Mock" then
-        targets.root = CF(0, 0, 0) * ANGLES(RAD(-3), RAD(-8 + breathe * 1.5), RAD(0))
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(3), RAD(12), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), RAD(-16), RAD(4))
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-18), RAD(0), RAD(78 + breathe * 2))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(8), RAD(0), RAD(-18))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-4), 0, 0)
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(4), 0, 0)
-    elseif state == "Charge" then
-        targets.root = CF(0, 0, 0) * ANGLES(RAD(-8 + breathe * 2), 0, 0)
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(-10), RAD(breathe * 3), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(8), 0, 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-78), RAD(0), RAD(70 + breathe * 4))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-78), RAD(0), RAD(-70 - breathe * 4))
-    elseif state == "Kurohitsugi" then
-        targets.root = CF(0, math.sin(sine * 1.5) * 0.08, 0) * ANGLES(RAD(-10), 0, 0)
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(-16), 0, 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-4), 0, 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-160), RAD(0), RAD(25))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-160), RAD(0), RAD(-25))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-6), 0, RAD(4))
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-6), 0, RAD(-4))
-    elseif state == "Raikoho" then
-        targets.root = CF(0, 0, 0) * ANGLES(RAD(8), RAD(-8), 0)
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(12), RAD(-14), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-6), RAD(10), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-96), RAD(0), RAD(84))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(20), RAD(-18), RAD(-32))
-    elseif state == "Shunpo" then
-        targets.root = CF(0, 0, 0) * ANGLES(RAD(22), 0, RAD(stride * 3))
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(18), 0, 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-15), 0, 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-50), 0, RAD(35))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-50), 0, RAD(-35))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-18), 0, 0)
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(18), 0, 0)
-    elseif state == "Reiatsu" or state == "Hover" then
-        targets.root = CF(0, math.sin(sine * 1.35) * 0.1, 0) * ANGLES(RAD(-6), 0, 0)
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(-8), RAD(breathe * 2), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-35), 0, RAD(95 + breathe * 3))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-35), 0, RAD(-95 - breathe * 3))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, RAD(5))
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, RAD(-5))
-    end
-    return targets
+	local sine = self.Sine
+	local breathe = math.sin(sine * 1.7)
+	local stride = math.sin(sine)
+	local strideBack = math.sin(sine + math.pi)
+	local targets = {}
+	if state == "Idle" then
+		targets.root = CF(0, 0, 0) * ANGLES(RAD(-2 + breathe * 1.2), 0, RAD(breathe * 0.6))
+		targets.waist = CF(0, 0, 0) * ANGLES(RAD(1 + breathe * 1.5), RAD(breathe * 1.2), 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(-1 - breathe * 0.8), 0, 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(4 + breathe * 2), 0, RAD(5))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(4 - breathe * 2), 0, RAD(-5))
+	elseif state == "Walk" then
+		local phase = sine * 1.08
+		local step = math.sin(phase)
+		local stepBack = -step
+		local rightPlant = math.max(0, math.cos(phase))
+		local leftPlant = math.max(0, -math.cos(phase))
+		targets.root = CF(0, (rightPlant + leftPlant) * 0.012, 0) * ANGLES(RAD(-0.8), 0, 0)
+		targets.waist = CF(0, 0, 0) * ANGLES(RAD(0.8), RAD(step * 0.8), 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(-0.7), RAD(-step * 0.45), 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 9 - 2), 0, RAD(2))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 9 - 2), 0, RAD(-2))
+		targets.rightHip = CF(0, rightPlant * 0.035, step * -0.045) * ANGLES(RAD(step * 20), 0, 0)
+		targets.leftHip = CF(0, leftPlant * 0.035, stepBack * -0.045) * ANGLES(RAD(stepBack * 20), 0, 0)
+	elseif state == "Run" then
+		local phase = sine * 1.52
+		local step = math.sin(phase)
+		local stepBack = -step
+		local rightPlant = math.max(0, math.cos(phase))
+		local leftPlant = math.max(0, -math.cos(phase))
+		targets.root = CF(0, (rightPlant + leftPlant) * 0.024, 0) * ANGLES(RAD(-6.5), 0, 0)
+		targets.waist = CF(0, 0, 0) * ANGLES(RAD(3.2), RAD(step * 1.6), 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(-5.5), RAD(-step * 0.8), 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 20 - 10), 0, RAD(5))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 20 - 10), 0, RAD(-5))
+		targets.rightHip = CF(0, rightPlant * 0.05, step * -0.08) * ANGLES(RAD(step * 38), 0, 0)
+		targets.leftHip = CF(0, leftPlant * 0.05, stepBack * -0.08) * ANGLES(RAD(stepBack * 38), 0, 0)
+	elseif state == "Jump" then
+		targets.root = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-34), 0, RAD(16))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-34), 0, RAD(-16))
+		targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(18), 0, 0)
+		targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
+	elseif state == "Fall" then
+		targets.root = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(8), 0, 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(18), 0, RAD(45))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(18), 0, RAD(-45))
+		targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
+		targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
+	elseif state == "Airwalk" then
+		local drift = math.sin(sine * 1.35)
+		targets.root = CF(0, drift * 0.08, 0) * ANGLES(RAD(-4), 0, RAD(drift * 1.2))
+		targets.waist = CF(0, 0, 0) * ANGLES(RAD(-3), RAD(drift * 2), 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(5), RAD(-drift * 1.5), 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-18 + breathe * 2), 0, RAD(34))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-18 - breathe * 2), 0, RAD(-34))
+		targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-10 + drift * 4), 0, RAD(8))
+		targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-10 - drift * 4), 0, RAD(-8))
+	elseif state == "Mock" then
+		targets.root = CF(0, 0, 0) * ANGLES(RAD(-3), RAD(-8 + breathe * 1.5), RAD(0))
+		targets.waist = CF(0, 0, 0) * ANGLES(RAD(3), RAD(12), 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), RAD(-16), RAD(4))
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-18), RAD(0), RAD(78 + breathe * 2))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(8), RAD(0), RAD(-18))
+		targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-4), 0, 0)
+		targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(4), 0, 0)
+	elseif state == "Charge" then
+		targets.root = CF(0, 0, 0) * ANGLES(RAD(-8 + breathe * 2), 0, 0)
+		targets.waist = CF(0, 0, 0) * ANGLES(RAD(-10), RAD(breathe * 3), 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(8), 0, 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-78), RAD(0), RAD(70 + breathe * 4))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-78), RAD(0), RAD(-70 - breathe * 4))
+	elseif state == "Kurohitsugi" then
+		targets.root = CF(0, math.sin(sine * 1.5) * 0.08, 0) * ANGLES(RAD(-10), 0, 0)
+		targets.waist = CF(0, 0, 0) * ANGLES(RAD(-16), 0, 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(-4), 0, 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-160), RAD(0), RAD(25))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-160), RAD(0), RAD(-25))
+		targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-6), 0, RAD(4))
+		targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-6), 0, RAD(-4))
+	elseif state == "Raikoho" then
+		targets.root = CF(0, 0, 0) * ANGLES(RAD(8), RAD(-8), 0)
+		targets.waist = CF(0, 0, 0) * ANGLES(RAD(12), RAD(-14), 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(-6), RAD(10), 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-96), RAD(0), RAD(84))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(20), RAD(-18), RAD(-32))
+	elseif state == "Shunpo" then
+		targets.root = CF(0, 0, 0) * ANGLES(RAD(22), 0, RAD(stride * 3))
+		targets.waist = CF(0, 0, 0) * ANGLES(RAD(18), 0, 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(-15), 0, 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-50), 0, RAD(35))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-50), 0, RAD(-35))
+		targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-18), 0, 0)
+		targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(18), 0, 0)
+	elseif state == "Reiatsu" or state == "Hover" then
+		targets.root = CF(0, math.sin(sine * 1.35) * 0.1, 0) * ANGLES(RAD(-6), 0, 0)
+		targets.waist = CF(0, 0, 0) * ANGLES(RAD(-8), RAD(breathe * 2), 0)
+		targets.neck = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
+		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-35), 0, RAD(95 + breathe * 3))
+		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-35), 0, RAD(-95 - breathe * 3))
+		targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, RAD(5))
+		targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, RAD(-5))
+	end
+	return targets
 end
 function AnimController:ApplyPose(targets, alpha)
-    for key, motor in pairs(self.Motors) do
-        if motor and self.BaseC0[key] then
-            local offset = targets[key] or CFrame.new()
-            motor.C0 = Clerp(motor.C0, self.BaseC0[key] * offset, alpha)
-        end
-    end
+	for key, motor in pairs(self.Motors) do
+		if motor and self.BaseC0[key] then
+			local offset = targets[key] or CFrame.new()
+			motor.C0 = Clerp(motor.C0, self.BaseC0[key] * offset, alpha)
+		end
+	end
 end
 function AnimController:Update(dt)
-    if not character or not root or not humanoid or humanoid.Health <= 0 then
-        return
-    end
-    self.Sine += dt * (self.Change * 8)
-    local locked = self.StateEndsAt > os.clock()
-    if not locked then
-        self.State = self:AutoState()
-    end
-    if self.State == "Airwalk" then
-        local camera = workspace.CurrentCamera
-        local look = camera and camera.CFrame.LookVector or root.CFrame.LookVector
-        local right = camera and camera.CFrame.RightVector or root.CFrame.RightVector
-        local move = (look * airwalkDirection.Z) + (right * airwalkDirection.X) + Vector3.new(0, airwalkDirection.Y, 0)
-        root.AssemblyLinearVelocity = move * 34 + Vector3.new(0, math.sin(os.clock() * 3) * 1.2, 0)
-        local flatLook = Vector3.new(look.X, 0, look.Z)
-        if flatLook.Magnitude > 0.05 then
-            root.CFrame = root.CFrame:Lerp(CFrame.new(root.Position, root.Position + flatLook), 0.18)
-        end
-    elseif self.State == "Kurohitsugi" or self.State == "Reiatsu" or self.State == "Hover" then
-        root.AssemblyLinearVelocity = Vector3.new(0, math.sin(os.clock() * 3) * 1.5, 0)
-        root.CFrame = root.CFrame:Lerp(root.CFrame + Vector3.new(0, math.sin(os.clock() * 3) * 0.03, 0), 0.4)
-    end
-    local alpha = locked and 0.12 or 0.08
-    if self.State == "Walk" or self.State == "Run" then
-        alpha = 0.2
-    end
-    self:ApplyPose(self:TargetPose(self.State), alpha)
+	if not character or not root or not humanoid or humanoid.Health <= 0 then
+		return
+	end
+	self.Sine += dt * (self.Change * 8)
+	local locked = self.StateEndsAt > os.clock()
+	if not locked then
+		self.State = self:AutoState()
+	end
+	if self.State == "Airwalk" then
+		local camera = workspace.CurrentCamera
+		local look = camera and camera.CFrame.LookVector or root.CFrame.LookVector
+		local right = camera and camera.CFrame.RightVector or root.CFrame.RightVector
+		local move = (look * airwalkDirection.Z) + (right * airwalkDirection.X) + Vector3.new(0, airwalkDirection.Y, 0)
+		root.AssemblyLinearVelocity = move * 34 + Vector3.new(0, math.sin(os.clock() * 3) * 1.2, 0)
+		local flatLook = Vector3.new(look.X, 0, look.Z)
+		if flatLook.Magnitude > 0.05 then
+			root.CFrame = root.CFrame:Lerp(CFrame.new(root.Position, root.Position + flatLook), 0.18)
+		end
+	elseif self.State == "Kurohitsugi" or self.State == "Reiatsu" or self.State == "Hover" then
+		root.AssemblyLinearVelocity = Vector3.new(0, math.sin(os.clock() * 3) * 1.5, 0)
+		root.CFrame = root.CFrame:Lerp(root.CFrame + Vector3.new(0, math.sin(os.clock() * 3) * 0.03, 0), 0.4)
+	end
+	local alpha = locked and 0.12 or 0.08
+	if self.State == "Walk" or self.State == "Run" then
+		alpha = 0.2
+	end
+	self:ApplyPose(self:TargetPose(self.State), alpha)
 end
 local function installProceduralAnimationEngine()
-    local animate = character:FindFirstChild("Animate")
-    if animate then
-        animate.Disabled = true
-    end
-    AnimController:RefreshMotors()
-    if not AnimController.Connected then
-        AnimController.Connected = true
-        RunService.RenderStepped:Connect(function(dt)
-            AnimController:Update(dt)
-        end)
-    end
-    player.CharacterAdded:Connect(function(newCharacter)
-        task.wait(0.45)
-        character = newCharacter
-        humanoid = character:WaitForChild("Humanoid")
-        root = character:WaitForChild("HumanoidRootPart")
-        local newAnimate = character:FindFirstChild("Animate")
-        if newAnimate then
-            newAnimate.Disabled = true
-        end
-        AnimController:RefreshMotors()
-        AnimController:SetState("Idle")
-    end)
+	local animate = character:FindFirstChild("Animate")
+	if animate then
+		animate.Disabled = true
+	end
+	AnimController:RefreshMotors()
+	if not AnimController.Connected then
+		AnimController.Connected = true
+		RunService.RenderStepped:Connect(function(dt)
+			AnimController:Update(dt)
+		end)
+	end
+	player.CharacterAdded:Connect(function(newCharacter)
+		task.wait(0.45)
+		character = newCharacter
+		humanoid = character:WaitForChild("Humanoid")
+		root = character:WaitForChild("HumanoidRootPart")
+		local newAnimate = character:FindFirstChild("Animate")
+		if newAnimate then
+			newAnimate.Disabled = true
+		end
+		AnimController:RefreshMotors()
+		AnimController:SetState("Idle")
+	end)
 end
 local function playBodyAnimation(style, duration)
-    local states = {
-        kyoka = "Mock",
-        coffin = "Kurohitsugi",
-        raikoho = "Raikoho",
-        shunpo = "Shunpo",
-        reiatsu = "Reiatsu",
-    }
-    AnimController:SetState(states[style] or style or "Idle", duration or 0.8)
+	local states = {
+		kyoka = "Mock",
+		coffin = "Kurohitsugi",
+		raikoho = "Raikoho",
+		shunpo = "Shunpo",
+		reiatsu = "Reiatsu",
+	}
+	AnimController:SetState(states[style] or style or "Idle", duration or 0.8)
 end
 local function distortionBarrier(duration, radius, pulseCount)
-    local sphere = makePart("RobloxGlop Purple Space Barrier", Vector3.new(radius, radius, radius), root.CFrame, ACCENT, Enum.Material.ForceField, 0.78)
-    sphere.Shape = Enum.PartType.Ball
-    tween(sphere, duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 1, Size = Vector3.new(radius * 1.35, radius * 1.35, radius * 1.35)})
-    Debris:AddItem(sphere, duration + 0.1)
-    for i = 1, (pulseCount or 4) do
-        task.delay((i - 1) * 0.12, function()
-            ring(root.CFrame * CFrame.Angles(math.rad(90), 0, 0), radius * (0.35 + i * 0.08), ACCENT, 0.45, 0.1)
-            ring(root.CFrame * CFrame.Angles(0, math.rad(90), 0), radius * (0.32 + i * 0.08), Color3.fromRGB(104, 45, 190), 0.45, 0.08)
-        end)
-    end
+	local sphere = makePart("RobloxGlop Purple Space Barrier", Vector3.new(radius, radius, radius), root.CFrame, ACCENT, Enum.Material.ForceField, 0.78)
+	sphere.Shape = Enum.PartType.Ball
+	tween(sphere, duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 1, Size = Vector3.new(radius * 1.35, radius * 1.35, radius * 1.35)})
+	Debris:AddItem(sphere, duration + 0.1)
+	for i = 1, (pulseCount or 4) do
+		task.delay((i - 1) * 0.12, function()
+			ring(root.CFrame * CFrame.Angles(math.rad(90), 0, 0), radius * (0.35 + i * 0.08), ACCENT, 0.45, 0.1)
+			ring(root.CFrame * CFrame.Angles(0, math.rad(90), 0), radius * (0.32 + i * 0.08), Color3.fromRGB(104, 45, 190), 0.45, 0.08)
+		end)
+	end
 end
 local function blackCoffinMangaBurst(center, count)
-    for i = 1, count do
-        local height = rng:NextNumber(5, 21)
-        local blade = makePart("Manga Ink Kurohitsugi Spike", Vector3.new(0.18, height, 0.18), center * CFrame.new(rng:NextNumber(-6, 6), height / 2, rng:NextNumber(-6, 6)), i % 2 == 0 and Color3.new(0, 0, 0) or ACCENT, Enum.Material.Neon, 0.04)
-        blade.CFrame = blade.CFrame * CFrame.Angles(rng:NextNumber(-0.35, 0.35), rng:NextNumber(-3.14, 3.14), rng:NextNumber(-0.35, 0.35))
-        tween(blade, 0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1, Size = Vector3.new(0.02, height * 1.2, 0.02)})
-        Debris:AddItem(blade, 0.58)
-    end
+	for i = 1, count do
+		local height = rng:NextNumber(5, 21)
+		local blade = makePart("Manga Ink Kurohitsugi Spike", Vector3.new(0.18, height, 0.18), center * CFrame.new(rng:NextNumber(-6, 6), height / 2, rng:NextNumber(-6, 6)), i % 2 == 0 and Color3.new(0, 0, 0) or ACCENT, Enum.Material.Neon, 0.04)
+		blade.CFrame = blade.CFrame * CFrame.Angles(rng:NextNumber(-0.35, 0.35), rng:NextNumber(-3.14, 3.14), rng:NextNumber(-0.35, 0.35))
+		tween(blade, 0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1, Size = Vector3.new(0.02, height * 1.2, 0.02)})
+		Debris:AddItem(blade, 0.58)
+	end
 end
 local function sideMangaCaption(text, duration)
-    if not root then
-        return
-    end
-    local gui = Instance.new("BillboardGui")
-    gui.Name = "RobloxGlop_RightSide_Manga_Box"
-    gui.AlwaysOnTop = true
-    gui.Size = UDim2.fromOffset(155, 92)
-    gui.StudsOffsetWorldSpace = root.CFrame.RightVector * 4 + Vector3.new(0, 2.4, 0)
-    gui.Parent = root
-    local frame = Instance.new("Frame")
-    frame.BackgroundColor3 = Color3.fromRGB(250, 246, 236)
-    frame.BorderSizePixel = 0
-    frame.Size = UDim2.fromScale(1, 1)
-    frame.Parent = gui
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = Color3.new(0, 0, 0)
-    stroke.Thickness = 5
-    stroke.Parent = frame
-    local label = Instance.new("TextLabel")
-    label.BackgroundTransparency = 1
-    label.Font = Enum.Font.GothamBlack
-    label.Position = UDim2.fromOffset(8, 7)
-    label.Size = UDim2.new(1, -16, 1, -14)
-    label.Text = text
-    label.TextColor3 = Color3.new(0, 0, 0)
-    label.TextScaled = true
-    label.TextWrapped = true
-    label.Parent = frame
-    tween(frame, 0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out, {Rotation = rng:NextNumber(-2, 2)})
-    task.delay(duration or 1.2, function()
-        tween(frame, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {BackgroundTransparency = 1})
-        tween(label, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {TextTransparency = 1})
-        Debris:AddItem(gui, 0.24)
-    end)
+	if not root then
+		return
+	end
+	local gui = Instance.new("BillboardGui")
+	gui.Name = "RobloxGlop_RightSide_Manga_Box"
+	gui.AlwaysOnTop = true
+	gui.Size = UDim2.fromOffset(155, 92)
+	gui.StudsOffsetWorldSpace = root.CFrame.RightVector * 4 + Vector3.new(0, 2.4, 0)
+	gui.Parent = root
+	local frame = Instance.new("Frame")
+	frame.BackgroundColor3 = Color3.fromRGB(250, 246, 236)
+	frame.BorderSizePixel = 0
+	frame.Size = UDim2.fromScale(1, 1)
+	frame.Parent = gui
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.new(0, 0, 0)
+	stroke.Thickness = 5
+	stroke.Parent = frame
+	local label = Instance.new("TextLabel")
+	label.BackgroundTransparency = 1
+	label.Font = Enum.Font.GothamBlack
+	label.Position = UDim2.fromOffset(8, 7)
+	label.Size = UDim2.new(1, -16, 1, -14)
+	label.Text = text
+	label.TextColor3 = Color3.new(0, 0, 0)
+	label.TextScaled = true
+	label.TextWrapped = true
+	label.Parent = frame
+	tween(frame, 0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out, {Rotation = rng:NextNumber(-2, 2)})
+	task.delay(duration or 1.2, function()
+		tween(frame, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {BackgroundTransparency = 1})
+		tween(label, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {TextTransparency = 1})
+		Debris:AddItem(gui, 0.24)
+	end)
 end
 local function kurohitsugiBox(center, lifetime)
-    local denseCore = makePart("Kurohitsugi Dense Black Interior", Vector3.new(12.7, 17.7, 12.7), center * CF(0, 9, 0), Color3.new(0, 0, 0), Enum.Material.Neon, 0.04)
-    tween(denseCore, lifetime or 0.95, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 0.12})
-    task.delay(lifetime or 0.95, function()
-        tween(denseCore, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1})
-        Debris:AddItem(denseCore, 0.34)
-    end)
-    local specs = {
-        {Vector3.new(13, 0.22, 13), CF(0, 0.1, 0)},
-        {Vector3.new(13, 0.22, 13), CF(0, 18, 0)},
-        {Vector3.new(0.22, 18, 13), CF(6.5, 9, 0)},
-        {Vector3.new(0.22, 18, 13), CF(-6.5, 9, 0)},
-        {Vector3.new(13, 18, 0.22), CF(0, 9, 6.5)},
-        {Vector3.new(13, 18, 0.22), CF(0, 9, -6.5)},
-    }
-    for i, spec in ipairs(specs) do
-        local panel = makePart("Hado 90 Black Coffin Box Face", spec[1], center * spec[2], i <= 2 and Color3.new(0, 0, 0) or Color3.fromRGB(8, 0, 14), Enum.Material.Neon, 0.02)
-        tween(panel, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transparency = 0.02})
-        task.delay(lifetime or 0.78, function()
-            tween(panel, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1})
-            Debris:AddItem(panel, 0.34)
-        end)
-    end
-    for i = 1, 12 do
-        local angle = (math.pi * 2 / 12) * i
-        local startPosition = (center * CF(math.cos(angle) * 6.7, 0.2, math.sin(angle) * 6.7)).Position
-        local endPosition = (center * CF(math.cos(angle) * 6.7, 18, math.sin(angle) * 6.7)).Position
-        beamBetween("Kurohitsugi White Edge", startPosition, endPosition, WHITE, 0.07, lifetime or 0.78)
-    end
+	local denseCore = makePart("Kurohitsugi Dense Black Interior", Vector3.new(12.7, 17.7, 12.7), center * CF(0, 9, 0), Color3.new(0, 0, 0), Enum.Material.Neon, 0.04)
+	tween(denseCore, lifetime or 0.95, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 0.12})
+	task.delay(lifetime or 0.95, function()
+		tween(denseCore, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1})
+		Debris:AddItem(denseCore, 0.34)
+	end)
+	local specs = {
+		{Vector3.new(13, 0.22, 13), CF(0, 0.1, 0)},
+		{Vector3.new(13, 0.22, 13), CF(0, 18, 0)},
+		{Vector3.new(0.22, 18, 13), CF(6.5, 9, 0)},
+		{Vector3.new(0.22, 18, 13), CF(-6.5, 9, 0)},
+		{Vector3.new(13, 18, 0.22), CF(0, 9, 6.5)},
+		{Vector3.new(13, 18, 0.22), CF(0, 9, -6.5)},
+	}
+	for i, spec in ipairs(specs) do
+		local panel = makePart("Hado 90 Black Coffin Box Face", spec[1], center * spec[2], i <= 2 and Color3.new(0, 0, 0) or Color3.fromRGB(8, 0, 14), Enum.Material.Neon, 0.02)
+		tween(panel, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transparency = 0.02})
+		task.delay(lifetime or 0.78, function()
+			tween(panel, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1})
+			Debris:AddItem(panel, 0.34)
+		end)
+	end
+	for i = 1, 12 do
+		local angle = (math.pi * 2 / 12) * i
+		local startPosition = (center * CF(math.cos(angle) * 6.7, 0.2, math.sin(angle) * 6.7)).Position
+		local endPosition = (center * CF(math.cos(angle) * 6.7, 18, math.sin(angle) * 6.7)).Position
+		beamBetween("Kurohitsugi White Edge", startPosition, endPosition, WHITE, 0.07, lifetime or 0.78)
+	end
 end
 local function kurohitsugiInnerPrison(center, lifetime)
-    local size = 5.4
-    for x = -1, 1, 2 do
-        for z = -1, 1, 2 do
-            beamBetween("Inner Coffin Vertical Seal", (center * CF(x * size / 2, 3, z * size / 2)).Position, (center * CF(x * size / 2, 14.5, z * size / 2)).Position, GOLD, 0.09, lifetime or 0.9)
-        end
-    end
-    for y = 4, 14, 5 do
-        local corners = {
-            (center * CF(-size / 2, y, -size / 2)).Position,
-            (center * CF(size / 2, y, -size / 2)).Position,
-            (center * CF(size / 2, y, size / 2)).Position,
-            (center * CF(-size / 2, y, size / 2)).Position,
-        }
-        for i = 1, #corners do
-            beamBetween("Inner Coffin Square Seal", corners[i], corners[(i % #corners) + 1], i == 1 and WHITE or GOLD, 0.08, lifetime or 0.9)
-        end
-    end
-    local core = makePart("Inner Kurohitsugi Captive Box", Vector3.new(size, size, size), center * CF(0, 8.8, 0), Color3.fromRGB(9, 0, 16), Enum.Material.Neon, 0.08)
-    tween(core, lifetime or 0.9, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 1, Size = Vector3.new(size * 0.6, size * 0.6, size * 0.6)})
-    Debris:AddItem(core, (lifetime or 0.9) + 0.1)
+	local size = 5.4
+	for x = -1, 1, 2 do
+		for z = -1, 1, 2 do
+			beamBetween("Inner Coffin Vertical Seal", (center * CF(x * size / 2, 3, z * size / 2)).Position, (center * CF(x * size / 2, 14.5, z * size / 2)).Position, GOLD, 0.09, lifetime or 0.9)
+		end
+	end
+	for y = 4, 14, 5 do
+		local corners = {
+			(center * CF(-size / 2, y, -size / 2)).Position,
+			(center * CF(size / 2, y, -size / 2)).Position,
+			(center * CF(size / 2, y, size / 2)).Position,
+			(center * CF(-size / 2, y, size / 2)).Position,
+		}
+		for i = 1, #corners do
+			beamBetween("Inner Coffin Square Seal", corners[i], corners[(i % #corners) + 1], i == 1 and WHITE or GOLD, 0.08, lifetime or 0.9)
+		end
+	end
+	local core = makePart("Inner Kurohitsugi Captive Box", Vector3.new(size, size, size), center * CF(0, 8.8, 0), Color3.fromRGB(9, 0, 16), Enum.Material.Neon, 0.08)
+	tween(core, lifetime or 0.9, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 1, Size = Vector3.new(size * 0.6, size * 0.6, size * 0.6)})
+	Debris:AddItem(core, (lifetime or 0.9) + 0.1)
 end
 local function markAndFlingTarget(model, origin, power)
-    if not model or model == character then
-        return
-    end
-    local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
-    local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
-    if not enemyHumanoid or not enemyRoot or enemyHumanoid.Health <= 0 then
-        return
-    end
-    local highlight = Instance.new("Highlight")
-    highlight.Name = "RobloxGlop Reiatsu Victim Mark"
-    highlight.FillColor = Color3.fromRGB(255, 35, 35)
-    highlight.OutlineColor = WHITE
-    highlight.FillTransparency = 0.25
-    highlight.OutlineTransparency = 0
-    highlight.Parent = model
-    Debris:AddItem(highlight, 0.85)
-    for _, descendant in ipairs(model:GetDescendants()) do
-        if descendant:IsA("BasePart") then
-            descendant.LocalTransparencyModifier = math.max(descendant.LocalTransparencyModifier, 0.38)
-            task.delay(0.72, function()
-                if descendant then
-                    descendant.LocalTransparencyModifier = 0
-                end
-            end)
-        end
-    end
-    local direction = enemyRoot.Position - origin
-    if direction.Magnitude < 0.1 then
-        direction = root.CFrame.LookVector
-    end
-    enemyRoot.AssemblyLinearVelocity = direction.Unit * (power or 78) + Vector3.new(0, 36, 0)
-    enemyHumanoid:TakeDamage(math.max(6, enemyHumanoid.MaxHealth * 0.1))
-    orb(enemyRoot.Position + Vector3.new(0, 1.5, 0), 1.3, Color3.fromRGB(255, 35, 35), 0.38)
+	if not model or model == character then
+		return
+	end
+	local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
+	local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
+	if not enemyHumanoid or not enemyRoot or enemyHumanoid.Health <= 0 then
+		return
+	end
+	local highlight = Instance.new("Highlight")
+	highlight.Name = "RobloxGlop Reiatsu Victim Mark"
+	highlight.FillColor = Color3.fromRGB(255, 35, 35)
+	highlight.OutlineColor = WHITE
+	highlight.FillTransparency = 0.25
+	highlight.OutlineTransparency = 0
+	highlight.Parent = model
+	Debris:AddItem(highlight, 0.85)
+	for _, descendant in ipairs(model:GetDescendants()) do
+		if descendant:IsA("BasePart") then
+			descendant.LocalTransparencyModifier = math.max(descendant.LocalTransparencyModifier, 0.38)
+			task.delay(0.72, function()
+				if descendant then
+					descendant.LocalTransparencyModifier = 0
+				end
+			end)
+		end
+	end
+	local direction = enemyRoot.Position - origin
+	if direction.Magnitude < 0.1 then
+		direction = root.CFrame.LookVector
+	end
+	enemyRoot.AssemblyLinearVelocity = direction.Unit * (power or 78) + Vector3.new(0, 36, 0)
+	enemyHumanoid:TakeDamage(math.max(6, enemyHumanoid.MaxHealth * 0.1))
+	orb(enemyRoot.Position + Vector3.new(0, 1.5, 0), 1.3, Color3.fromRGB(255, 35, 35), 0.38)
 end
 local function findFrontTarget(range, arc)
-    local bestModel = nil
-    local bestRoot = nil
-    local bestDistance = range or 45
-    local forward = root.CFrame.LookVector
-    for _, model in ipairs(workspace:GetChildren()) do
-        if model:IsA("Model") and model ~= character then
-            local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
-            local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
-            if enemyHumanoid and enemyRoot and enemyHumanoid.Health > 0 then
-                local delta = enemyRoot.Position - root.Position
-                local distance = delta.Magnitude
-                if distance <= bestDistance and distance > 1 then
-                    local dot = forward:Dot(delta.Unit)
-                    if dot >= (arc or 0.25) then
-                        bestModel = model
-                        bestRoot = enemyRoot
-                        bestDistance = distance
-                    end
-                end
-            end
-        end
-    end
-    return bestModel, bestRoot
+	local bestModel = nil
+	local bestRoot = nil
+	local bestDistance = range or 45
+	local forward = root.CFrame.LookVector
+	for _, model in ipairs(workspace:GetChildren()) do
+		if model:IsA("Model") and model ~= character then
+			local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
+			local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
+			if enemyHumanoid and enemyRoot and enemyHumanoid.Health > 0 then
+				local delta = enemyRoot.Position - root.Position
+				local distance = delta.Magnitude
+				if distance <= bestDistance and distance > 1 then
+					local dot = forward:Dot(delta.Unit)
+					if dot >= (arc or 0.25) then
+						bestModel = model
+						bestRoot = enemyRoot
+						bestDistance = distance
+					end
+				end
+			end
+		end
+	end
+	return bestModel, bestRoot
 end
 local function glassShatterBurst(origin, normal, count)
-    for i = 1, count do
-        local shard = makePart("Kyoka Glass Shard", Vector3.new(rng:NextNumber(0.04, 0.12), rng:NextNumber(0.5, 1.4), rng:NextNumber(0.02, 0.06)), CFrame.new(origin), WHITE, Enum.Material.Glass, 0.18)
-        local tangent = Vector3.new(rng:NextNumber(-1, 1), rng:NextNumber(-0.25, 1), rng:NextNumber(-1, 1))
-        if tangent.Magnitude < 0.1 then
-            tangent = Vector3.new(0, 1, 0)
-        end
-        local velocity = (normal * rng:NextNumber(3, 9)) + (tangent.Unit * rng:NextNumber(5, 14))
-        shard.CFrame = CFrame.new(origin, origin + velocity) * CFrame.Angles(rng:NextNumber(-3, 3), rng:NextNumber(-3, 3), rng:NextNumber(-3, 3))
-        tween(shard, 0.46, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, {CFrame = shard.CFrame + velocity, Transparency = 1})
-        Debris:AddItem(shard, 0.52)
-    end
-    for i = 1, 3 do
-        task.delay(i * 0.035, function()
-            ring(CFrame.new(origin) * CFrame.Angles(math.rad(90), 0, 0), 2 + i * 1.3, WHITE, 0.3, 0.05)
-        end)
-    end
+	for i = 1, count do
+		local shard = makePart("Kyoka Glass Shard", Vector3.new(rng:NextNumber(0.04, 0.12), rng:NextNumber(0.5, 1.4), rng:NextNumber(0.02, 0.06)), CFrame.new(origin), WHITE, Enum.Material.Glass, 0.18)
+		local tangent = Vector3.new(rng:NextNumber(-1, 1), rng:NextNumber(-0.25, 1), rng:NextNumber(-1, 1))
+		if tangent.Magnitude < 0.1 then
+			tangent = Vector3.new(0, 1, 0)
+		end
+		local velocity = (normal * rng:NextNumber(3, 9)) + (tangent.Unit * rng:NextNumber(5, 14))
+		shard.CFrame = CFrame.new(origin, origin + velocity) * CFrame.Angles(rng:NextNumber(-3, 3), rng:NextNumber(-3, 3), rng:NextNumber(-3, 3))
+		tween(shard, 0.46, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, {CFrame = shard.CFrame + velocity, Transparency = 1})
+		Debris:AddItem(shard, 0.52)
+	end
+	for i = 1, 3 do
+		task.delay(i * 0.035, function()
+			ring(CFrame.new(origin) * CFrame.Angles(math.rad(90), 0, 0), 2 + i * 1.3, WHITE, 0.3, 0.05)
+		end)
+	end
 end
 local function collapseTarget(model, duration)
-    local enemyHumanoid = model and model:FindFirstChildOfClass("Humanoid")
-    local enemyRoot = model and (model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso"))
-    if not enemyHumanoid or not enemyRoot then
-        return
-    end
-    enemyHumanoid:TakeDamage(math.max(4, enemyHumanoid.MaxHealth * 0.08))
-    enemyHumanoid.Sit = true
-    enemyHumanoid.WalkSpeed = math.max(0, enemyHumanoid.WalkSpeed * 0.35)
-    enemyRoot.AssemblyLinearVelocity = Vector3.new(0, -18, 0)
-    orb(enemyRoot.Position + Vector3.new(0, 1, 0), 1.5, DARK, 0.4)
-    task.delay(duration or 1.2, function()
-        if enemyHumanoid then
-            enemyHumanoid.Sit = false
-        end
-    end)
+	local enemyHumanoid = model and model:FindFirstChildOfClass("Humanoid")
+	local enemyRoot = model and (model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso"))
+	if not enemyHumanoid or not enemyRoot then
+		return
+	end
+	enemyHumanoid:TakeDamage(math.max(4, enemyHumanoid.MaxHealth * 0.08))
+	enemyHumanoid.Sit = true
+	enemyHumanoid.WalkSpeed = math.max(0, enemyHumanoid.WalkSpeed * 0.35)
+	enemyRoot.AssemblyLinearVelocity = Vector3.new(0, -18, 0)
+	orb(enemyRoot.Position + Vector3.new(0, 1, 0), 1.5, DARK, 0.4)
+	task.delay(duration or 1.2, function()
+		if enemyHumanoid then
+			enemyHumanoid.Sit = false
+		end
+	end)
 end
 local function kyokaBehindTeleport()
-    local targetModel, targetRoot = findFrontTarget(55, 0.15)
-    if not targetRoot then
-        return false
-    end
-    local before = root.Position + Vector3.new(0, 2, 0)
-    local behind = targetRoot.CFrame * CFrame.new(0, 0, 5.2)
-    glassShatterBurst(before, root.CFrame.LookVector, 24)
-    ghostClone(Vector3.zero, 0.55)
-    root.CFrame = CFrame.new(behind.Position, targetRoot.Position)
-    glassShatterBurst(root.Position + Vector3.new(0, 2, 0), -root.CFrame.LookVector, 18)
-    collapseTarget(targetModel, 1.25)
-    sideMangaCaption([[Behind you.]], 0.9)
-    return true
+	local targetModel, targetRoot = findFrontTarget(55, 0.15)
+	if not targetRoot then
+		return false
+	end
+	local before = root.Position + Vector3.new(0, 2, 0)
+	local behind = targetRoot.CFrame * CFrame.new(0, 0, 5.2)
+	glassShatterBurst(before, root.CFrame.LookVector, 24)
+	ghostClone(Vector3.zero, 0.55)
+	root.CFrame = CFrame.new(behind.Position, targetRoot.Position)
+	glassShatterBurst(root.Position + Vector3.new(0, 2, 0), -root.CFrame.LookVector, 18)
+	collapseTarget(targetModel, 1.25)
+	sideMangaCaption([[Behind you.]], 0.9)
+	return true
 end
 local function shunpoCutsceneTrail(startCFrame, endCFrame)
-    cutsceneBars(0.55)
-    cameraPulse(0.12, 0.35)
-    glassShatterBurst(startCFrame.Position + Vector3.new(0, 2, 0), startCFrame.LookVector, 14)
-    for i = 1, 10 do
-        local cf = startCFrame:Lerp(endCFrame, i / 10)
-        task.delay(i * 0.015, function()
-            beamBetween("Shunpo Speed Cut", cf.Position + cf.RightVector * -2 + Vector3.new(0, 1.5, 0), cf.Position + cf.RightVector * 2 + Vector3.new(0, 1.5, 0), i % 2 == 0 and WHITE or ACCENT, 0.08, 0.22)
-            ring(cf * CFrame.Angles(math.rad(90), 0, 0), 2 + i * 0.25, ACCENT, 0.28, 0.05)
-        end)
-    end
+	cutsceneBars(0.55)
+	cameraPulse(0.12, 0.35)
+	glassShatterBurst(startCFrame.Position + Vector3.new(0, 2, 0), startCFrame.LookVector, 14)
+	for i = 1, 10 do
+		local cf = startCFrame:Lerp(endCFrame, i / 10)
+		task.delay(i * 0.015, function()
+			beamBetween("Shunpo Speed Cut", cf.Position + cf.RightVector * -2 + Vector3.new(0, 1.5, 0), cf.Position + cf.RightVector * 2 + Vector3.new(0, 1.5, 0), i % 2 == 0 and WHITE or ACCENT, 0.08, 0.22)
+			ring(cf * CFrame.Angles(math.rad(90), 0, 0), 2 + i * 0.25, ACCENT, 0.28, 0.05)
+		end)
+	end
 end
 local function cooldown(tool, seconds)
-    if activeCooldowns[tool] then
-        return false
-    end
-    activeCooldowns[tool] = true
-    local originalName = tool.Name
-    task.spawn(function()
-        for remaining = seconds, 1, -1 do
-            tool.Name = string.format("%s [%ds]", originalName, remaining)
-            task.wait(1)
-        end
-        tool.Name = originalName
-        activeCooldowns[tool] = nil
-    end)
-    return true
+	if activeCooldowns[tool] then
+		return false
+	end
+	activeCooldowns[tool] = true
+	local originalName = tool.Name
+	task.spawn(function()
+		for remaining = seconds, 1, -1 do
+			tool.Name = string.format("%s [%ds]", originalName, remaining)
+			task.wait(1)
+		end
+		tool.Name = originalName
+		activeCooldowns[tool] = nil
+	end)
+	return true
 end
 local function createTool(name, icon, cooldownSeconds, callback)
-    local tool = Instance.new("Tool")
-    tool.Name = name
-    tool.ToolTip = KIT_NAME .. " | " .. name
-    tool.TextureId = icon or ""
-    tool.RequiresHandle = false
-    tool.CanBeDropped = false
-    tool.Parent = backpack
-    tool.Activated:Connect(function()
-        if not character or not root or humanoid.Health <= 0 then
-            return
-        end
-        if cooldown(tool, cooldownSeconds) then
-            callback(tool)
-        end
-    end)
-    return tool
+	local tool = Instance.new("Tool")
+	tool.Name = name
+	tool.ToolTip = KIT_NAME .. " | " .. name
+	tool.TextureId = icon or ""
+	tool.RequiresHandle = false
+	tool.CanBeDropped = false
+	tool.Parent = backpack
+	tool.Activated:Connect(function()
+		if not character or not root or humanoid.Health <= 0 then
+			return
+		end
+		if cooldown(tool, cooldownSeconds) then
+			callback(tool)
+		end
+	end)
+	return tool
 end
 local function kyokaSuigetsu()
-    cutsceneBars(0.9)
-    cinematicCutscene("KYOKA SUIGETSU", "You were never looking at me.", 0.82)
-    sideMangaCaption([[Yokoso...
+	cutsceneBars(0.9)
+	cinematicCutscene("KYOKA SUIGETSU", "You were never looking at me.", 0.82)
+	sideMangaCaption([[Yokoso...
 Look closer.]], 1.25)
-    playBodyAnimation("kyoka", 0.9)
-    flash(ACCENT, 0.18, 0.45)
-    cameraPulse(0.08, 0.35)
-    makeSound("Kyoka Draw", "rbxassetid://9125402735", 0.45, 1.15, root)
-    bladeTrail(1.15)
-    kyokaBehindTeleport()
-    publicPose("Kyoka Suigetsu", 1.1, root.CFrame.LookVector * 8 + Vector3.new(0, 14, 0))
-    local origin = root.CFrame
-    sigil(origin * CFrame.Angles(math.rad(90), 0, 0), 5.5, ACCENT, 0.75, 16)
-    orb(root.Position + Vector3.new(0, 2.7, 0), 1.2, ACCENT, 0.45)
-    petalBurst(root.Position + Vector3.new(0, 2, 0), 34, ACCENT, 0.85)
-    for i = 1, 9 do
-        local angle = (math.pi * 2 / 9) * i
-        local offset = Vector3.new(math.cos(angle) * 7, 0, math.sin(angle) * 7)
-        task.delay(i * 0.035, function()
-            ghostClone(offset, 0.85)
-            beamBetween("Hypnosis Thread", root.Position + Vector3.new(0, 2, 0), root.Position + offset + Vector3.new(0, 2, 0), ACCENT, 0.08, 0.32)
-        end)
-    end
+	playBodyAnimation("kyoka", 0.9)
+	flash(ACCENT, 0.18, 0.45)
+	cameraPulse(0.08, 0.35)
+	makeSound("Kyoka Draw", "rbxassetid://9125402735", 0.45, 1.15, root)
+	bladeTrail(1.15)
+	kyokaBehindTeleport()
+	publicPose("Kyoka Suigetsu", 1.1, root.CFrame.LookVector * 8 + Vector3.new(0, 14, 0))
+	local origin = root.CFrame
+	sigil(origin * CFrame.Angles(math.rad(90), 0, 0), 5.5, ACCENT, 0.75, 16)
+	orb(root.Position + Vector3.new(0, 2.7, 0), 1.2, ACCENT, 0.45)
+	petalBurst(root.Position + Vector3.new(0, 2, 0), 34, ACCENT, 0.85)
+	for i = 1, 9 do
+		local angle = (math.pi * 2 / 9) * i
+		local offset = Vector3.new(math.cos(angle) * 7, 0, math.sin(angle) * 7)
+		task.delay(i * 0.035, function()
+			ghostClone(offset, 0.85)
+			beamBetween("Hypnosis Thread", root.Position + Vector3.new(0, 2, 0), root.Position + offset + Vector3.new(0, 2, 0), ACCENT, 0.08, 0.32)
+		end)
+	end
 end
 local function kurohitsugi()
-    cutsceneBars(1.25)
-    cinematicCutscene("HADO 90", "Kurohitsugi // Kara Tabut", 1.05)
-    sideMangaCaption([[Hado 90
+	cutsceneBars(1.25)
+	cinematicCutscene("HADO 90", "Kurohitsugi // Kara Tabut", 1.05)
+	sideMangaCaption([[Hado 90
 Black Coffin]], 1.35)
-    playBodyAnimation("coffin", 1.05)
-    flash(DARK, 0.3, 0.7)
-    cameraPulse(0.14, 0.65)
-    makeSound("Black Coffin Charge", "rbxassetid://9126299510", 0.65, 0.8, root)
-    publicPose("Hado 90: Kurohitsugi", 1.25, Vector3.new(0, 11, 0))
-    local center = root.CFrame * CFrame.new(0, 0, -14)
-    sigil(center * CFrame.Angles(math.rad(90), 0, 0), 9, DARK, 0.9, 20)
-    hadoGroundLoop(center, 1.05)
-    kurohitsugiMeshSequence(center)
-    kurohitsugiBox(center, 1.05)
-    kurohitsugiInnerPrison(center, 1.05)
-    local pillars = {}
-    for i = 1, 16 do
-        local angle = (math.pi * 2 / 16) * i
-        local x = math.cos(angle) * 6.2
-        local z = math.sin(angle) * 6.2
-        local pillar = makePart("Hado 90 Kurohitsugi Wall", Vector3.new(0.5, 0.2, 0.5), center * CFrame.new(x, 0, z), DARK, Enum.Material.Neon, 0.08)
-        pillars[#pillars + 1] = pillar
-        task.delay(i * 0.018, function()
-            tween(pillar, 0.42, Enum.EasingStyle.Back, Enum.EasingDirection.Out, {
-                Size = Vector3.new(0.5, 22, 0.5),
-                CFrame = pillar.CFrame * CFrame.new(0, 11, 0),
-            })
-        end)
-    end
-    task.delay(0.45, function()
-        makeSound("Black Coffin Slam", "rbxassetid://9125652147", 0.9, 0.72, root)
-        orb(center.Position + Vector3.new(0, 9, 0), 5.2, Color3.fromRGB(52, 17, 91), 0.6)
-        blackCoffinMangaBurst(center, 34)
-        distortionBarrier(0.7, 19, 5)
-        giantPurpleExplosion(center.Position + Vector3.new(0, 8, 0))
-        for _, model in ipairs(workspace:GetChildren()) do
-            local enemyRoot = model:IsA("Model") and (model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso"))
-            if enemyRoot and (enemyRoot.Position - center.Position).Magnitude <= 11 then
-                markAndFlingTarget(model, center.Position, 92)
-            end
-        end
-        for i = 1, 32 do
-            local slashStart = center.Position + Vector3.new(rng:NextNumber(-6, 6), rng:NextNumber(2, 19), rng:NextNumber(-6, 6))
-            local slashEnd = slashStart + Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(-7, 1), rng:NextNumber(-4, 4))
-            task.delay(i * 0.012, function()
-                beamBetween("Kurohitsugi Severing Line", slashStart, slashEnd, i % 3 == 0 and GOLD or ACCENT, 0.12, 0.3)
-            end)
-        end
-        for _, pillar in ipairs(pillars) do
-            tween(pillar, 0.46, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1, Size = Vector3.new(0.1, 24, 0.1)})
-            Debris:AddItem(pillar, 0.55)
-        end
-    end)
+	playBodyAnimation("coffin", 1.05)
+	flash(DARK, 0.3, 0.7)
+	cameraPulse(0.14, 0.65)
+	makeSound("Black Coffin Charge", "rbxassetid://9126299510", 0.65, 0.8, root)
+	publicPose("Hado 90: Kurohitsugi", 1.25, Vector3.new(0, 11, 0))
+	local center = root.CFrame * CFrame.new(0, 0, -14)
+	sigil(center * CFrame.Angles(math.rad(90), 0, 0), 9, DARK, 0.9, 20)
+	hadoGroundLoop(center, 1.05)
+	kurohitsugiMeshSequence(center)
+	kurohitsugiBox(center, 1.05)
+	kurohitsugiInnerPrison(center, 1.05)
+	local pillars = {}
+	for i = 1, 16 do
+		local angle = (math.pi * 2 / 16) * i
+		local x = math.cos(angle) * 6.2
+		local z = math.sin(angle) * 6.2
+		local pillar = makePart("Hado 90 Kurohitsugi Wall", Vector3.new(0.5, 0.2, 0.5), center * CFrame.new(x, 0, z), DARK, Enum.Material.Neon, 0.08)
+		pillars[#pillars + 1] = pillar
+		task.delay(i * 0.018, function()
+			tween(pillar, 0.42, Enum.EasingStyle.Back, Enum.EasingDirection.Out, {
+				Size = Vector3.new(0.5, 22, 0.5),
+				CFrame = pillar.CFrame * CFrame.new(0, 11, 0),
+			})
+		end)
+	end
+	task.delay(0.45, function()
+		makeSound("Black Coffin Slam", "rbxassetid://9125652147", 0.9, 0.72, root)
+		orb(center.Position + Vector3.new(0, 9, 0), 5.2, Color3.fromRGB(52, 17, 91), 0.6)
+		blackCoffinMangaBurst(center, 34)
+		distortionBarrier(0.7, 19, 5)
+		giantPurpleExplosion(center.Position + Vector3.new(0, 8, 0))
+		for _, model in ipairs(workspace:GetChildren()) do
+			local enemyRoot = model:IsA("Model") and (model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso"))
+			if enemyRoot and (enemyRoot.Position - center.Position).Magnitude <= 11 then
+				markAndFlingTarget(model, center.Position, 92)
+			end
+		end
+		for i = 1, 32 do
+			local slashStart = center.Position + Vector3.new(rng:NextNumber(-6, 6), rng:NextNumber(2, 19), rng:NextNumber(-6, 6))
+			local slashEnd = slashStart + Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(-7, 1), rng:NextNumber(-4, 4))
+			task.delay(i * 0.012, function()
+				beamBetween("Kurohitsugi Severing Line", slashStart, slashEnd, i % 3 == 0 and GOLD or ACCENT, 0.12, 0.3)
+			end)
+		end
+		for _, pillar in ipairs(pillars) do
+			tween(pillar, 0.46, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1, Size = Vector3.new(0.1, 24, 0.1)})
+			Debris:AddItem(pillar, 0.55)
+		end
+	end)
 end
 local function raikoho()
-    sideMangaCaption([[Raikoho
+	sideMangaCaption([[Raikoho
 Pierce.]], 0.95)
-    playBodyAnimation("raikoho", 0.72)
-    flash(LIGHTNING, 0.24, 0.35)
-    cameraPulse(0.1, 0.32)
-    makeSound("Raikoho Charge", "rbxassetid://9125800125", 0.55, 1.35, root)
-    publicPose("Hado 63: Raikoho", 0.8, -root.CFrame.LookVector * 7 + Vector3.new(0, 5, 0))
-    local hand = character:FindFirstChild("RightHand") or character:FindFirstChild("Right Arm") or root
-    local startPosition = hand.Position + root.CFrame.LookVector * 1.5
-    local endPosition = startPosition + root.CFrame.LookVector * 90
-    orb(startPosition, 1.6, LIGHTNING, 0.35)
-    meshVFX("Raikoho Mesh Burst", MESH_RAIKOHO, CFrame.new(startPosition, endPosition), Vector3.new(6, 6, 10), LIGHTNING, 0.5, 0.05)
-    sigil(CFrame.new(startPosition, endPosition) * CFrame.Angles(math.rad(90), 0, 0), 3.6, LIGHTNING, 0.38, 10)
-    task.delay(0.16, function()
-        makeSound("Raikoho Release", "rbxassetid://9126150731", 0.75, 1.2, root)
-        beamBetween("Hado 63 Raikoho", startPosition, endPosition, LIGHTNING, 2.8, 0.34)
-        beamBetween("Raikoho Core", startPosition, endPosition, Color3.new(1, 1, 1), 0.75, 0.24)
-        for i = 1, 16 do
-            local jitter = Vector3.new(rng:NextNumber(-5, 5), rng:NextNumber(-5, 5), rng:NextNumber(-5, 5))
-            task.delay(i * 0.014, function()
-                beamBetween("Forked Lightning", startPosition, endPosition + jitter, LIGHTNING, 0.18, 0.2)
-            end)
-        end
-        ring(CFrame.new(endPosition) * CFrame.Angles(math.rad(90), 0, 0), 6, LIGHTNING, 0.48, 0.12)
-        for i = 1, 9 do
-            task.delay(i * 0.018, function()
-                orb(startPosition:Lerp(endPosition, i / 9), 0.7 + i * 0.05, i % 2 == 0 and WHITE or LIGHTNING, 0.22)
-            end)
-        end
-    end)
+	playBodyAnimation("raikoho", 0.72)
+	flash(LIGHTNING, 0.24, 0.35)
+	cameraPulse(0.1, 0.32)
+	makeSound("Raikoho Charge", "rbxassetid://9125800125", 0.55, 1.35, root)
+	publicPose("Hado 63: Raikoho", 0.8, -root.CFrame.LookVector * 7 + Vector3.new(0, 5, 0))
+	local hand = character:FindFirstChild("RightHand") or character:FindFirstChild("Right Arm") or root
+	local startPosition = hand.Position + root.CFrame.LookVector * 1.5
+	local endPosition = startPosition + root.CFrame.LookVector * 90
+	orb(startPosition, 1.6, LIGHTNING, 0.35)
+	meshVFX("Raikoho Mesh Burst", MESH_RAIKOHO, CFrame.new(startPosition, endPosition), Vector3.new(6, 6, 10), LIGHTNING, 0.5, 0.05)
+	sigil(CFrame.new(startPosition, endPosition) * CFrame.Angles(math.rad(90), 0, 0), 3.6, LIGHTNING, 0.38, 10)
+	task.delay(0.16, function()
+		makeSound("Raikoho Release", "rbxassetid://9126150731", 0.75, 1.2, root)
+		beamBetween("Hado 63 Raikoho", startPosition, endPosition, LIGHTNING, 2.8, 0.34)
+		beamBetween("Raikoho Core", startPosition, endPosition, Color3.new(1, 1, 1), 0.75, 0.24)
+		for i = 1, 16 do
+			local jitter = Vector3.new(rng:NextNumber(-5, 5), rng:NextNumber(-5, 5), rng:NextNumber(-5, 5))
+			task.delay(i * 0.014, function()
+				beamBetween("Forked Lightning", startPosition, endPosition + jitter, LIGHTNING, 0.18, 0.2)
+			end)
+		end
+		ring(CFrame.new(endPosition) * CFrame.Angles(math.rad(90), 0, 0), 6, LIGHTNING, 0.48, 0.12)
+		for i = 1, 9 do
+			task.delay(i * 0.018, function()
+				orb(startPosition:Lerp(endPosition, i / 9), 0.7 + i * 0.05, i % 2 == 0 and WHITE or LIGHTNING, 0.22)
+			end)
+		end
+	end)
 end
 local function shunpo()
-    cinematicCutscene("SHUNPO", "A step outside perception.", 0.58)
-    sideMangaCaption("Too slow.", 0.85)
-    playBodyAnimation("shunpo", 0.7)
-    makeSound("Shunpo", "rbxassetid://9126098978", 0.58, 1.55, root)
-    ghostClone(Vector3.zero, 0.55)
-    flash(Color3.fromRGB(230, 230, 255), 0.16, 0.24)
-    publicPose("Shunpo", 0.7, root.CFrame.LookVector * 62 + Vector3.new(0, 5, 0))
-    local start = root.CFrame
-    local targetModel, targetRoot = findFrontTarget(42, 0.2)
-    local destination = targetRoot and CFrame.new((targetRoot.CFrame * CFrame.new(0, 0, 4.6)).Position, targetRoot.Position) or (start + start.LookVector * 38)
-    shunpoCutsceneTrail(start, destination)
-    blackSpeedLines(start.Position + Vector3.new(0, 2, 0), start.LookVector, 18, 0.22)
-    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-    root.CFrame = destination
-    blackSpeedLines(root.Position + Vector3.new(0, 2, 0), root.CFrame.LookVector, 18, 0.22)
-    if targetModel then
-        collapseTarget(targetModel, 1.0)
-        markAndFlingTarget(targetModel, root.Position, 46)
-    end
-    task.delay(0.1, function()
-        if humanoid then
-            humanoid:ChangeState(Enum.HumanoidStateType.Running)
-        end
-    end)
-    for i = 1, 7 do
-        task.delay(i * 0.02, function()
-            ring(start:Lerp(destination, i / 7) * CFrame.Angles(math.rad(90), 0, 0), 2.5 + i, ACCENT, 0.35, 0.08)
-            petalBurst(start:Lerp(destination, i / 7).Position + Vector3.new(0, 2, 0), 4, GOLD, 0.35)
-        end)
-    end
+	cinematicCutscene("SHUNPO", "A step outside perception.", 0.58)
+	sideMangaCaption("Too slow.", 0.85)
+	playBodyAnimation("shunpo", 0.7)
+	makeSound("Shunpo", "rbxassetid://9126098978", 0.58, 1.55, root)
+	ghostClone(Vector3.zero, 0.55)
+	flash(Color3.fromRGB(230, 230, 255), 0.16, 0.24)
+	publicPose("Shunpo", 0.7, root.CFrame.LookVector * 62 + Vector3.new(0, 5, 0))
+	local start = root.CFrame
+	local targetModel, targetRoot = findFrontTarget(42, 0.2)
+	local destination = targetRoot and CFrame.new((targetRoot.CFrame * CFrame.new(0, 0, 4.6)).Position, targetRoot.Position) or (start + start.LookVector * 38)
+	shunpoCutsceneTrail(start, destination)
+	blackSpeedLines(start.Position + Vector3.new(0, 2, 0), start.LookVector, 18, 0.22)
+	humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+	root.CFrame = destination
+	blackSpeedLines(root.Position + Vector3.new(0, 2, 0), root.CFrame.LookVector, 18, 0.22)
+	if targetModel then
+		collapseTarget(targetModel, 1.0)
+		markAndFlingTarget(targetModel, root.Position, 46)
+	end
+	task.delay(0.1, function()
+		if humanoid then
+			humanoid:ChangeState(Enum.HumanoidStateType.Running)
+		end
+	end)
+	for i = 1, 7 do
+		task.delay(i * 0.02, function()
+			ring(start:Lerp(destination, i / 7) * CFrame.Angles(math.rad(90), 0, 0), 2.5 + i, ACCENT, 0.35, 0.08)
+			petalBurst(start:Lerp(destination, i / 7).Position + Vector3.new(0, 2, 0), 4, GOLD, 0.35)
+		end)
+	end
 end
 local function reiatsuCrush()
-    cutsceneBars(0.85)
-    sideMangaCaption([[Do not
+	cutsceneBars(0.85)
+	sideMangaCaption([[Do not
 approach.]], 1.1)
-    playBodyAnimation("reiatsu", 0.9)
-    distortionBarrier(0.95, 16, 6)
-    flash(ACCENT, 0.22, 0.6)
-    cameraPulse(0.16, 0.55)
-    makeSound("Spiritual Pressure", "rbxassetid://9125838794", 0.8, 0.68, root)
-    publicPose("Reiatsu Crush", 1.1, Vector3.new(0, 18, 0))
-    for i = 1, 11 do
-        task.delay(i * 0.055, function()
-            ring(root.CFrame * CFrame.Angles(math.rad(90), 0, 0), 3 + i * 2.5, i % 2 == 0 and GOLD or ACCENT, 0.62, 0.16)
-        end)
-    end
-    local aura = orb(root.Position + Vector3.new(0, 1.8, 0), 4.5, ACCENT, 0.95)
-    aura.Transparency = 0.55
-    petalBurst(root.Position + Vector3.new(0, 2, 0), 42, GOLD, 0.95)
+	playBodyAnimation("reiatsu", 0.9)
+	distortionBarrier(0.95, 16, 6)
+	flash(ACCENT, 0.22, 0.6)
+	cameraPulse(0.16, 0.55)
+	makeSound("Spiritual Pressure", "rbxassetid://9125838794", 0.8, 0.68, root)
+	publicPose("Reiatsu Crush", 1.1, Vector3.new(0, 18, 0))
+	for i = 1, 11 do
+		task.delay(i * 0.055, function()
+			ring(root.CFrame * CFrame.Angles(math.rad(90), 0, 0), 3 + i * 2.5, i % 2 == 0 and GOLD or ACCENT, 0.62, 0.16)
+		end)
+	end
+	local aura = orb(root.Position + Vector3.new(0, 1.8, 0), 4.5, ACCENT, 0.95)
+	aura.Transparency = 0.55
+	petalBurst(root.Position + Vector3.new(0, 2, 0), 42, GOLD, 0.95)
 end
 local function setAirwalkButton(button, vector)
-    button.MouseButton1Down:Connect(function()
-        airwalkDirection += vector
-    end)
-    button.MouseButton1Up:Connect(function()
-        airwalkDirection -= vector
-    end)
+	button.MouseButton1Down:Connect(function()
+		airwalkDirection += vector
+	end)
+	button.MouseButton1Up:Connect(function()
+		airwalkDirection -= vector
+	end)
 end
 local function createAirwalkControls()
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "RobloxGlop_Airwalk_Controls"
-    gui.ResetOnSpawn = false
-    gui.Enabled = false
-    gui.Parent = playerGui
-    local holder = Instance.new("Frame")
-    holder.AnchorPoint = Vector2.new(1, 1)
-    holder.BackgroundTransparency = 1
-    holder.Position = UDim2.new(1, -22, 1, -130)
-    holder.Size = UDim2.fromOffset(190, 150)
-    holder.Parent = gui
-    local function button(name, text, pos)
-        local b = Instance.new("TextButton")
-        b.Name = name
-        b.BackgroundColor3 = Color3.fromRGB(20, 10, 38)
-        b.BackgroundTransparency = 0.12
-        b.BorderSizePixel = 0
-        b.Font = Enum.Font.GothamBlack
-        b.Position = pos
-        b.Size = UDim2.fromOffset(54, 42)
-        b.Text = text
-        b.TextColor3 = WHITE
-        b.TextScaled = true
-        b.Parent = holder
-        local stroke = Instance.new("UIStroke")
-        stroke.Color = ACCENT
-        stroke.Thickness = 2
-        stroke.Parent = b
-        return b
-    end
-    setAirwalkButton(button("Forward", "↑", UDim2.fromOffset(68, 0)), Vector3.new(0, 0, 1))
-    setAirwalkButton(button("Back", "↓", UDim2.fromOffset(68, 96)), Vector3.new(0, 0, -1))
-    setAirwalkButton(button("Up", "+", UDim2.fromOffset(10, 48)), Vector3.new(0, 1, 0))
-    setAirwalkButton(button("Down", "-", UDim2.fromOffset(126, 48)), Vector3.new(0, -1, 0))
-    return gui
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "RobloxGlop_Airwalk_Controls"
+	gui.ResetOnSpawn = false
+	gui.Enabled = false
+	gui.Parent = playerGui
+	local holder = Instance.new("Frame")
+	holder.AnchorPoint = Vector2.new(1, 1)
+	holder.BackgroundTransparency = 1
+	holder.Position = UDim2.new(1, -22, 1, -130)
+	holder.Size = UDim2.fromOffset(190, 150)
+	holder.Parent = gui
+	local function button(name, text, pos)
+		local b = Instance.new("TextButton")
+		b.Name = name
+		b.BackgroundColor3 = Color3.fromRGB(20, 10, 38)
+		b.BackgroundTransparency = 0.12
+		b.BorderSizePixel = 0
+		b.Font = Enum.Font.GothamBlack
+		b.Position = pos
+		b.Size = UDim2.fromOffset(54, 42)
+		b.Text = text
+		b.TextColor3 = WHITE
+		b.TextScaled = true
+		b.Parent = holder
+		local stroke = Instance.new("UIStroke")
+		stroke.Color = ACCENT
+		stroke.Thickness = 2
+		stroke.Parent = b
+		return b
+	end
+	setAirwalkButton(button("Forward", "↑", UDim2.fromOffset(68, 0)), Vector3.new(0, 0, 1))
+	setAirwalkButton(button("Back", "↓", UDim2.fromOffset(68, 96)), Vector3.new(0, 0, -1))
+	setAirwalkButton(button("Up", "+", UDim2.fromOffset(10, 48)), Vector3.new(0, 1, 0))
+	setAirwalkButton(button("Down", "-", UDim2.fromOffset(126, 48)), Vector3.new(0, -1, 0))
+	return gui
 end
 local airwalkGui = createAirwalkControls()
 local function setAirwalk(enabled)
-    airwalkActive = enabled
-    airwalkDirection = Vector3.zero
-    airwalkGui.Enabled = enabled
-    if enabled then
-        AnimController:SetState("Airwalk")
-        humanoid.PlatformStand = true
-        sideMangaCaption([[Airwalk
+	airwalkActive = enabled
+	airwalkDirection = Vector3.zero
+	airwalkGui.Enabled = enabled
+	if enabled then
+		AnimController:SetState("Airwalk")
+		humanoid.PlatformStand = true
+		sideMangaCaption([[Airwalk
 activated]], 0.95)
-        distortionBarrier(0.45, 10, 3)
-    else
-        humanoid.PlatformStand = false
-        AnimController:SetState("Idle")
-        sideMangaCaption([[Airwalk
+		distortionBarrier(0.45, 10, 3)
+	else
+		humanoid.PlatformStand = false
+		AnimController:SetState("Idle")
+		sideMangaCaption([[Airwalk
 off]], 0.65)
-    end
+	end
 end
 local function installAirwalkControls()
-    UserInputService.JumpRequest:Connect(function()
-        local now = os.clock()
-        if now - lastJumpRequest < 0.35 then
-            setAirwalk(not airwalkActive)
-        end
-        lastJumpRequest = now
-    end)
-    UserInputService.InputBegan:Connect(function(input, processed)
-        if processed or not airwalkActive then
-            return
-        end
-        if input.KeyCode == Enum.KeyCode.W then
-            airwalkDirection += Vector3.new(0, 0, 1)
-        elseif input.KeyCode == Enum.KeyCode.S then
-            airwalkDirection += Vector3.new(0, 0, -1)
-        elseif input.KeyCode == Enum.KeyCode.E then
-            airwalkDirection += Vector3.new(0, 1, 0)
-        elseif input.KeyCode == Enum.KeyCode.Q then
-            airwalkDirection += Vector3.new(0, -1, 0)
-        end
-    end)
-    UserInputService.InputEnded:Connect(function(input)
-        if not airwalkActive then
-            return
-        end
-        if input.KeyCode == Enum.KeyCode.W then
-            airwalkDirection -= Vector3.new(0, 0, 1)
-        elseif input.KeyCode == Enum.KeyCode.S then
-            airwalkDirection -= Vector3.new(0, 0, -1)
-        elseif input.KeyCode == Enum.KeyCode.E then
-            airwalkDirection -= Vector3.new(0, 1, 0)
-        elseif input.KeyCode == Enum.KeyCode.Q then
-            airwalkDirection -= Vector3.new(0, -1, 0)
-        end
-    end)
+	UserInputService.JumpRequest:Connect(function()
+		local now = os.clock()
+		if now - lastJumpRequest < 0.35 then
+			setAirwalk(not airwalkActive)
+		end
+		lastJumpRequest = now
+	end)
+	UserInputService.InputBegan:Connect(function(input, processed)
+		if processed or not airwalkActive then
+			return
+		end
+		if input.KeyCode == Enum.KeyCode.W then
+			airwalkDirection += Vector3.new(0, 0, 1)
+		elseif input.KeyCode == Enum.KeyCode.S then
+			airwalkDirection += Vector3.new(0, 0, -1)
+		elseif input.KeyCode == Enum.KeyCode.E then
+			airwalkDirection += Vector3.new(0, 1, 0)
+		elseif input.KeyCode == Enum.KeyCode.Q then
+			airwalkDirection += Vector3.new(0, -1, 0)
+		end
+	end)
+	UserInputService.InputEnded:Connect(function(input)
+		if not airwalkActive then
+			return
+		end
+		if input.KeyCode == Enum.KeyCode.W then
+			airwalkDirection -= Vector3.new(0, 0, 1)
+		elseif input.KeyCode == Enum.KeyCode.S then
+			airwalkDirection -= Vector3.new(0, 0, -1)
+		elseif input.KeyCode == Enum.KeyCode.E then
+			airwalkDirection -= Vector3.new(0, 1, 0)
+		elseif input.KeyCode == Enum.KeyCode.Q then
+			airwalkDirection -= Vector3.new(0, -1, 0)
+		end
+	end)
 end
 local function installKeyboardShortcuts()
-    UserInputService.InputBegan:Connect(function(input, processed)
-        if processed or not root then
-            return
-        end
-        if input.KeyCode == Enum.KeyCode.Z then
-            kyokaSuigetsu()
-        elseif input.KeyCode == Enum.KeyCode.X then
-            kurohitsugi()
-        elseif input.KeyCode == Enum.KeyCode.C then
-            raikoho()
-        elseif input.KeyCode == Enum.KeyCode.V then
-            shunpo()
-        elseif input.KeyCode == Enum.KeyCode.B then
-            reiatsuCrush()
-        end
-    end)
+	UserInputService.InputBegan:Connect(function(input, processed)
+		if processed or not root then
+			return
+		end
+		if input.KeyCode == Enum.KeyCode.Z then
+			kyokaSuigetsu()
+		elseif input.KeyCode == Enum.KeyCode.X then
+			kurohitsugi()
+		elseif input.KeyCode == Enum.KeyCode.C then
+			raikoho()
+		elseif input.KeyCode == Enum.KeyCode.V then
+			shunpo()
+		elseif input.KeyCode == Enum.KeyCode.B then
+			reiatsuCrush()
+		end
+	end)
 end
 local function installAmbientAura()
-    local auraAttachment = Instance.new("Attachment")
-    auraAttachment.Name = "Aizen Reiatsu Anchor"
-    auraAttachment.Parent = root
-    local aura = Instance.new("ParticleEmitter")
-    aura.Name = "Calm Absolute Reiatsu"
-    aura.Texture = AURA_TEXTURE
-    aura.Color = ColorSequence.new(ACCENT, GOLD)
-    aura.LightEmission = 0.8
-    aura.Lifetime = NumberRange.new(0.8, 1.4)
-    aura.Rate = 24
-    aura.Speed = NumberRange.new(0.8, 2.2)
-    aura.SpreadAngle = Vector2.new(30, 30)
-    aura.Size = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0.28),
-        NumberSequenceKeypoint.new(0.5, 0.08),
-        NumberSequenceKeypoint.new(1, 0),
-    })
-    aura.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0.12),
-        NumberSequenceKeypoint.new(1, 1),
-    })
-    aura.Parent = auraAttachment
-    local connection
-    connection = RunService.RenderStepped:Connect(function()
-        if not root or not root.Parent then
-            connection:Disconnect()
-            return
-        end
-        auraAttachment.WorldCFrame = root.CFrame * CFrame.new(0, -2.5, 0)
-    end)
+	local auraAttachment = Instance.new("Attachment")
+	auraAttachment.Name = "Aizen Reiatsu Anchor"
+	auraAttachment.Parent = root
+	local aura = Instance.new("ParticleEmitter")
+	aura.Name = "Calm Absolute Reiatsu"
+	aura.Texture = AURA_TEXTURE
+	aura.Color = ColorSequence.new(ACCENT, GOLD)
+	aura.LightEmission = 0.8
+	aura.Lifetime = NumberRange.new(0.8, 1.4)
+	aura.Rate = 24
+	aura.Speed = NumberRange.new(0.8, 2.2)
+	aura.SpreadAngle = Vector2.new(30, 30)
+	aura.Size = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.28),
+		NumberSequenceKeypoint.new(0.5, 0.08),
+		NumberSequenceKeypoint.new(1, 0),
+	})
+	aura.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.12),
+		NumberSequenceKeypoint.new(1, 1),
+	})
+	aura.Parent = auraAttachment
+	local connection
+	connection = RunService.RenderStepped:Connect(function()
+		if not root or not root.Parent then
+			connection:Disconnect()
+			return
+		end
+		auraAttachment.WorldCFrame = root.CFrame * CFrame.new(0, -2.5, 0)
+	end)
 end
 local function installPassiveDominion()
-    local damaged = {}
-    local passiveGuiTimer = 0
-    RunService.Heartbeat:Connect(function()
-        if not root or not root.Parent or not humanoid or humanoid.Health <= 0 then
-            return
-        end
-        local foundThreat = false
-        for _, model in ipairs(workspace:GetChildren()) do
-            if model:IsA("Model") and model ~= character then
-                local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
-                local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
-                if enemyHumanoid and enemyRoot and enemyHumanoid.Health > 0 then
-                    local offset = enemyRoot.Position - root.Position
-                    local distance = offset.Magnitude
-                    local inFront = distance > 0.1 and root.CFrame.LookVector:Dot(offset.Unit) > 0.2
-                    if distance <= 24 or (inFront and distance <= 34) then
-                        foundThreat = true
-                        if os.clock() - (damaged[enemyHumanoid] or 0) > 0.65 then
-                            damaged[enemyHumanoid] = os.clock()
-                            collapseTarget(model, 1.25)
-                            markAndFlingTarget(model, root.Position, inFront and 38 or 64)
-                            beamBetween("Passive Reiatsu Compression", root.Position + Vector3.new(0, 2, 0), enemyRoot.Position + Vector3.new(0, 1.5, 0), ACCENT, 0.16, 0.22)
-                            sideMangaCaption("Kneel.", 0.55)
-                        end
-                    end
-                end
-            end
-        end
-        if foundThreat and os.clock() - passiveGuiTimer > 1.2 then
-            passiveGuiTimer = os.clock()
-            distortionBarrier(0.55, 14, 3)
-        end
-    end)
+	local damaged = {}
+	local passiveGuiTimer = 0
+	RunService.Heartbeat:Connect(function()
+		if not root or not root.Parent or not humanoid or humanoid.Health <= 0 then
+			return
+		end
+		local foundThreat = false
+		for _, model in ipairs(workspace:GetChildren()) do
+			if model:IsA("Model") and model ~= character then
+				local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
+				local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
+				if enemyHumanoid and enemyRoot and enemyHumanoid.Health > 0 then
+					local offset = enemyRoot.Position - root.Position
+					local distance = offset.Magnitude
+					local inFront = distance > 0.1 and root.CFrame.LookVector:Dot(offset.Unit) > 0.2
+					if distance <= 24 or (inFront and distance <= 34) then
+						foundThreat = true
+						if os.clock() - (damaged[enemyHumanoid] or 0) > 0.65 then
+							damaged[enemyHumanoid] = os.clock()
+							collapseTarget(model, 1.25)
+							markAndFlingTarget(model, root.Position, inFront and 38 or 64)
+							beamBetween("Passive Reiatsu Compression", root.Position + Vector3.new(0, 2, 0), enemyRoot.Position + Vector3.new(0, 1.5, 0), ACCENT, 0.16, 0.22)
+							sideMangaCaption("Kneel.", 0.55)
+						end
+					end
+				end
+			end
+		end
+		if foundThreat and os.clock() - passiveGuiTimer > 1.2 then
+			passiveGuiTimer = os.clock()
+			distortionBarrier(0.55, 14, 3)
+		end
+	end)
 end
 local function createIntroGui(onComplete)
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "RobloxGlop_Aizen_Loader"
-    gui.IgnoreGuiInset = true
-    gui.ResetOnSpawn = false
-    gui.Parent = playerGui
-    local shade = Instance.new("Frame")
-    shade.BackgroundColor3 = Color3.fromRGB(3, 1, 10)
-    shade.BackgroundTransparency = 0.08
-    shade.BorderSizePixel = 0
-    shade.Size = UDim2.fromScale(1, 1)
-    shade.Parent = gui
-    local card = Instance.new("Frame")
-    card.AnchorPoint = Vector2.new(0.5, 0.5)
-    card.BackgroundColor3 = Color3.fromRGB(13, 8, 26)
-    card.BorderSizePixel = 0
-    card.Position = UDim2.fromScale(0.5, 0.5)
-    card.Size = UDim2.fromOffset(520, 275)
-    card.Parent = shade
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 18)
-    corner.Parent = card
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = ACCENT
-    stroke.Thickness = 2
-    stroke.Transparency = 0.15
-    stroke.Parent = card
-    local title = Instance.new("TextLabel")
-    title.BackgroundTransparency = 1
-    title.Font = Enum.Font.GothamBlack
-    title.Position = UDim2.fromOffset(28, 24)
-    title.Size = UDim2.new(1, -56, 0, 44)
-    title.Text = "RobloxGlop FE Aizen"
-    title.TextColor3 = WHITE
-    title.TextScaled = true
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.Parent = card
-    local subtitle = Instance.new("TextLabel")
-    subtitle.BackgroundTransparency = 1
-    subtitle.Font = Enum.Font.GothamSemibold
-    subtitle.Position = UDim2.fromOffset(30, 78)
-    subtitle.Size = UDim2.new(1, -60, 0, 32)
-    subtitle.Text = "script loading..."
-    subtitle.TextColor3 = GOLD
-    subtitle.TextScaled = true
-    subtitle.TextXAlignment = Enum.TextXAlignment.Left
-    subtitle.Parent = card
-    local barBack = Instance.new("Frame")
-    barBack.BackgroundColor3 = Color3.fromRGB(32, 22, 54)
-    barBack.BorderSizePixel = 0
-    barBack.Position = UDim2.fromOffset(30, 128)
-    barBack.Size = UDim2.new(1, -60, 0, 12)
-    barBack.Parent = card
-    local barCorner = Instance.new("UICorner")
-    barCorner.CornerRadius = UDim.new(1, 0)
-    barCorner.Parent = barBack
-    local bar = Instance.new("Frame")
-    bar.BackgroundColor3 = ACCENT
-    bar.BorderSizePixel = 0
-    bar.Size = UDim2.fromScale(0, 1)
-    bar.Parent = barBack
-    local fillCorner = Instance.new("UICorner")
-    fillCorner.CornerRadius = UDim.new(1, 0)
-    fillCorner.Parent = bar
-    local languageHolder = Instance.new("Frame")
-    languageHolder.BackgroundTransparency = 1
-    languageHolder.Position = UDim2.fromOffset(30, 166)
-    languageHolder.Size = UDim2.new(1, -60, 0, 54)
-    languageHolder.Visible = false
-    languageHolder.Parent = card
-    local layout = Instance.new("UIListLayout")
-    layout.FillDirection = Enum.FillDirection.Horizontal
-    layout.Padding = UDim.new(0, 10)
-    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    layout.Parent = languageHolder
-    tween(bar, 1.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Size = UDim2.fromScale(1, 1)})
-    task.delay(1.28, function()
-        subtitle.Text = TRANSLATIONS.tr.pick
-        languageHolder.Visible = true
-        for code, text in pairs(TRANSLATIONS) do
-            local button = Instance.new("TextButton")
-            button.BackgroundColor3 = Color3.fromRGB(25, 16, 42)
-            button.BorderSizePixel = 0
-            button.Font = Enum.Font.GothamBlack
-            button.Size = UDim2.fromOffset(78, 46)
-            button.Text = text.button
-            button.TextColor3 = WHITE
-            button.TextScaled = true
-            button.Parent = languageHolder
-            local buttonCorner = Instance.new("UICorner")
-            buttonCorner.CornerRadius = UDim.new(0, 12)
-            buttonCorner.Parent = button
-            local buttonStroke = Instance.new("UIStroke")
-            buttonStroke.Color = GOLD
-            buttonStroke.Transparency = 0.45
-            buttonStroke.Parent = button
-            button.MouseEnter:Connect(function()
-                tween(button, 0.16, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {BackgroundColor3 = ACCENT})
-            end)
-            button.MouseLeave:Connect(function()
-                tween(button, 0.16, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {BackgroundColor3 = Color3.fromRGB(25, 16, 42)})
-            end)
-            button.MouseButton1Click:Connect(function()
-                selectedLanguage = code
-                local chosen = TRANSLATIONS[selectedLanguage]
-                subtitle.Text = chosen.ready
-                notify(chosen.title, chosen.tip, 6)
-                sendChatMessage(chosen.chat)
-                flash(ACCENT, 0.16, 0.45)
-                petalBurst(root.Position + Vector3.new(0, 3, 0), 28, GOLD, 0.75)
-                tween(card, 0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {Position = UDim2.fromScale(0.5, 0.44), BackgroundTransparency = 1})
-                tween(shade, 0.35, Enum.EasingStyle.Sine, Enum.EasingDirection.In, {BackgroundTransparency = 1})
-                Debris:AddItem(gui, 0.45)
-                onComplete()
-            end)
-        end
-    end)
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "RobloxGlop_Aizen_Loader"
+	gui.IgnoreGuiInset = true
+	gui.ResetOnSpawn = false
+	gui.Parent = playerGui
+	local shade = Instance.new("Frame")
+	shade.BackgroundColor3 = Color3.fromRGB(3, 1, 10)
+	shade.BackgroundTransparency = 0.08
+	shade.BorderSizePixel = 0
+	shade.Size = UDim2.fromScale(1, 1)
+	shade.Parent = gui
+	local card = Instance.new("Frame")
+	card.AnchorPoint = Vector2.new(0.5, 0.5)
+	card.BackgroundColor3 = Color3.fromRGB(13, 8, 26)
+	card.BorderSizePixel = 0
+	card.Position = UDim2.fromScale(0.5, 0.5)
+	card.Size = UDim2.fromOffset(520, 275)
+	card.Parent = shade
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 18)
+	corner.Parent = card
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = ACCENT
+	stroke.Thickness = 2
+	stroke.Transparency = 0.15
+	stroke.Parent = card
+	local title = Instance.new("TextLabel")
+	title.BackgroundTransparency = 1
+	title.Font = Enum.Font.GothamBlack
+	title.Position = UDim2.fromOffset(28, 24)
+	title.Size = UDim2.new(1, -56, 0, 44)
+	title.Text = "RobloxGlop FE Aizen"
+	title.TextColor3 = WHITE
+	title.TextScaled = true
+	title.TextXAlignment = Enum.TextXAlignment.Left
+	title.Parent = card
+	local subtitle = Instance.new("TextLabel")
+	subtitle.BackgroundTransparency = 1
+	subtitle.Font = Enum.Font.GothamSemibold
+	subtitle.Position = UDim2.fromOffset(30, 78)
+	subtitle.Size = UDim2.new(1, -60, 0, 32)
+	subtitle.Text = "script loading..."
+	subtitle.TextColor3 = GOLD
+	subtitle.TextScaled = true
+	subtitle.TextXAlignment = Enum.TextXAlignment.Left
+	subtitle.Parent = card
+	local barBack = Instance.new("Frame")
+	barBack.BackgroundColor3 = Color3.fromRGB(32, 22, 54)
+	barBack.BorderSizePixel = 0
+	barBack.Position = UDim2.fromOffset(30, 128)
+	barBack.Size = UDim2.new(1, -60, 0, 12)
+	barBack.Parent = card
+	local barCorner = Instance.new("UICorner")
+	barCorner.CornerRadius = UDim.new(1, 0)
+	barCorner.Parent = barBack
+	local bar = Instance.new("Frame")
+	bar.BackgroundColor3 = ACCENT
+	bar.BorderSizePixel = 0
+	bar.Size = UDim2.fromScale(0, 1)
+	bar.Parent = barBack
+	local fillCorner = Instance.new("UICorner")
+	fillCorner.CornerRadius = UDim.new(1, 0)
+	fillCorner.Parent = bar
+	local languageHolder = Instance.new("Frame")
+	languageHolder.BackgroundTransparency = 1
+	languageHolder.Position = UDim2.fromOffset(30, 166)
+	languageHolder.Size = UDim2.new(1, -60, 0, 54)
+	languageHolder.Visible = false
+	languageHolder.Parent = card
+	local layout = Instance.new("UIListLayout")
+	layout.FillDirection = Enum.FillDirection.Horizontal
+	layout.Padding = UDim.new(0, 10)
+	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	layout.Parent = languageHolder
+	tween(bar, 1.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Size = UDim2.fromScale(1, 1)})
+	task.delay(1.28, function()
+		subtitle.Text = TRANSLATIONS.tr.pick
+		languageHolder.Visible = true
+		for code, text in pairs(TRANSLATIONS) do
+			local button = Instance.new("TextButton")
+			button.BackgroundColor3 = Color3.fromRGB(25, 16, 42)
+			button.BorderSizePixel = 0
+			button.Font = Enum.Font.GothamBlack
+			button.Size = UDim2.fromOffset(78, 46)
+			button.Text = text.button
+			button.TextColor3 = WHITE
+			button.TextScaled = true
+			button.Parent = languageHolder
+			local buttonCorner = Instance.new("UICorner")
+			buttonCorner.CornerRadius = UDim.new(0, 12)
+			buttonCorner.Parent = button
+			local buttonStroke = Instance.new("UIStroke")
+			buttonStroke.Color = GOLD
+			buttonStroke.Transparency = 0.45
+			buttonStroke.Parent = button
+			button.MouseEnter:Connect(function()
+				tween(button, 0.16, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {BackgroundColor3 = ACCENT})
+			end)
+			button.MouseLeave:Connect(function()
+				tween(button, 0.16, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {BackgroundColor3 = Color3.fromRGB(25, 16, 42)})
+			end)
+			button.MouseButton1Click:Connect(function()
+				selectedLanguage = code
+				local chosen = TRANSLATIONS[selectedLanguage]
+				subtitle.Text = chosen.ready
+				notify(chosen.title, chosen.tip, 6)
+				sendChatMessage(chosen.chat)
+				flash(ACCENT, 0.16, 0.45)
+				petalBurst(root.Position + Vector3.new(0, 3, 0), 28, GOLD, 0.75)
+				tween(card, 0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {Position = UDim2.fromScale(0.5, 0.44), BackgroundTransparency = 1})
+				tween(shade, 0.35, Enum.EasingStyle.Sine, Enum.EasingDirection.In, {BackgroundTransparency = 1})
+				Debris:AddItem(gui, 0.45)
+				onComplete()
+			end)
+		end
+	end)
 end
 local function installTools()
-    createTool("Kyoka Suigetsu", "", 4, kyokaSuigetsu)
-    createTool("Hado 90: Kurohitsugi", "", 9, kurohitsugi)
-    createTool("Hado 63: Raikoho", "", 5, raikoho)
-    createTool("Shunpo", "", 3, shunpo)
-    createTool("Reiatsu Crush", "", 7, reiatsuCrush)
+	createTool("Kyoka Suigetsu", "", 4, kyokaSuigetsu)
+	createTool("Hado 90: Kurohitsugi", "", 9, kurohitsugi)
+	createTool("Hado 63: Raikoho", "", 5, raikoho)
+	createTool("Shunpo", "", 3, shunpo)
+	createTool("Reiatsu Crush", "", 7, reiatsuCrush)
 end
 installProceduralAnimationEngine()
 installTools()
@@ -1485,6 +1485,6 @@ installAirwalkControls()
 installAmbientAura()
 installPassiveDominion()
 createIntroGui(function()
-    local text = TRANSLATIONS[selectedLanguage]
-    print("[RobloxGlop FE Aizen] " .. text.ready .. " " .. text.tip)
+	local text = TRANSLATIONS[selectedLanguage]
+	print("[RobloxGlop FE Aizen] " .. text.ready .. " " .. text.tip)
 end)
