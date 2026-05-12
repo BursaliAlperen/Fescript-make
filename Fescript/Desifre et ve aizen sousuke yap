@@ -578,27 +578,29 @@ function AnimController:TargetPose(state)
         targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(4 + breathe * 2), 0, RAD(5))
         targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(4 - breathe * 2), 0, RAD(-5))
     elseif state == "Walk" then
-        local step = math.sin(sine * 0.9)
+        local step = math.sin(sine * 1.05)
         local stepBack = -step
-        local lift = math.abs(math.cos(sine * 0.9))
-        targets.root = CF(0, lift * 0.035, 0) * ANGLES(RAD(-2), 0, RAD(step * 0.8))
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(1.5), RAD(step * 2.2), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-1.5), RAD(-step * 1.4), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 10 - 4), 0, RAD(8))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 10 - 4), 0, RAD(-8))
-        targets.rightHip = CF(0, lift * 0.015, 0) * ANGLES(RAD(step * 26), 0, RAD(-1))
-        targets.leftHip = CF(0, lift * 0.015, 0) * ANGLES(RAD(stepBack * 26), 0, RAD(1))
+        local lift = math.max(0, math.cos(sine * 1.05))
+        local liftBack = math.max(0, -math.cos(sine * 1.05))
+        targets.root = CF(0, (lift + liftBack) * 0.018, 0) * ANGLES(RAD(-1.2), 0, 0)
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(1), RAD(step * 1.2), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-1), RAD(-step * 0.8), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 12 - 3), 0, RAD(4))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 12 - 3), 0, RAD(-4))
+        targets.rightHip = CF(0, lift * 0.045, 0) * ANGLES(RAD(step * 24), 0, 0)
+        targets.leftHip = CF(0, liftBack * 0.045, 0) * ANGLES(RAD(stepBack * 24), 0, 0)
     elseif state == "Run" then
-        local step = math.sin(sine * 1.25)
+        local step = math.sin(sine * 1.45)
         local stepBack = -step
-        local lift = math.abs(math.cos(sine * 1.25))
-        targets.root = CF(0, lift * 0.055, 0) * ANGLES(RAD(-10), 0, RAD(step * 1.5))
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(6), RAD(step * 4), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-7), RAD(-step * 2), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 22 - 18), 0, RAD(18))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 22 - 18), 0, RAD(-18))
-        targets.rightHip = CF(0, lift * 0.02, 0) * ANGLES(RAD(step * 42), 0, RAD(-2))
-        targets.leftHip = CF(0, lift * 0.02, 0) * ANGLES(RAD(stepBack * 42), 0, RAD(2))
+        local lift = math.max(0, math.cos(sine * 1.45))
+        local liftBack = math.max(0, -math.cos(sine * 1.45))
+        targets.root = CF(0, (lift + liftBack) * 0.03, 0) * ANGLES(RAD(-8), 0, 0)
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(4), RAD(step * 2.2), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-6), RAD(-step * 1.2), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 26 - 14), 0, RAD(9))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 26 - 14), 0, RAD(-9))
+        targets.rightHip = CF(0, lift * 0.06, 0) * ANGLES(RAD(step * 46), 0, 0)
+        targets.leftHip = CF(0, liftBack * 0.06, 0) * ANGLES(RAD(stepBack * 46), 0, 0)
     elseif state == "Jump" then
         targets.root = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
         targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
@@ -622,6 +624,14 @@ function AnimController:TargetPose(state)
         targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-18 - breathe * 2), 0, RAD(-34))
         targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-10 + drift * 4), 0, RAD(8))
         targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-10 - drift * 4), 0, RAD(-8))
+    elseif state == "Mock" then
+        targets.root = CF(0, 0, 0) * ANGLES(RAD(-3), RAD(-8 + breathe * 1.5), RAD(0))
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(3), RAD(12), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), RAD(-16), RAD(4))
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-18), RAD(0), RAD(78 + breathe * 2))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(8), RAD(0), RAD(-18))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-4), 0, 0)
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(4), 0, 0)
     elseif state == "Charge" then
         targets.root = CF(0, 0, 0) * ANGLES(RAD(-8 + breathe * 2), 0, 0)
         targets.waist = CF(0, 0, 0) * ANGLES(RAD(-10), RAD(breathe * 3), 0)
@@ -689,7 +699,10 @@ function AnimController:Update(dt)
         local right = camera and camera.CFrame.RightVector or root.CFrame.RightVector
         local move = (look * airwalkDirection.Z) + (right * airwalkDirection.X) + Vector3.new(0, airwalkDirection.Y, 0)
         root.AssemblyLinearVelocity = move * 34 + Vector3.new(0, math.sin(os.clock() * 3) * 1.2, 0)
-        root.CFrame = root.CFrame:Lerp(CFrame.new(root.Position, root.Position + Vector3.new(look.X, 0, look.Z)), 0.18)
+        local flatLook = Vector3.new(look.X, 0, look.Z)
+        if flatLook.Magnitude > 0.05 then
+            root.CFrame = root.CFrame:Lerp(CFrame.new(root.Position, root.Position + flatLook), 0.18)
+        end
     elseif self.State == "Kurohitsugi" or self.State == "Reiatsu" or self.State == "Hover" then
         root.AssemblyLinearVelocity = Vector3.new(0, math.sin(os.clock() * 3) * 1.5, 0)
         root.CFrame = root.CFrame:Lerp(root.CFrame + Vector3.new(0, math.sin(os.clock() * 3) * 0.03, 0), 0.4)
@@ -732,7 +745,7 @@ end
 
 local function playBodyAnimation(style, duration)
     local states = {
-        kyoka = "Charge",
+        kyoka = "Mock",
         coffin = "Kurohitsugi",
         raikoho = "Raikoho",
         shunpo = "Shunpo",
@@ -898,6 +911,103 @@ local function markAndFlingTarget(model, origin, power)
     orb(enemyRoot.Position + Vector3.new(0, 1.5, 0), 1.3, Color3.fromRGB(255, 35, 35), 0.38)
 end
 
+local function findFrontTarget(range, arc)
+    local bestModel = nil
+    local bestRoot = nil
+    local bestDistance = range or 45
+    local forward = root.CFrame.LookVector
+
+    for _, model in ipairs(workspace:GetChildren()) do
+        if model:IsA("Model") and model ~= character then
+            local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
+            local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
+            if enemyHumanoid and enemyRoot and enemyHumanoid.Health > 0 then
+                local delta = enemyRoot.Position - root.Position
+                local distance = delta.Magnitude
+                if distance <= bestDistance and distance > 1 then
+                    local dot = forward:Dot(delta.Unit)
+                    if dot >= (arc or 0.25) then
+                        bestModel = model
+                        bestRoot = enemyRoot
+                        bestDistance = distance
+                    end
+                end
+            end
+        end
+    end
+
+    return bestModel, bestRoot
+end
+
+local function glassShatterBurst(origin, normal, count)
+    for i = 1, count do
+        local shard = makePart("Kyoka Glass Shard", Vector3.new(rng:NextNumber(0.04, 0.12), rng:NextNumber(0.5, 1.4), rng:NextNumber(0.02, 0.06)), CFrame.new(origin), WHITE, Enum.Material.Glass, 0.18)
+        local tangent = Vector3.new(rng:NextNumber(-1, 1), rng:NextNumber(-0.25, 1), rng:NextNumber(-1, 1))
+        if tangent.Magnitude < 0.1 then
+            tangent = Vector3.new(0, 1, 0)
+        end
+        local velocity = (normal * rng:NextNumber(3, 9)) + (tangent.Unit * rng:NextNumber(5, 14))
+        shard.CFrame = CFrame.new(origin, origin + velocity) * CFrame.Angles(rng:NextNumber(-3, 3), rng:NextNumber(-3, 3), rng:NextNumber(-3, 3))
+        tween(shard, 0.46, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, {CFrame = shard.CFrame + velocity, Transparency = 1})
+        Debris:AddItem(shard, 0.52)
+    end
+
+    for i = 1, 3 do
+        task.delay(i * 0.035, function()
+            ring(CFrame.new(origin) * CFrame.Angles(math.rad(90), 0, 0), 2 + i * 1.3, WHITE, 0.3, 0.05)
+        end)
+    end
+end
+
+local function collapseTarget(model, duration)
+    local enemyHumanoid = model and model:FindFirstChildOfClass("Humanoid")
+    local enemyRoot = model and (model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso"))
+    if not enemyHumanoid or not enemyRoot then
+        return
+    end
+
+    enemyHumanoid:TakeDamage(math.max(4, enemyHumanoid.MaxHealth * 0.08))
+    enemyHumanoid.Sit = true
+    enemyHumanoid.WalkSpeed = math.max(0, enemyHumanoid.WalkSpeed * 0.35)
+    enemyRoot.AssemblyLinearVelocity = Vector3.new(0, -18, 0)
+    orb(enemyRoot.Position + Vector3.new(0, 1, 0), 1.5, DARK, 0.4)
+    task.delay(duration or 1.2, function()
+        if enemyHumanoid then
+            enemyHumanoid.Sit = false
+        end
+    end)
+end
+
+local function kyokaBehindTeleport()
+    local targetModel, targetRoot = findFrontTarget(55, 0.15)
+    if not targetRoot then
+        return false
+    end
+
+    local before = root.Position + Vector3.new(0, 2, 0)
+    local behind = targetRoot.CFrame * CFrame.new(0, 0, 5.2)
+    glassShatterBurst(before, root.CFrame.LookVector, 24)
+    ghostClone(Vector3.zero, 0.55)
+    root.CFrame = CFrame.new(behind.Position, targetRoot.Position)
+    glassShatterBurst(root.Position + Vector3.new(0, 2, 0), -root.CFrame.LookVector, 18)
+    collapseTarget(targetModel, 1.25)
+    sideMangaCaption([[Behind you.]], 0.9)
+    return true
+end
+
+local function shunpoCutsceneTrail(startCFrame, endCFrame)
+    cutsceneBars(0.55)
+    cameraPulse(0.12, 0.35)
+    glassShatterBurst(startCFrame.Position + Vector3.new(0, 2, 0), startCFrame.LookVector, 14)
+    for i = 1, 10 do
+        local cf = startCFrame:Lerp(endCFrame, i / 10)
+        task.delay(i * 0.015, function()
+            beamBetween("Shunpo Speed Cut", cf.Position + cf.RightVector * -2 + Vector3.new(0, 1.5, 0), cf.Position + cf.RightVector * 2 + Vector3.new(0, 1.5, 0), i % 2 == 0 and WHITE or ACCENT, 0.08, 0.22)
+            ring(cf * CFrame.Angles(math.rad(90), 0, 0), 2 + i * 0.25, ACCENT, 0.28, 0.05)
+        end)
+    end
+end
+
 
 local function cooldown(tool, seconds)
     if activeCooldowns[tool] then
@@ -948,6 +1058,7 @@ Look closer.]], 1.25)
     cameraPulse(0.08, 0.35)
     makeSound("Kyoka Draw", "rbxassetid://9125402735", 0.45, 1.15, root)
     bladeTrail(1.15)
+    kyokaBehindTeleport()
     publicPose("Kyoka Suigetsu", 1.1, root.CFrame.LookVector * 8 + Vector3.new(0, 14, 0))
 
     local origin = root.CFrame
@@ -1055,18 +1166,23 @@ Pierce.]], 0.95)
 end
 
 local function shunpo()
-    sideMangaCaption("Too slow.", 0.75)
-    playBodyAnimation("shunpo", 0.48)
-    makeSound("Shunpo", "rbxassetid://9126098978", 0.5, 1.45, root)
-    ghostClone(Vector3.zero, 0.45)
-    flash(Color3.fromRGB(230, 230, 255), 0.12, 0.2)
-    cameraPulse(0.07, 0.2)
-    publicPose("Shunpo", 0.55, root.CFrame.LookVector * 55 + Vector3.new(0, 4, 0))
+    sideMangaCaption("Too slow.", 0.85)
+    playBodyAnimation("shunpo", 0.7)
+    makeSound("Shunpo", "rbxassetid://9126098978", 0.58, 1.55, root)
+    ghostClone(Vector3.zero, 0.55)
+    flash(Color3.fromRGB(230, 230, 255), 0.16, 0.24)
+    publicPose("Shunpo", 0.7, root.CFrame.LookVector * 62 + Vector3.new(0, 5, 0))
 
     local start = root.CFrame
-    local destination = start + start.LookVector * 32
+    local targetModel, targetRoot = findFrontTarget(42, 0.2)
+    local destination = targetRoot and CFrame.new((targetRoot.CFrame * CFrame.new(0, 0, 4.6)).Position, targetRoot.Position) or (start + start.LookVector * 38)
+    shunpoCutsceneTrail(start, destination)
     humanoid:ChangeState(Enum.HumanoidStateType.Physics)
     root.CFrame = destination
+    if targetModel then
+        collapseTarget(targetModel, 1.0)
+        markAndFlingTarget(targetModel, root.Position, 46)
+    end
     task.delay(0.1, function()
         if humanoid then
             humanoid:ChangeState(Enum.HumanoidStateType.Running)
@@ -1281,14 +1397,17 @@ local function installPassiveDominion()
                 local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
                 local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
                 if enemyHumanoid and enemyRoot and enemyHumanoid.Health > 0 then
-                    local distance = (enemyRoot.Position - root.Position).Magnitude
-                    if distance <= 18 then
+                    local offset = enemyRoot.Position - root.Position
+                    local distance = offset.Magnitude
+                    local inFront = distance > 0.1 and root.CFrame.LookVector:Dot(offset.Unit) > 0.2
+                    if distance <= 24 or (inFront and distance <= 34) then
                         foundThreat = true
-                        if os.clock() - (damaged[enemyHumanoid] or 0) > 0.8 then
+                        if os.clock() - (damaged[enemyHumanoid] or 0) > 0.65 then
                             damaged[enemyHumanoid] = os.clock()
-                            markAndFlingTarget(model, root.Position, 64)
+                            collapseTarget(model, 1.25)
+                            markAndFlingTarget(model, root.Position, inFront and 38 or 64)
                             beamBetween("Passive Reiatsu Compression", root.Position + Vector3.new(0, 2, 0), enemyRoot.Position + Vector3.new(0, 1.5, 0), ACCENT, 0.16, 0.22)
-                            sideMangaCaption("Stay back.", 0.55)
+                            sideMangaCaption("Kneel.", 0.55)
                         end
                     end
                 end
