@@ -145,34 +145,6 @@ local function makePart(name, size, cframe, color, material, transparency)
 	part.Parent = cleanupBin
 	return part
 end
-local function makeSound(name, soundId, volume, speed, parent)
-	local sound = Instance.new("Sound")
-	sound.Name = name
-	sound.SoundId = soundId
-	sound.Volume = volume or 0.6
-	sound.PlaybackSpeed = speed or 1
-	sound.RollOffMaxDistance = 110
-	sound.Parent = parent or root
-	sound:Play()
-	Debris:AddItem(sound, 6)
-	return sound
-end
-local function flash(color, intensity, duration)
-	local effect = Instance.new("ColorCorrectionEffect")
-	effect.Name = "AizenFlash"
-	effect.TintColor = color
-	effect.Brightness = intensity
-	effect.Contrast = 0.25
-	effect.Saturation = -0.05
-	effect.Parent = Lighting
-	tween(effect, duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {
-		Brightness = 0,
-		Contrast = 0,
-		Saturation = 0,
-		TintColor = Color3.new(1, 1, 1),
-	})
-	Debris:AddItem(effect, duration + 0.15)
-end
 local function screenFade(color, fadeIn, hold, fadeOut)
 	local gui = Instance.new("ScreenGui")
 	gui.Name = "RobloxGlop_Cutscene_Fade"
@@ -652,19 +624,19 @@ function AnimController:TargetPose(state)
 		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-78), RAD(0), RAD(70 + breathe * 4))
 		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-78), RAD(0), RAD(-70 - breathe * 4))
 	elseif state == "Kurohitsugi" then
-		targets.root = CF(0, math.sin(sine * 1.5) * 0.08, 0) * ANGLES(RAD(-10), 0, 0)
-		targets.waist = CF(0, 0, 0) * ANGLES(RAD(-16), 0, 0)
-		targets.neck = CF(0, 0, 0) * ANGLES(RAD(-4), 0, 0)
-		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-160), RAD(0), RAD(25))
-		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-160), RAD(0), RAD(-25))
+			targets.root = CF(0, math.sin(sine * 1.5) * 0.08, 0) * ANGLES(RAD(-7), 0, 0)
+			targets.waist = CF(0, 0, 0) * ANGLES(RAD(-9), RAD(breathe * 2), 0)
+			targets.neck = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
+			targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-132), 0, RAD(52))
+			targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-118), 0, RAD(-46))
 		targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-6), 0, RAD(4))
 		targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-6), 0, RAD(-4))
 	elseif state == "Raikoho" then
-		targets.root = CF(0, 0, 0) * ANGLES(RAD(8), RAD(-8), 0)
-		targets.waist = CF(0, 0, 0) * ANGLES(RAD(12), RAD(-14), 0)
-		targets.neck = CF(0, 0, 0) * ANGLES(RAD(-6), RAD(10), 0)
-		targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-96), RAD(0), RAD(84))
-		targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(20), RAD(-18), RAD(-32))
+			targets.root = CF(0, 0, 0) * ANGLES(RAD(5), RAD(-10), RAD(-2))
+			targets.waist = CF(0, 0, 0) * ANGLES(RAD(8), RAD(-18), 0)
+			targets.neck = CF(0, 0, 0) * ANGLES(RAD(-9), RAD(14), 0)
+			targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-116), 0, RAD(92))
+			targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(10), RAD(-14), RAD(-24))
 	elseif state == "Shunpo" then
 		targets.root = CF(0, 0, 0) * ANGLES(RAD(22), 0, RAD(stride * 3))
 		targets.waist = CF(0, 0, 0) * ANGLES(RAD(18), 0, 0)
@@ -715,7 +687,7 @@ function AnimController:Update(dt)
 		root.AssemblyLinearVelocity = Vector3.new(0, math.sin(os.clock() * 3) * 1.5, 0)
 		root.CFrame = root.CFrame:Lerp(root.CFrame + Vector3.new(0, math.sin(os.clock() * 3) * 0.03, 0), 0.4)
 	end
-	local alpha = locked and 0.12 or 0.08
+	local alpha = locked and 0.18 or 0.08
 	if self.State == "Walk" or self.State == "Run" then
 		alpha = 0.2
 		if os.clock()-(self.StepAt or 0)>0.34 then
@@ -976,7 +948,6 @@ local function kyokaBehindTeleport()
 	end
 	local before = root.Position + Vector3.new(0, 2, 0)
 	local behind = targetRoot.CFrame * CFrame.new(0, 0, 5.2)
-	makeSound("Shatter","rbxassetid://120633100334014",0.8,1,root)
 	glassShatterBurst(before, root.CFrame.LookVector, 24)
 	ghostClone(Vector3.zero, 0.55)
 	root.CFrame = CFrame.new(behind.Position, targetRoot.Position)
@@ -1039,7 +1010,6 @@ Look closer.]], 1.25)
 	playBodyAnimation("kyoka", 0.9)
 	flash(ACCENT, 0.18, 0.45)
 	cameraPulse(0.08, 0.35)
-	makeSound("Kyoka Draw", "rbxassetid://74748555886377", 0.45, 1.15, root)
 	bladeTrail(1.15)
 	kyokaBehindTeleport()
 	publicPose("Kyoka", 1.1, root.CFrame.LookVector * 8 + Vector3.new(0, 14, 0))
@@ -1057,23 +1027,27 @@ Look closer.]], 1.25)
 	end
 end
 local function kurohitsugi()
-	cutsceneBars(1.25)
-	cinematicCutscene("HADO 90", "Kurohitsugi // Kara Tabut", 1.05)
+	cutsceneBars(2.35)
+	cinematicCutscene("HADO 90", "Kurohitsugi // Kara Tabut", 1.7)
 	sideMangaCaption([[Hado 90
 Black Coffin]], 1.35)
-	playBodyAnimation("coffin", 1.05)
+	playBodyAnimation("coffin", 1.95)
 	flash(DARK, 0.3, 0.7)
-	cameraPulse(0.14, 0.65)
-	makeSound("Black Coffin Charge", "rbxassetid://125881573434700", 0.65, 0.8, root)
-	publicPose("Hado 90", 1.25, Vector3.new(0, 11, 0))
+	cameraPulse(0.18, 1.1)
+	publicPose("Hado 90", 2.1, Vector3.new(0, 11, 0))
 	local center = root.CFrame * CFrame.new(0, 0, -14)
-	focusCam((root.CFrame*CF(1.4,1.5,-1.8)).Position,root.Position+Vector3.new(0,2.4,0),1.25)
+	focusCam((root.CFrame*CF(1.4,1.5,-1.8)).Position,(character:FindFirstChild("Head") or root).Position+Vector3.new(0,0.15,0),2.45)
 	orb((root.CFrame*CF(1.4,1.4,-1.8)).Position,1.1,ACCENT,0.6)
 	sigil(center * CFrame.Angles(math.rad(90), 0, 0), 9, DARK, 0.9, 20)
 	hadoGroundLoop(center, 1.05)
 	kurohitsugiMeshSequence(center)
 	kurohitsugiBox(center, 1.05)
 	kurohitsugiInnerPrison(center, 1.05)
+	for i=1,18 do
+		local a=math.pi*2*i/18
+		local p=(center*CF(math.cos(a)*7,1,math.sin(a)*7)).Position
+		beamBetween("Void Pin",p,p+Vector3.new(0,21,0),i%2==0 and ACCENT or WHITE,0.055,1.4)
+	end
 	local pillars = {}
 	for i = 1, 16 do
 		local angle = (math.pi * 2 / 16) * i
@@ -1088,8 +1062,7 @@ Black Coffin]], 1.35)
 			})
 		end)
 	end
-	task.delay(0.45, function()
-		makeSound("Black Coffin Slam", "rbxassetid://125881573434700", 0.9, 0.72, root)
+	task.delay(1.15, function()
 		orb(center.Position + Vector3.new(0, 9, 0), 5.2, Color3.fromRGB(52, 17, 91), 0.6)
 		blackCoffinMangaBurst(center, 34)
 		distortionBarrier(0.7, 19, 5)
@@ -1121,7 +1094,6 @@ Pierce.]], 0.95)
 	playBodyAnimation("raikoho", 0.72)
 	flash(LIGHTNING, 0.24, 0.35)
 	cameraPulse(0.1, 0.32)
-	makeSound("Raikoho Charge", "rbxassetid://122138089415450", 0.55, 1.35, root)
 	publicPose("Raikoho", 0.8, -root.CFrame.LookVector * 7 + Vector3.new(0, 5, 0))
 	local hand = character:FindFirstChild("RightHand") or character:FindFirstChild("Right Arm") or root
 	local startPosition = hand.Position + root.CFrame.LookVector * 1.5
@@ -1129,8 +1101,11 @@ Pierce.]], 0.95)
 	orb(startPosition, 1.6, LIGHTNING, 0.35)
 	meshVFX("Raikoho Mesh Burst", MESH_RAIKOHO, CFrame.new(startPosition, endPosition), Vector3.new(6, 6, 10), LIGHTNING, 0.5, 0.05)
 	sigil(CFrame.new(startPosition, endPosition) * CFrame.Angles(math.rad(90), 0, 0), 3.6, LIGHTNING, 0.38, 10)
+	for i=1,10 do
+		local side=root.CFrame.RightVector*rng:NextNumber(-2.2,2.2)+Vector3.new(0,rng:NextNumber(-1.4,1.4),0)
+		beamBetween("Raiko Trace",startPosition+side,endPosition+side*2,i%2==0 and WHITE or LIGHTNING,0.055,0.42)
+	end
 	task.delay(0.16, function()
-		makeSound("Raikoho Release", "rbxassetid://122138089415450", 0.75, 1.2, root)
 		beamBetween("Hado 63 Raikoho", startPosition, endPosition, LIGHTNING, 2.8, 0.34)
 		beamBetween("Raikoho Core", startPosition, endPosition, Color3.new(1, 1, 1), 0.75, 0.24)
 		for i = 1, 16 do
@@ -1151,7 +1126,6 @@ local function shunpo()
 	cinematicCutscene("SHUNPO", "A step outside perception.", 0.58)
 	sideMangaCaption("Too slow.", 0.85)
 	playBodyAnimation("shunpo", 0.7)
-	makeSound("Shunpo", "rbxassetid://9126098978", 0.58, 1.55, root)
 	ghostClone(Vector3.zero, 0.55)
 	flash(Color3.fromRGB(230, 230, 255), 0.16, 0.24)
 	publicPose("Shunpo", 0.7, root.CFrame.LookVector * 62 + Vector3.new(0, 5, 0))
@@ -1187,7 +1161,6 @@ approach.]], 1.1)
 	distortionBarrier(0.95, 16, 6)
 	flash(ACCENT, 0.22, 0.6)
 	cameraPulse(0.16, 0.55)
-	makeSound("Spiritual Pressure", "rbxassetid://71057229888843", 0.8, 0.68, root)
 	publicPose("Reiatsu", 1.1, Vector3.new(0, 18, 0))
 	for i = 1, 11 do
 		task.delay(i * 0.055, function()
@@ -1379,8 +1352,7 @@ local function installPassiveDominion()
 		end
 		if foundThreat and os.clock() - passiveGuiTimer > 1.2 then
 			passiveGuiTimer = os.clock()
-			makeSound("Auto Reiatsu","rbxassetid://71057229888843",0.55,1,root)
-				distortionBarrier(0.55, 14, 3)
+			distortionBarrier(0.55, 14, 3)
 		end
 	end)
 end
@@ -1536,6 +1508,5 @@ player.CharacterAdded:Connect(function(newCharacter)
 end)
 createIntroGui(function()
 	local text = TRANSLATIONS[selectedLanguage]
-	makeSound("Yokoso","rbxassetid://87247991358620",0.65,1,root)
 	print("[Aizen FE] " .. text.ready .. " " .. text.tip)
 end)
