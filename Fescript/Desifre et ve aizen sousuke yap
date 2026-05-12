@@ -379,9 +379,9 @@ local function publicPose(label, duration, velocity)
     end
 
     local marker = Instance.new("BillboardGui")
-    marker.Name = "Public Aizen Pose"
-    marker.Size = UDim2.fromOffset(240, 42)
-    marker.StudsOffset = Vector3.new(0, 4.2, 0)
+    marker.Name = "RobloxGlop Public Aizen Pose"
+    marker.Size = UDim2.fromOffset(300, 54)
+    marker.StudsOffset = Vector3.new(0, 4.5, 0)
     marker.AlwaysOnTop = true
     marker.Parent = root
 
@@ -389,20 +389,183 @@ local function publicPose(label, duration, velocity)
     labelGui.BackgroundTransparency = 1
     labelGui.Size = UDim2.fromScale(1, 1)
     labelGui.Font = Enum.Font.GothamBlack
-    labelGui.Text = label
+    labelGui.Text = "RobloxGlop • " .. label
     labelGui.TextColor3 = WHITE
-    labelGui.TextStrokeTransparency = 0.25
+    labelGui.TextStrokeColor3 = Color3.new(0, 0, 0)
+    labelGui.TextStrokeTransparency = 0.05
     labelGui.TextScaled = true
     labelGui.Parent = marker
 
     tween(labelGui, duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {TextTransparency = 1, TextStrokeTransparency = 1})
     Debris:AddItem(marker, duration + 0.1)
 
-    task.delay(math.min(duration, 0.8), function()
+    task.delay(math.min(duration, 0.85), function()
         if humanoid then
             humanoid.AutoRotate = true
         end
     end)
+end
+
+local function mangaPanel(title, body, duration)
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "RobloxGlop_Manga_CutIn"
+    gui.IgnoreGuiInset = true
+    gui.ResetOnSpawn = false
+    gui.Parent = playerGui
+
+    local frame = Instance.new("Frame")
+    frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    frame.BackgroundColor3 = Color3.fromRGB(248, 245, 235)
+    frame.BorderSizePixel = 0
+    frame.Position = UDim2.fromScale(0.5, 0.52)
+    frame.Rotation = rng:NextNumber(-1.4, 1.4)
+    frame.Size = UDim2.fromOffset(0, 0)
+    frame.Parent = gui
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.new(0, 0, 0)
+    stroke.Thickness = 7
+    stroke.Parent = frame
+
+    local hatch = Instance.new("UIGradient")
+    hatch.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(215, 208, 224))
+    hatch.Rotation = 35
+    hatch.Parent = frame
+
+    local brand = Instance.new("TextLabel")
+    brand.BackgroundTransparency = 1
+    brand.Font = Enum.Font.GothamBlack
+    brand.Position = UDim2.fromOffset(18, 10)
+    brand.Size = UDim2.new(1, -36, 0, 26)
+    brand.Text = "ROBLOXGLOP // AIZEN CUTSCENE"
+    brand.TextColor3 = Color3.new(0, 0, 0)
+    brand.TextScaled = true
+    brand.TextXAlignment = Enum.TextXAlignment.Left
+    brand.Parent = frame
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Font = Enum.Font.Arcade
+    titleLabel.Position = UDim2.fromOffset(22, 48)
+    titleLabel.Size = UDim2.new(1, -44, 0, 70)
+    titleLabel.Text = title
+    titleLabel.TextColor3 = Color3.new(0, 0, 0)
+    titleLabel.TextScaled = true
+    titleLabel.TextWrapped = true
+    titleLabel.Parent = frame
+
+    local bodyLabel = Instance.new("TextLabel")
+    bodyLabel.BackgroundTransparency = 1
+    bodyLabel.Font = Enum.Font.GothamBlack
+    bodyLabel.Position = UDim2.fromOffset(24, 126)
+    bodyLabel.Size = UDim2.new(1, -48, 0, 104)
+    bodyLabel.Text = body
+    bodyLabel.TextColor3 = Color3.new(0, 0, 0)
+    bodyLabel.TextScaled = true
+    bodyLabel.TextWrapped = true
+    bodyLabel.Parent = frame
+
+    tween(frame, 0.22, Enum.EasingStyle.Back, Enum.EasingDirection.Out, {Size = UDim2.fromOffset(430, 255)})
+    task.delay(duration or 1.1, function()
+        tween(frame, 0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {Size = UDim2.fromOffset(0, 0), Rotation = frame.Rotation + 5})
+        Debris:AddItem(gui, 0.28)
+    end)
+end
+
+local function getMotor(name)
+    for _, descendant in ipairs(character:GetDescendants()) do
+        if descendant:IsA("Motor6D") and descendant.Name == name then
+            return descendant
+        end
+    end
+    return nil
+end
+
+local function playBodyAnimation(style, duration)
+    local motors = {
+        waist = getMotor("Waist") or getMotor("RootJoint"),
+        neck = getMotor("Neck"),
+        rightShoulder = getMotor("RightShoulder") or getMotor("Right Shoulder"),
+        leftShoulder = getMotor("LeftShoulder") or getMotor("Left Shoulder"),
+        rightHip = getMotor("RightHip") or getMotor("Right Hip"),
+        leftHip = getMotor("LeftHip") or getMotor("Left Hip"),
+    }
+
+    local poses = {
+        kyoka = {
+            waist = CFrame.Angles(math.rad(-8), math.rad(22), 0),
+            neck = CFrame.Angles(math.rad(8), math.rad(-18), 0),
+            rightShoulder = CFrame.Angles(math.rad(-105), math.rad(18), math.rad(42)),
+            leftShoulder = CFrame.Angles(math.rad(-18), math.rad(-24), math.rad(-28)),
+        },
+        coffin = {
+            waist = CFrame.Angles(math.rad(-16), 0, 0),
+            neck = CFrame.Angles(math.rad(-6), 0, 0),
+            rightShoulder = CFrame.Angles(math.rad(-165), 0, math.rad(18)),
+            leftShoulder = CFrame.Angles(math.rad(-165), 0, math.rad(-18)),
+        },
+        raikoho = {
+            waist = CFrame.Angles(math.rad(10), math.rad(-10), 0),
+            neck = CFrame.Angles(math.rad(-5), math.rad(8), 0),
+            rightShoulder = CFrame.Angles(math.rad(-92), math.rad(0), math.rad(82)),
+            leftShoulder = CFrame.Angles(math.rad(18), math.rad(-18), math.rad(-30)),
+        },
+        shunpo = {
+            waist = CFrame.Angles(math.rad(20), 0, 0),
+            neck = CFrame.Angles(math.rad(-15), 0, 0),
+            rightShoulder = CFrame.Angles(math.rad(-45), 0, math.rad(25)),
+            leftShoulder = CFrame.Angles(math.rad(-45), 0, math.rad(-25)),
+            rightHip = CFrame.Angles(math.rad(-12), 0, 0),
+            leftHip = CFrame.Angles(math.rad(12), 0, 0),
+        },
+        reiatsu = {
+            waist = CFrame.Angles(math.rad(-10), 0, 0),
+            neck = CFrame.Angles(math.rad(12), 0, 0),
+            rightShoulder = CFrame.Angles(math.rad(-35), 0, math.rad(95)),
+            leftShoulder = CFrame.Angles(math.rad(-35), 0, math.rad(-95)),
+        },
+    }
+
+    local pose = poses[style]
+    if not pose then
+        return
+    end
+
+    for key, transform in pairs(pose) do
+        local motor = motors[key]
+        if motor then
+            tween(motor, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transform = transform})
+            task.delay(duration or 0.65, function()
+                if motor then
+                    tween(motor, 0.22, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transform = CFrame.new()})
+                end
+            end)
+        end
+    end
+end
+
+local function distortionBarrier(duration, radius, pulseCount)
+    local sphere = makePart("RobloxGlop Purple Space Barrier", Vector3.new(radius, radius, radius), root.CFrame, ACCENT, Enum.Material.ForceField, 0.78)
+    sphere.Shape = Enum.PartType.Ball
+    tween(sphere, duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 1, Size = Vector3.new(radius * 1.35, radius * 1.35, radius * 1.35)})
+    Debris:AddItem(sphere, duration + 0.1)
+
+    for i = 1, (pulseCount or 4) do
+        task.delay((i - 1) * 0.12, function()
+            ring(root.CFrame * CFrame.Angles(math.rad(90), 0, 0), radius * (0.35 + i * 0.08), ACCENT, 0.45, 0.1)
+            ring(root.CFrame * CFrame.Angles(0, math.rad(90), 0), radius * (0.32 + i * 0.08), Color3.fromRGB(104, 45, 190), 0.45, 0.08)
+        end)
+    end
+end
+
+local function blackCoffinMangaBurst(center, count)
+    for i = 1, count do
+        local height = rng:NextNumber(5, 21)
+        local blade = makePart("Manga Ink Kurohitsugi Spike", Vector3.new(0.18, height, 0.18), center * CFrame.new(rng:NextNumber(-6, 6), height / 2, rng:NextNumber(-6, 6)), i % 2 == 0 and Color3.new(0, 0, 0) or ACCENT, Enum.Material.Neon, 0.04)
+        blade.CFrame = blade.CFrame * CFrame.Angles(rng:NextNumber(-0.35, 0.35), rng:NextNumber(-3.14, 3.14), rng:NextNumber(-0.35, 0.35))
+        tween(blade, 0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1, Size = Vector3.new(0.02, height * 1.2, 0.02)})
+        Debris:AddItem(blade, 0.58)
+    end
 end
 
 local function cooldown(tool, seconds)
@@ -447,6 +610,8 @@ end
 
 local function kyokaSuigetsu()
     cutsceneBars(0.9)
+    mangaPanel("YOKOSO", "watashi no Soul Society", 1.05)
+    playBodyAnimation("kyoka", 0.9)
     flash(ACCENT, 0.18, 0.45)
     cameraPulse(0.08, 0.35)
     makeSound("Kyoka Draw", "rbxassetid://9125402735", 0.45, 1.15, root)
@@ -470,6 +635,8 @@ end
 
 local function kurohitsugi()
     cutsceneBars(1.25)
+    mangaPanel("HADO 90", "Kurohitsugi — Kara Tabut", 1.2)
+    playBodyAnimation("coffin", 1.05)
     flash(DARK, 0.3, 0.7)
     cameraPulse(0.14, 0.65)
     makeSound("Black Coffin Charge", "rbxassetid://9126299510", 0.65, 0.8, root)
@@ -496,6 +663,8 @@ local function kurohitsugi()
     task.delay(0.45, function()
         makeSound("Black Coffin Slam", "rbxassetid://9125652147", 0.9, 0.72, root)
         orb(center.Position + Vector3.new(0, 9, 0), 5.2, Color3.fromRGB(52, 17, 91), 0.6)
+        blackCoffinMangaBurst(center, 34)
+        distortionBarrier(0.7, 19, 5)
         for i = 1, 32 do
             local slashStart = center.Position + Vector3.new(rng:NextNumber(-6, 6), rng:NextNumber(2, 19), rng:NextNumber(-6, 6))
             local slashEnd = slashStart + Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(-7, 1), rng:NextNumber(-4, 4))
@@ -511,6 +680,8 @@ local function kurohitsugi()
 end
 
 local function raikoho()
+    mangaPanel("RAIKOHO", "Thunder roar, white lightning", 0.85)
+    playBodyAnimation("raikoho", 0.72)
     flash(LIGHTNING, 0.24, 0.35)
     cameraPulse(0.1, 0.32)
     makeSound("Raikoho Charge", "rbxassetid://9125800125", 0.55, 1.35, root)
@@ -533,10 +704,17 @@ local function raikoho()
             end)
         end
         ring(CFrame.new(endPosition) * CFrame.Angles(math.rad(90), 0, 0), 6, LIGHTNING, 0.48, 0.12)
+        for i = 1, 9 do
+            task.delay(i * 0.018, function()
+                orb(startPosition:Lerp(endPosition, i / 9), 0.7 + i * 0.05, i % 2 == 0 and WHITE or LIGHTNING, 0.22)
+            end)
+        end
     end)
 end
 
 local function shunpo()
+    mangaPanel("SHUNPO", "One step beyond perception", 0.62)
+    playBodyAnimation("shunpo", 0.48)
     makeSound("Shunpo", "rbxassetid://9126098978", 0.5, 1.45, root)
     ghostClone(Vector3.zero, 0.45)
     flash(Color3.fromRGB(230, 230, 255), 0.12, 0.2)
@@ -563,6 +741,9 @@ end
 
 local function reiatsuCrush()
     cutsceneBars(0.85)
+    mangaPanel("REIATSU", "Kneel before RobloxGlop Aizen", 0.95)
+    playBodyAnimation("reiatsu", 0.9)
+    distortionBarrier(0.95, 16, 6)
     flash(ACCENT, 0.22, 0.6)
     cameraPulse(0.16, 0.55)
     makeSound("Spiritual Pressure", "rbxassetid://9125838794", 0.8, 0.68, root)
@@ -629,6 +810,43 @@ local function installAmbientAura()
             return
         end
         auraAttachment.WorldCFrame = root.CFrame * CFrame.new(0, -2.5, 0)
+    end)
+end
+
+local function installPassiveDominion()
+    local damaged = {}
+    local passiveGuiTimer = 0
+
+    RunService.Heartbeat:Connect(function()
+        if not root or not root.Parent or not humanoid or humanoid.Health <= 0 then
+            return
+        end
+
+        local foundThreat = false
+        for _, model in ipairs(workspace:GetChildren()) do
+            if model:IsA("Model") and model ~= character and not Players:GetPlayerFromCharacter(model) then
+                local enemyHumanoid = model:FindFirstChildOfClass("Humanoid")
+                local enemyRoot = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Torso") or model:FindFirstChild("UpperTorso")
+                if enemyHumanoid and enemyRoot and enemyHumanoid.Health > 0 then
+                    local distance = (enemyRoot.Position - root.Position).Magnitude
+                    if distance <= 18 then
+                        foundThreat = true
+                        if os.clock() - (damaged[enemyHumanoid] or 0) > 0.8 then
+                            damaged[enemyHumanoid] = os.clock()
+                            enemyHumanoid:TakeDamage(math.max(8, enemyHumanoid.MaxHealth * 0.18))
+                            enemyRoot.AssemblyLinearVelocity = (enemyRoot.Position - root.Position).Unit * 42 + Vector3.new(0, 16, 0)
+                            beamBetween("Passive Reiatsu Compression", root.Position + Vector3.new(0, 2, 0), enemyRoot.Position + Vector3.new(0, 1.5, 0), ACCENT, 0.16, 0.22)
+                            orb(enemyRoot.Position + Vector3.new(0, 1.5, 0), 1.1, DARK, 0.35)
+                        end
+                    end
+                end
+            end
+        end
+
+        if foundThreat and os.clock() - passiveGuiTimer > 1.2 then
+            passiveGuiTimer = os.clock()
+            distortionBarrier(0.55, 14, 3)
+        end
     end)
 end
 
@@ -781,6 +999,7 @@ end
 installTools()
 installKeyboardShortcuts()
 installAmbientAura()
+installPassiveDominion()
 createIntroGui(function()
     local text = TRANSLATIONS[selectedLanguage]
     print("[RobloxGlop FE Aizen] " .. text.ready .. " " .. text.tip)
