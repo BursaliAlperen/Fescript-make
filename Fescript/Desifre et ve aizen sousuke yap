@@ -38,6 +38,9 @@ local WHITE = Color3.fromRGB(245, 243, 255)
 local rng = Random.new()
 local activeCooldowns = {}
 local selectedLanguage = "tr"
+local airwalkActive = false
+local airwalkDirection = Vector3.zero
+local lastJumpRequest = 0
 local cleanupBin = Instance.new("Folder")
 cleanupBin.Name = "RobloxGlop_Aizen_FE_VFX"
 cleanupBin.Parent = workspace
@@ -538,6 +541,10 @@ function AnimController:AutoState()
         return "Idle"
     end
 
+    if airwalkActive then
+        return "AirWalk"
+    end
+
     local state = humanoid:GetState()
     if state == Enum.HumanoidStateType.Jumping then
         return "Jump"
@@ -571,23 +578,27 @@ function AnimController:TargetPose(state)
         targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(4 + breathe * 2), 0, RAD(5))
         targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(4 - breathe * 2), 0, RAD(-5))
     elseif state == "Walk" then
-        local softStep = math.sin(sine * 0.72)
-        targets.root = CF(0, math.abs(stride) * 0.025, 0) * ANGLES(RAD(-1.5), 0, RAD(softStep * 0.7))
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(1.5), RAD(softStep * 1.8), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-1.4), RAD(-softStep * 1.2), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-6 + breathe * 1.2), RAD(0), RAD(10 + softStep * 1.4))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-6 - breathe * 1.2), RAD(0), RAD(-10 + softStep * 1.4))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(stride * 18), 0, RAD(-1.5))
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(strideBack * 18), 0, RAD(1.5))
+        local step = math.sin(sine * 0.9)
+        local stepBack = -step
+        local lift = math.abs(math.cos(sine * 0.9))
+        targets.root = CF(0, lift * 0.035, 0) * ANGLES(RAD(-2), 0, RAD(step * 0.8))
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(1.5), RAD(step * 2.2), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-1.5), RAD(-step * 1.4), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 10 - 4), 0, RAD(8))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 10 - 4), 0, RAD(-8))
+        targets.rightHip = CF(0, lift * 0.015, 0) * ANGLES(RAD(step * 26), 0, RAD(-1))
+        targets.leftHip = CF(0, lift * 0.015, 0) * ANGLES(RAD(stepBack * 26), 0, RAD(1))
     elseif state == "Run" then
-        local dashStep = math.sin(sine * 1.18)
-        targets.root = CF(0, math.abs(stride) * 0.045, 0) * ANGLES(RAD(-8), 0, RAD(dashStep * 1.8))
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(5), RAD(dashStep * 3.5), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-6), RAD(-dashStep * 2), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-24 + strideBack * 8), RAD(0), RAD(22))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-24 + stride * 8), RAD(0), RAD(-22))
-        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(stride * 34), 0, RAD(-2))
-        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(strideBack * 34), 0, RAD(2))
+        local step = math.sin(sine * 1.25)
+        local stepBack = -step
+        local lift = math.abs(math.cos(sine * 1.25))
+        targets.root = CF(0, lift * 0.055, 0) * ANGLES(RAD(-10), 0, RAD(step * 1.5))
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(6), RAD(step * 4), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-7), RAD(-step * 2), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 22 - 18), 0, RAD(18))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 22 - 18), 0, RAD(-18))
+        targets.rightHip = CF(0, lift * 0.02, 0) * ANGLES(RAD(step * 42), 0, RAD(-2))
+        targets.leftHip = CF(0, lift * 0.02, 0) * ANGLES(RAD(stepBack * 42), 0, RAD(2))
     elseif state == "Jump" then
         targets.root = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
         targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
@@ -602,6 +613,15 @@ function AnimController:TargetPose(state)
         targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(18), 0, RAD(-45))
         targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
         targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
+    elseif state == "AirWalk" then
+        local drift = math.sin(sine * 1.35)
+        targets.root = CF(0, drift * 0.08, 0) * ANGLES(RAD(-4), 0, RAD(drift * 1.2))
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(-3), RAD(drift * 2), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(5), RAD(-drift * 1.5), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-18 + breathe * 2), 0, RAD(34))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-18 - breathe * 2), 0, RAD(-34))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-10 + drift * 4), 0, RAD(8))
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-10 - drift * 4), 0, RAD(-8))
     elseif state == "Charge" then
         targets.root = CF(0, 0, 0) * ANGLES(RAD(-8 + breathe * 2), 0, 0)
         targets.waist = CF(0, 0, 0) * ANGLES(RAD(-10), RAD(breathe * 3), 0)
@@ -663,7 +683,14 @@ function AnimController:Update(dt)
         self.State = self:AutoState()
     end
 
-    if self.State == "Kurohitsugi" or self.State == "Reiatsu" or self.State == "Hover" then
+    if self.State == "AirWalk" then
+        local camera = workspace.CurrentCamera
+        local look = camera and camera.CFrame.LookVector or root.CFrame.LookVector
+        local right = camera and camera.CFrame.RightVector or root.CFrame.RightVector
+        local move = (look * airwalkDirection.Z) + (right * airwalkDirection.X) + Vector3.new(0, airwalkDirection.Y, 0)
+        root.AssemblyLinearVelocity = move * 34 + Vector3.new(0, math.sin(os.clock() * 3) * 1.2, 0)
+        root.CFrame = root.CFrame:Lerp(CFrame.new(root.Position, root.Position + Vector3.new(look.X, 0, look.Z)), 0.18)
+    elseif self.State == "Kurohitsugi" or self.State == "Reiatsu" or self.State == "Hover" then
         root.AssemblyLinearVelocity = Vector3.new(0, math.sin(os.clock() * 3) * 1.5, 0)
         root.CFrame = root.CFrame:Lerp(root.CFrame + Vector3.new(0, math.sin(os.clock() * 3) * 0.03, 0), 0.4)
     end
@@ -806,6 +833,31 @@ local function kurohitsugiBox(center, lifetime)
     end
 end
 
+local function kurohitsugiInnerPrison(center, lifetime)
+    local size = 5.4
+    for x = -1, 1, 2 do
+        for z = -1, 1, 2 do
+            beamBetween("Inner Coffin Vertical Seal", (center * CF(x * size / 2, 3, z * size / 2)).Position, (center * CF(x * size / 2, 14.5, z * size / 2)).Position, GOLD, 0.09, lifetime or 0.9)
+        end
+    end
+
+    for y = 4, 14, 5 do
+        local corners = {
+            (center * CF(-size / 2, y, -size / 2)).Position,
+            (center * CF(size / 2, y, -size / 2)).Position,
+            (center * CF(size / 2, y, size / 2)).Position,
+            (center * CF(-size / 2, y, size / 2)).Position,
+        }
+        for i = 1, #corners do
+            beamBetween("Inner Coffin Square Seal", corners[i], corners[(i % #corners) + 1], i == 1 and WHITE or GOLD, 0.08, lifetime or 0.9)
+        end
+    end
+
+    local core = makePart("Inner Kurohitsugi Captive Box", Vector3.new(size, size, size), center * CF(0, 8.8, 0), Color3.fromRGB(34, 7, 56), Enum.Material.ForceField, 0.52)
+    tween(core, lifetime or 0.9, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 1, Size = Vector3.new(size * 0.6, size * 0.6, size * 0.6)})
+    Debris:AddItem(core, (lifetime or 0.9) + 0.1)
+end
+
 local function markAndFlingTarget(model, origin, power)
     if not model or model == character then
         return
@@ -891,7 +943,6 @@ local function kyokaSuigetsu()
     cutsceneBars(0.9)
     sideMangaCaption([[Yokoso...
 Look closer.]], 1.25)
-    mangaPanel("YOKOSO", "watashi no Soul Society", 1.05)
     playBodyAnimation("kyoka", 0.9)
     flash(ACCENT, 0.18, 0.45)
     cameraPulse(0.08, 0.35)
@@ -918,7 +969,6 @@ local function kurohitsugi()
     cutsceneBars(1.25)
     sideMangaCaption([[Hado 90
 Black Coffin]], 1.35)
-    mangaPanel("HADO 90", "Kurohitsugi — Kara Tabut", 1.2)
     playBodyAnimation("coffin", 1.05)
     flash(DARK, 0.3, 0.7)
     cameraPulse(0.14, 0.65)
@@ -928,6 +978,7 @@ Black Coffin]], 1.35)
     local center = root.CFrame * CFrame.new(0, 0, -14)
     sigil(center * CFrame.Angles(math.rad(90), 0, 0), 9, DARK, 0.9, 20)
     kurohitsugiBox(center, 1.05)
+    kurohitsugiInnerPrison(center, 1.05)
 
     local pillars = {}
     for i = 1, 16 do
@@ -972,7 +1023,6 @@ end
 local function raikoho()
     sideMangaCaption([[Raikoho
 Pierce.]], 0.95)
-    mangaPanel("RAIKOHO", "Thunder roar, white lightning", 0.85)
     playBodyAnimation("raikoho", 0.72)
     flash(LIGHTNING, 0.24, 0.35)
     cameraPulse(0.1, 0.32)
@@ -1006,7 +1056,6 @@ end
 
 local function shunpo()
     sideMangaCaption("Too slow.", 0.75)
-    mangaPanel("SHUNPO", "One step beyond perception", 0.62)
     playBodyAnimation("shunpo", 0.48)
     makeSound("Shunpo", "rbxassetid://9126098978", 0.5, 1.45, root)
     ghostClone(Vector3.zero, 0.45)
@@ -1036,7 +1085,6 @@ local function reiatsuCrush()
     cutsceneBars(0.85)
     sideMangaCaption([[Do not
 approach.]], 1.1)
-    mangaPanel("REIATSU", "Kneel before RobloxGlop Aizen", 0.95)
     playBodyAnimation("reiatsu", 0.9)
     distortionBarrier(0.95, 16, 6)
     flash(ACCENT, 0.22, 0.6)
@@ -1053,6 +1101,116 @@ approach.]], 1.1)
     local aura = orb(root.Position + Vector3.new(0, 1.8, 0), 4.5, ACCENT, 0.95)
     aura.Transparency = 0.55
     petalBurst(root.Position + Vector3.new(0, 2, 0), 42, GOLD, 0.95)
+end
+
+local function setAirwalkButton(button, vector)
+    button.MouseButton1Down:Connect(function()
+        airwalkDirection += vector
+    end)
+    button.MouseButton1Up:Connect(function()
+        airwalkDirection -= vector
+    end)
+end
+
+local function createAirwalkControls()
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "RobloxGlop_AirWalk_Controls"
+    gui.ResetOnSpawn = false
+    gui.Enabled = false
+    gui.Parent = playerGui
+
+    local holder = Instance.new("Frame")
+    holder.AnchorPoint = Vector2.new(1, 1)
+    holder.BackgroundTransparency = 1
+    holder.Position = UDim2.new(1, -22, 1, -130)
+    holder.Size = UDim2.fromOffset(190, 150)
+    holder.Parent = gui
+
+    local function button(name, text, pos)
+        local b = Instance.new("TextButton")
+        b.Name = name
+        b.BackgroundColor3 = Color3.fromRGB(20, 10, 38)
+        b.BackgroundTransparency = 0.12
+        b.BorderSizePixel = 0
+        b.Font = Enum.Font.GothamBlack
+        b.Position = pos
+        b.Size = UDim2.fromOffset(54, 42)
+        b.Text = text
+        b.TextColor3 = WHITE
+        b.TextScaled = true
+        b.Parent = holder
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = ACCENT
+        stroke.Thickness = 2
+        stroke.Parent = b
+        return b
+    end
+
+    setAirwalkButton(button("Forward", "↑", UDim2.fromOffset(68, 0)), Vector3.new(0, 0, 1))
+    setAirwalkButton(button("Back", "↓", UDim2.fromOffset(68, 96)), Vector3.new(0, 0, -1))
+    setAirwalkButton(button("Up", "+", UDim2.fromOffset(10, 48)), Vector3.new(0, 1, 0))
+    setAirwalkButton(button("Down", "-", UDim2.fromOffset(126, 48)), Vector3.new(0, -1, 0))
+    return gui
+end
+
+local airwalkGui = createAirwalkControls()
+
+local function setAirwalk(enabled)
+    airwalkActive = enabled
+    airwalkDirection = Vector3.zero
+    airwalkGui.Enabled = enabled
+    if enabled then
+        AnimController:SetState("AirWalk")
+        humanoid.PlatformStand = true
+        sideMangaCaption([[Airwalk
+activated]], 0.95)
+        distortionBarrier(0.45, 10, 3)
+    else
+        humanoid.PlatformStand = false
+        AnimController:SetState("Idle")
+        sideMangaCaption([[Airwalk
+off]], 0.65)
+    end
+end
+
+local function installAirwalkControls()
+    UserInputService.JumpRequest:Connect(function()
+        local now = os.clock()
+        if now - lastJumpRequest < 0.35 then
+            setAirwalk(not airwalkActive)
+        end
+        lastJumpRequest = now
+    end)
+
+    UserInputService.InputBegan:Connect(function(input, processed)
+        if processed or not airwalkActive then
+            return
+        end
+        if input.KeyCode == Enum.KeyCode.W then
+            airwalkDirection += Vector3.new(0, 0, 1)
+        elseif input.KeyCode == Enum.KeyCode.S then
+            airwalkDirection += Vector3.new(0, 0, -1)
+        elseif input.KeyCode == Enum.KeyCode.E then
+            airwalkDirection += Vector3.new(0, 1, 0)
+        elseif input.KeyCode == Enum.KeyCode.Q then
+            airwalkDirection += Vector3.new(0, -1, 0)
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(input)
+        if not airwalkActive then
+            return
+        end
+        if input.KeyCode == Enum.KeyCode.W then
+            airwalkDirection -= Vector3.new(0, 0, 1)
+        elseif input.KeyCode == Enum.KeyCode.S then
+            airwalkDirection -= Vector3.new(0, 0, -1)
+        elseif input.KeyCode == Enum.KeyCode.E then
+            airwalkDirection -= Vector3.new(0, 1, 0)
+        elseif input.KeyCode == Enum.KeyCode.Q then
+            airwalkDirection -= Vector3.new(0, -1, 0)
+        end
+    end)
 end
 
 local function installKeyboardShortcuts()
@@ -1293,6 +1451,7 @@ end
 installProceduralAnimationEngine()
 installTools()
 installKeyboardShortcuts()
+installAirwalkControls()
 installAmbientAura()
 installPassiveDominion()
 createIntroGui(function()
