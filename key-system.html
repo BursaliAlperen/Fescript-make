@@ -18,7 +18,7 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial
 <div id="result" class="key" style="display:none"></div>
 <button id="copy" style="display:none">COPY KEY</button>
 <a id="scriptLink" class="btn" style="display:none" href="/aizen/script">OPEN SCRIPT ACCESS</a>
-<small id="hint">Routes: /aizen/key1 through /aizen/key50. Each route keeps the same key for 10 minutes, then rotates to a new key.</small>
+<small id="hint">Routes: /aizen/key1 through /aizen/key50. Each route always returns its own fixed key (for example: /aizen/key5 -> KEY5-A8C4DW).</small>
 </main>
 <script>
 const keys=[
@@ -37,8 +37,7 @@ const validSet=new Set(keys);
 const requested=(params.get('key')||'').toUpperCase().replace(/\s+/g,'');
 const submitted=(params.get('submitted')||'').toUpperCase().replace(/\s+/g,'');
 
-const TEN_MINUTES_MS=10*60*1000;
-const storagePrefix='aizen_key_route_';
+const keyByRoute=Object.freeze(keys.map((key,index)=>({route:index+1,key})));
 
 function getRouteByKey(keyValue){
   const index=keys.indexOf(keyValue);
@@ -49,50 +48,23 @@ function isKnownKey(keyValue){
   return validSet.has(keyValue);
 }
 
-
-function randomKeyExcluding(exclude){
-  if(keys.length===1){return keys[0];}
-  let next=exclude;
-  while(next===exclude){
-    next=keys[Math.floor(Math.random()*keys.length)];
-  }
-  return next;
+function getRouteKey(route){
+  const safeRoute=Math.max(1,Math.min(50,route));
+  return keyByRoute[safeRoute-1].key;
 }
 
-function getOrCreateRouteKey(route){
-  const now=Date.now();
-  const storageKey=`${storagePrefix}${route}`;
-  const raw=localStorage.getItem(storageKey);
-  if(raw){
-    try{
-      const cached=JSON.parse(raw);
-      if(cached.value&&cached.expiresAt&&cached.expiresAt>now){
-        return cached;
-      }
-      const newValue=randomKeyExcluding(cached.value||'');
-      const updated={value:newValue,issuedAt:now,expiresAt:now+TEN_MINUTES_MS};
-      localStorage.setItem(storageKey,JSON.stringify(updated));
-      return updated;
-    }catch{}
-  }
-  const created={value:keys[Math.floor(Math.random()*keys.length)],issuedAt:now,expiresAt:now+TEN_MINUTES_MS};
-  localStorage.setItem(storageKey,JSON.stringify(created));
-  return created;
-}
-
-const routeKeyData=getOrCreateRouteKey(routeNumber);
-const exactKey=validSet.has(requested)?requested:routeKeyData.value;
-const expiresInMinutes=Math.max(0,Math.ceil((routeKeyData.expiresAt-Date.now())/60000));
+const routeKey=getRouteKey(routeNumber);
+const exactKey=validSet.has(requested)?requested:routeKey;
 const submittedIsValid=isKnownKey(submitted);
 const submittedRoute=submittedIsValid?getRouteByKey(submitted):null;
 
 title.textContent=mode==='script'?'AIZEN SCRIPT ACCESS':`AIZEN KEY ${routeNumber} ACCESS`;
 desc.textContent=mode==='script'
   ?'Pass the steps to reach script access. Refresh starts over.'
-  :'Pass the steps to reveal your route key. Your route stays on the same key for 10 minutes, then rotates automatically.';
+  :'Pass the steps to reveal your exact route key. Each route always returns its own fixed key.';
 smart.innerHTML=mode==='script'
   ?`Smart scan: script access mode detected. ${submitted? (submittedIsValid?`Submitted key is recognized from <b>/aizen/key${submittedRoute}</b>.`:'Submitted key is not in the 50-key list.'):'Add ?submitted=YOUR_KEY in URL to verify a key instantly.'}`
-  :`Smart scan: route <b>/aizen/key${routeNumber}</b> detected. ${validSet.has(requested)?'A valid URL key override was detected.':'This route key is locked for 10 minutes and survives refreshes/clicks in this browser.'} Time left: <b>${expiresInMinutes} minute(s)</b>.`;
+  :`Smart scan: route <b>/aizen/key${routeNumber}</b> detected. Fixed mapping active: <b>/aizen/key${routeNumber}</b> always returns <b>${routeKey}</b>.`;
 
 const stepNames=['Wait 5 seconds','Confirm website visit','Scan requested key route','Final security check','Reveal exact key'];
 let step=0,value='';
