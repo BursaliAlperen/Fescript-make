@@ -163,6 +163,24 @@ local function screenFade(color, fadeIn, hold, fadeOut)
 		Debris:AddItem(gui, (fadeOut or 0.2) + 0.05)
 	end)
 end
+local function flash(color, fadeIn, hold, fadeOut)
+	local gui=Instance.new("ScreenGui")
+	gui.Name="Aizen_Flash"
+	gui.IgnoreGuiInset=true
+	gui.ResetOnSpawn=false
+	gui.Parent=playerGui
+	local frame=Instance.new("Frame")
+	frame.BackgroundColor3=color or WHITE
+	frame.BackgroundTransparency=1
+	frame.BorderSizePixel=0
+	frame.Size=UDim2.fromScale(1,1)
+	frame.Parent=gui
+	tween(frame,fadeIn or 0.08,Enum.EasingStyle.Sine,Enum.EasingDirection.Out,{BackgroundTransparency=0.08})
+	task.delay((fadeIn or 0.08)+(hold or 0.05),function()
+		tween(frame,fadeOut or 0.22,Enum.EasingStyle.Sine,Enum.EasingDirection.In,{BackgroundTransparency=1})
+		Debris:AddItem(gui,(fadeOut or 0.22)+0.05)
+	end)
+end
 local function cameraPulse(power, duration)
 	local camera = workspace.CurrentCamera
 	if not camera then
@@ -571,8 +589,8 @@ function AnimController:TargetPose(state)
 		targets.neck=CF(0,0,0)*ANGLES(RAD(-2),RAD(step*0.65),0)
 		targets.rightShoulder=CF(0,0,0)*ANGLES(RAD(-6+stepBack*4),0,RAD(9))
 		targets.leftShoulder=CF(0,0,0)*ANGLES(RAD(-6+step*4),0,RAD(-9))
-		targets.rightHip=CF(0,rightPlant*0.045,step*-0.06)*ANGLES(RAD(step*24),0,RAD(-2))
-		targets.leftHip=CF(0,leftPlant*0.045,stepBack*-0.06)*ANGLES(RAD(stepBack*24),0,RAD(2))
+		targets.rightHip=CF(0,rightPlant*0.045,-math.abs(step)*0.035)*ANGLES(RAD(step*26),0,0)
+		targets.leftHip=CF(0,leftPlant*0.045,-math.abs(stepBack)*0.035)*ANGLES(RAD(stepBack*26),0,0)
 	elseif state == "Run" then
 		local phase = sine * 1.52
 		local step = math.sin(phase)
@@ -689,7 +707,14 @@ function AnimController:Update(dt)
 	end
 	local alpha = locked and 0.18 or 0.08
 	if self.State == "Walk" or self.State == "Run" then
-		alpha = 0.2
+		alpha = 0.22
+		local moveDir=humanoid.MoveDirection
+		if moveDir.Magnitude>0.08 then
+			local flat=Vector3.new(moveDir.X,0,moveDir.Z)
+			if flat.Magnitude>0.05 then
+				root.CFrame=root.CFrame:Lerp(CFrame.new(root.Position,root.Position+flat.Unit),0.28)
+			end
+		end
 		if os.clock()-(self.StepAt or 0)>0.34 then
 			self.StepAt=os.clock()
 			ring(root.CFrame*CF(0,-2.8,0)*ANGLES(RAD(90),0,0),3,ACCENT,0.28,0.04)
