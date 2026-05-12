@@ -1,4 +1,4 @@
 Deobfuscated FE rewrite is now in:
 Fescript/Desifre et ve aizen sousuke yap
 
-Theme: RobloxGlop FE Aizen with manga cut-in panels, "Yokoso / watashi no Soul Society" text, Delta-friendly tool abilities, procedural body animations, public pose markers, passive NPC reiatsu damage, purple space barrier, Kurohitsugi/Raikoho AAA VFX, multi-language loading UI, and yokoso chat ritual.
+Theme: RobloxGlop FE Aizen combat framework with RenderStepped procedural animation engine, Motor6D C0 + CFrame + Clerp state machine, manga cut-in panels, "Yokoso / watashi no Soul Society" text, Delta-friendly tool abilities, public pose markers, passive NPC reiatsu damage, purple space barrier, Kurohitsugi/Raikoho AAA VFX, multi-language loading UI, and yokoso chat ritual.

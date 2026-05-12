@@ -3,7 +3,7 @@
     Drop this LocalScript into an executor or StarterPlayerScripts.
     It creates a tool-based, client-side Aizen inspired kit with loading UI,
     multi-language selection, cinematic VFX, public character motion, cooldowns,
-    and a chat welcome ritual.
+    a chat welcome ritual, and a real-time procedural combat animation engine.
 
     FE note: Roblox FilteringEnabled blocks a pure LocalScript from forcing custom
     VFX instances to every client. This script makes the user's own character motion
@@ -472,6 +472,24 @@ local function mangaPanel(title, body, duration)
     end)
 end
 
+local CF = CFrame.new
+local ANGLES = CFrame.Angles
+local RAD = math.rad
+
+local function Clerp(a, b, t)
+    return a:Lerp(b, math.clamp(t, 0, 1))
+end
+
+local AnimController = {
+    State = "Idle",
+    Sine = 0,
+    Change = 1,
+    StateEndsAt = 0,
+    Motors = {},
+    BaseC0 = {},
+    Connected = false,
+}
+
 local function getMotor(name)
     for _, descendant in ipairs(character:GetDescendants()) do
         if descendant:IsA("Motor6D") and descendant.Name == name then
@@ -481,67 +499,217 @@ local function getMotor(name)
     return nil
 end
 
-local function playBodyAnimation(style, duration)
-    local motors = {
-        waist = getMotor("Waist") or getMotor("RootJoint"),
-        neck = getMotor("Neck"),
-        rightShoulder = getMotor("RightShoulder") or getMotor("Right Shoulder"),
-        leftShoulder = getMotor("LeftShoulder") or getMotor("Left Shoulder"),
-        rightHip = getMotor("RightHip") or getMotor("Right Hip"),
-        leftHip = getMotor("LeftHip") or getMotor("Left Hip"),
+local function captureMotor(name, ...)
+    local aliases = {...}
+    local motor = getMotor(name)
+    for _, alias in ipairs(aliases) do
+        motor = motor or getMotor(alias)
+    end
+    return motor
+end
+
+function AnimController:RefreshMotors()
+    self.Motors = {
+        root = captureMotor("RootJoint", "Root"),
+        waist = captureMotor("Waist"),
+        neck = captureMotor("Neck"),
+        rightShoulder = captureMotor("RightShoulder", "Right Shoulder"),
+        leftShoulder = captureMotor("LeftShoulder", "Left Shoulder"),
+        rightHip = captureMotor("RightHip", "Right Hip"),
+        leftHip = captureMotor("LeftHip", "Left Hip"),
     }
 
-    local poses = {
-        kyoka = {
-            waist = CFrame.Angles(math.rad(-8), math.rad(22), 0),
-            neck = CFrame.Angles(math.rad(8), math.rad(-18), 0),
-            rightShoulder = CFrame.Angles(math.rad(-105), math.rad(18), math.rad(42)),
-            leftShoulder = CFrame.Angles(math.rad(-18), math.rad(-24), math.rad(-28)),
-        },
-        coffin = {
-            waist = CFrame.Angles(math.rad(-16), 0, 0),
-            neck = CFrame.Angles(math.rad(-6), 0, 0),
-            rightShoulder = CFrame.Angles(math.rad(-165), 0, math.rad(18)),
-            leftShoulder = CFrame.Angles(math.rad(-165), 0, math.rad(-18)),
-        },
-        raikoho = {
-            waist = CFrame.Angles(math.rad(10), math.rad(-10), 0),
-            neck = CFrame.Angles(math.rad(-5), math.rad(8), 0),
-            rightShoulder = CFrame.Angles(math.rad(-92), math.rad(0), math.rad(82)),
-            leftShoulder = CFrame.Angles(math.rad(18), math.rad(-18), math.rad(-30)),
-        },
-        shunpo = {
-            waist = CFrame.Angles(math.rad(20), 0, 0),
-            neck = CFrame.Angles(math.rad(-15), 0, 0),
-            rightShoulder = CFrame.Angles(math.rad(-45), 0, math.rad(25)),
-            leftShoulder = CFrame.Angles(math.rad(-45), 0, math.rad(-25)),
-            rightHip = CFrame.Angles(math.rad(-12), 0, 0),
-            leftHip = CFrame.Angles(math.rad(12), 0, 0),
-        },
-        reiatsu = {
-            waist = CFrame.Angles(math.rad(-10), 0, 0),
-            neck = CFrame.Angles(math.rad(12), 0, 0),
-            rightShoulder = CFrame.Angles(math.rad(-35), 0, math.rad(95)),
-            leftShoulder = CFrame.Angles(math.rad(-35), 0, math.rad(-95)),
-        },
-    }
+    self.BaseC0 = {}
+    for key, motor in pairs(self.Motors) do
+        if motor then
+            self.BaseC0[key] = motor.C0
+            motor.Transform = CFrame.new()
+        end
+    end
+end
 
-    local pose = poses[style]
-    if not pose then
+function AnimController:SetState(newState, duration)
+    self.State = newState
+    self.StateEndsAt = duration and (os.clock() + duration) or 0
+end
+
+function AnimController:AutoState()
+    if not humanoid or not root then
+        return "Idle"
+    end
+
+    local state = humanoid:GetState()
+    if state == Enum.HumanoidStateType.Jumping then
+        return "Jump"
+    end
+    if state == Enum.HumanoidStateType.Freefall then
+        return root.AssemblyLinearVelocity.Y > 0 and "Jump" or "Fall"
+    end
+
+    local moving = humanoid.MoveDirection.Magnitude > 0.08
+    local speed = Vector3.new(root.AssemblyLinearVelocity.X, 0, root.AssemblyLinearVelocity.Z).Magnitude
+    if moving and speed > 18 then
+        return "Run"
+    end
+    if moving then
+        return "Walk"
+    end
+    return "Idle"
+end
+
+function AnimController:TargetPose(state)
+    local sine = self.Sine
+    local breathe = math.sin(sine * 1.7)
+    local stride = math.sin(sine)
+    local strideBack = math.sin(sine + math.pi)
+    local targets = {}
+
+    if state == "Idle" then
+        targets.root = CF(0, 0, 0) * ANGLES(RAD(-2 + breathe * 1.2), 0, RAD(breathe * 0.6))
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(1 + breathe * 1.5), RAD(breathe * 1.2), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-1 - breathe * 0.8), 0, 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(4 + breathe * 2), 0, RAD(5))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(4 - breathe * 2), 0, RAD(-5))
+    elseif state == "Walk" then
+        targets.root = CF(0, math.abs(stride) * 0.05, 0) * ANGLES(RAD(-4), 0, RAD(stride * 2))
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(3), RAD(stride * 5), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-3), RAD(-stride * 3), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(strideBack * 24), 0, RAD(7))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(stride * 24), 0, RAD(-7))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(stride * 35), 0, 0)
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(strideBack * 35), 0, 0)
+    elseif state == "Run" then
+        targets.root = CF(0, math.abs(stride) * 0.08, 0) * ANGLES(RAD(-12), 0, RAD(stride * 4))
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(8), RAD(stride * 8), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), RAD(-stride * 5), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(strideBack * 44), 0, RAD(10))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(stride * 44), 0, RAD(-10))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(stride * 55), 0, 0)
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(strideBack * 55), 0, 0)
+    elseif state == "Jump" then
+        targets.root = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-34), 0, RAD(16))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-34), 0, RAD(-16))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(18), 0, 0)
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
+    elseif state == "Fall" then
+        targets.root = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(8), 0, 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(18), 0, RAD(45))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(18), 0, RAD(-45))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
+    elseif state == "Charge" then
+        targets.root = CF(0, 0, 0) * ANGLES(RAD(-8 + breathe * 2), 0, 0)
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(-10), RAD(breathe * 3), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(8), 0, 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-78), RAD(0), RAD(70 + breathe * 4))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-78), RAD(0), RAD(-70 - breathe * 4))
+    elseif state == "Kurohitsugi" then
+        targets.root = CF(0, math.sin(sine * 1.5) * 0.08, 0) * ANGLES(RAD(-10), 0, 0)
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(-16), 0, 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-4), 0, 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-160), RAD(0), RAD(25))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-160), RAD(0), RAD(-25))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-6), 0, RAD(4))
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-6), 0, RAD(-4))
+    elseif state == "Raikoho" then
+        targets.root = CF(0, 0, 0) * ANGLES(RAD(8), RAD(-8), 0)
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(12), RAD(-14), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-6), RAD(10), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-96), RAD(0), RAD(84))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(20), RAD(-18), RAD(-32))
+    elseif state == "Shunpo" then
+        targets.root = CF(0, 0, 0) * ANGLES(RAD(22), 0, RAD(stride * 3))
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(18), 0, 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-15), 0, 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-50), 0, RAD(35))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-50), 0, RAD(-35))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-18), 0, 0)
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(18), 0, 0)
+    elseif state == "Reiatsu" or state == "Hover" then
+        targets.root = CF(0, math.sin(sine * 1.35) * 0.1, 0) * ANGLES(RAD(-6), 0, 0)
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(-8), RAD(breathe * 2), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(-35), 0, RAD(95 + breathe * 3))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(-35), 0, RAD(-95 - breathe * 3))
+        targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, RAD(5))
+        targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, RAD(-5))
+    end
+
+    return targets
+end
+
+function AnimController:ApplyPose(targets, alpha)
+    for key, motor in pairs(self.Motors) do
+        if motor and self.BaseC0[key] then
+            local offset = targets[key] or CFrame.new()
+            motor.C0 = Clerp(motor.C0, self.BaseC0[key] * offset, alpha)
+        end
+    end
+end
+
+function AnimController:Update(dt)
+    if not character or not root or not humanoid or humanoid.Health <= 0 then
         return
     end
 
-    for key, transform in pairs(pose) do
-        local motor = motors[key]
-        if motor then
-            tween(motor, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transform = transform})
-            task.delay(duration or 0.65, function()
-                if motor then
-                    tween(motor, 0.22, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transform = CFrame.new()})
-                end
-            end)
-        end
+    self.Sine += dt * (self.Change * 8)
+    local locked = self.StateEndsAt > os.clock()
+    if not locked then
+        self.State = self:AutoState()
     end
+
+    if self.State == "Kurohitsugi" or self.State == "Reiatsu" or self.State == "Hover" then
+        root.AssemblyLinearVelocity = Vector3.new(0, math.sin(os.clock() * 3) * 1.5, 0)
+        root.CFrame = root.CFrame:Lerp(root.CFrame + Vector3.new(0, math.sin(os.clock() * 3) * 0.03, 0), 0.4)
+    end
+
+    local alpha = locked and 0.12 or 0.08
+    if self.State == "Walk" or self.State == "Run" then
+        alpha = 0.2
+    end
+    self:ApplyPose(self:TargetPose(self.State), alpha)
+end
+
+local function installProceduralAnimationEngine()
+    local animate = character:FindFirstChild("Animate")
+    if animate then
+        animate.Disabled = true
+    end
+
+    AnimController:RefreshMotors()
+    if not AnimController.Connected then
+        AnimController.Connected = true
+        RunService.RenderStepped:Connect(function(dt)
+            AnimController:Update(dt)
+        end)
+    end
+
+    player.CharacterAdded:Connect(function(newCharacter)
+        task.wait(0.45)
+        character = newCharacter
+        humanoid = character:WaitForChild("Humanoid")
+        root = character:WaitForChild("HumanoidRootPart")
+        local newAnimate = character:FindFirstChild("Animate")
+        if newAnimate then
+            newAnimate.Disabled = true
+        end
+        AnimController:RefreshMotors()
+        AnimController:SetState("Idle")
+    end)
+end
+
+local function playBodyAnimation(style, duration)
+    local states = {
+        kyoka = "Charge",
+        coffin = "Kurohitsugi",
+        raikoho = "Raikoho",
+        shunpo = "Shunpo",
+        reiatsu = "Reiatsu",
+    }
+    AnimController:SetState(states[style] or style or "Idle", duration or 0.8)
 end
 
 local function distortionBarrier(duration, radius, pulseCount)
@@ -996,6 +1164,7 @@ local function installTools()
     createTool("Reiatsu Crush", "", 7, reiatsuCrush)
 end
 
+installProceduralAnimationEngine()
 installTools()
 installKeyboardShortcuts()
 installAmbientAura()
