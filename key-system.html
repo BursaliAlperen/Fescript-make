@@ -18,15 +18,15 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial
 <div id="result" class="key" style="display:none"></div>
 <button id="copy" style="display:none">COPY KEY</button>
 <a id="scriptLink" class="btn" style="display:none" href="/aizen/script">OPEN SCRIPT ACCESS</a>
-<small id="hint">Routes: /aizen/key1 through /aizen/key50. Each route always returns its own fixed key (for example: /aizen/key5 -> KEY5-A8C4DW).</small>
+<small id="hint">Routes: /aizen/key1 through /aizen/key50. Each route always returns its own fixed key (for example: /aizen/key5 -> A8C4DW).</small>
 </main>
 <script>
 const keys=[
-"KEY1-X7K2MP","KEY2-Q9L3NR","KEY3-W5T8VS","KEY4-R1Y6UB","KEY5-A8C4DW","KEY6-M3F9EJ","KEY7-P2H6KT","KEY8-Z4J7LM","KEY9-N5V1QR","KEY10-B8X3SW",
-"KEY11-G2Y9TR","KEY12-K6M4UZ","KEY13-D1P5WA","KEY14-L7R2CV","KEY15-E3S8BX","KEY16-F9T1NY","KEY17-J4U6HD","KEY18-O2V5JG","KEY19-C6W3KQ","KEY20-T8Z7LP",
-"KEY21-V1A5MR","KEY22-W4B8NS","KEY23-X9C2PT","KEY24-Y2D6QU","KEY25-Z7E3RV","KEY26-A3F5SW","KEY27-B6G8TX","KEY28-C1H4UY","KEY29-D5I7VZ","KEY30-E8J2WA",
-"KEY31-F4K9XB","KEY32-G7L1YC","KEY33-H2M5ZD","KEY34-I6N8AE","KEY35-J3P2BF","KEY36-K9Q4CG","KEY37-L1R7DH","KEY38-M5S3EI","KEY39-N8T6FJ","KEY40-O2U9GK",
-"KEY41-P6V1HL","KEY42-Q3W4IM","KEY43-R7X8JN","KEY44-S1Y5KO","KEY45-T4Z2LP","KEY46-U8A9MQ","KEY47-V2B3NR","KEY48-W6C7OS","KEY49-X9D1PT","KEY50-Y3E5QU"
+"X7K2MP","Q9L3NR","W5T8VS","R1Y6UB","A8C4DW","M3F9EJ","P2H6KT","Z4J7LM","N5V1QR","B8X3SW",
+"G2Y9TR","K6M4UZ","D1P5WA","L7R2CV","E3S8BX","F9T1NY","J4U6HD","O2V5JG","C6W3KQ","T8Z7LP",
+"V1A5MR","W4B8NS","X9C2PT","Y2D6QU","Z7E3RV","A3F5SW","B6G8TX","C1H4UY","D5I7VZ","E8J2WA",
+"F4K9XB","G7L1YC","H2M5ZD","I6N8AE","J3P2BF","K9Q4CG","L1R7DH","M5S3EI","N8T6FJ","O2U9GK",
+"P6V1HL","Q3W4IM","R7X8JN","S1Y5KO","T4Z2LP","U8A9MQ","V2B3NR","W6C7OS","X9D1PT","Y3E5QU"
 ];
 const params=new URLSearchParams(location.search);
 const path=location.pathname.toLowerCase();
@@ -34,8 +34,10 @@ const mode=path.includes('/script')?'script':'key';
 const routeMatch=path.match(/\/key([1-9]|[1-4][0-9]|50)(?:\/|$)/);
 const routeNumber=routeMatch?Number(routeMatch[1]):1;
 const validSet=new Set(keys);
-const requested=(params.get('key')||'').toUpperCase().replace(/\s+/g,'');
-const submitted=(params.get('submitted')||'').toUpperCase().replace(/\s+/g,'');
+const requestedRaw=(params.get('key')||'').toUpperCase().replace(/\s+/g,'');
+const requested=requestedRaw.replace(/^KEY\d+-/,'');
+const submittedRaw=(params.get('submitted')||'').toUpperCase().replace(/\s+/g,'');
+const submitted=submittedRaw.replace(/^KEY\d+-/,'');
 
 const keyByRoute=Object.freeze(keys.map((key,index)=>({route:index+1,key})));
 
@@ -63,7 +65,7 @@ desc.textContent=mode==='script'
   ?'Pass the steps to reach script access. Refresh starts over.'
   :'Pass the steps to reveal your exact route key. Each route always returns its own fixed key.';
 smart.innerHTML=mode==='script'
-  ?`Smart scan: script access mode detected. ${submitted? (submittedIsValid?`Submitted key is recognized from <b>/aizen/key${submittedRoute}</b>.`:'Submitted key is not in the 50-key list.'):'Add ?submitted=YOUR_KEY in URL to verify a key instantly.'}`
+  ?`Smart scan: script access mode detected. ${submitted? (submittedIsValid?`Submitted key is recognized from <b>/aizen/key${submittedRoute}</b>.`:'Submitted key is not in the 50-key list.'):'Add ?submitted=A8C4DW (or KEY5-A8C4DW) in URL to verify instantly.'}`
   :`Smart scan: route <b>/aizen/key${routeNumber}</b> detected. Fixed mapping active: <b>/aizen/key${routeNumber}</b> always returns <b>${routeKey}</b>.`;
 
 const stepNames=['Wait 5 seconds','Confirm website visit','Scan requested key route','Final security check','Reveal exact key'];
