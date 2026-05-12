@@ -246,6 +246,59 @@ local function cutsceneBars(duration)
     end)
 end
 
+local function cinematicCutscene(title, subtitle, duration)
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "RobloxGlop_AAA_Cutscene_Sweep"
+    gui.IgnoreGuiInset = true
+    gui.ResetOnSpawn = false
+    gui.Parent = playerGui
+
+    local sweep = Instance.new("Frame")
+    sweep.BackgroundColor3 = DARK
+    sweep.BackgroundTransparency = 0.18
+    sweep.BorderSizePixel = 0
+    sweep.Position = UDim2.new(-0.25, 0, 0.18, 0)
+    sweep.Rotation = -7
+    sweep.Size = UDim2.new(0, 0, 0, 118)
+    sweep.Parent = gui
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = ACCENT
+    stroke.Thickness = 2
+    stroke.Transparency = 0.25
+    stroke.Parent = sweep
+
+    local label = Instance.new("TextLabel")
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.GothamBlack
+    label.Position = UDim2.fromOffset(28, 12)
+    label.Size = UDim2.new(1, -56, 0, 54)
+    label.Text = title
+    label.TextColor3 = WHITE
+    label.TextScaled = true
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = sweep
+
+    local sub = Instance.new("TextLabel")
+    sub.BackgroundTransparency = 1
+    sub.Font = Enum.Font.GothamSemibold
+    sub.Position = UDim2.fromOffset(32, 68)
+    sub.Size = UDim2.new(1, -64, 0, 34)
+    sub.Text = subtitle
+    sub.TextColor3 = GOLD
+    sub.TextScaled = true
+    sub.TextXAlignment = Enum.TextXAlignment.Left
+    sub.Parent = sweep
+
+    tween(sweep, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Position = UDim2.new(0.08, 0, 0.18, 0), Size = UDim2.new(0.84, 0, 0, 118)})
+    task.delay(duration or 0.75, function()
+        tween(sweep, 0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.In, {Position = UDim2.new(1.05, 0, 0.18, 0), BackgroundTransparency = 1})
+        tween(label, 0.15, Enum.EasingStyle.Sine, Enum.EasingDirection.In, {TextTransparency = 1})
+        tween(sub, 0.15, Enum.EasingStyle.Sine, Enum.EasingDirection.In, {TextTransparency = 1})
+        Debris:AddItem(gui, 0.28)
+    end)
+end
+
 local function ring(cframe, radius, color, lifetime, thickness)
     local part = makePart("Spiritual Pressure Ring", Vector3.new(radius, thickness or 0.18, radius), cframe, color, Enum.Material.Neon, 0.18)
     part.Shape = Enum.PartType.Cylinder
@@ -542,7 +595,7 @@ function AnimController:AutoState()
     end
 
     if airwalkActive then
-        return "AirWalk"
+        return "Airwalk"
     end
 
     local state = humanoid:GetState()
@@ -578,29 +631,31 @@ function AnimController:TargetPose(state)
         targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(4 + breathe * 2), 0, RAD(5))
         targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(4 - breathe * 2), 0, RAD(-5))
     elseif state == "Walk" then
-        local step = math.sin(sine * 1.05)
+        local phase = sine * 1.08
+        local step = math.sin(phase)
         local stepBack = -step
-        local lift = math.max(0, math.cos(sine * 1.05))
-        local liftBack = math.max(0, -math.cos(sine * 1.05))
-        targets.root = CF(0, (lift + liftBack) * 0.018, 0) * ANGLES(RAD(-1.2), 0, 0)
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(1), RAD(step * 1.2), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-1), RAD(-step * 0.8), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 12 - 3), 0, RAD(4))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 12 - 3), 0, RAD(-4))
-        targets.rightHip = CF(0, lift * 0.045, 0) * ANGLES(RAD(step * 24), 0, 0)
-        targets.leftHip = CF(0, liftBack * 0.045, 0) * ANGLES(RAD(stepBack * 24), 0, 0)
+        local rightPlant = math.max(0, math.cos(phase))
+        local leftPlant = math.max(0, -math.cos(phase))
+        targets.root = CF(0, (rightPlant + leftPlant) * 0.012, 0) * ANGLES(RAD(-0.8), 0, 0)
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(0.8), RAD(step * 0.8), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-0.7), RAD(-step * 0.45), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 9 - 2), 0, RAD(2))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 9 - 2), 0, RAD(-2))
+        targets.rightHip = CF(0, rightPlant * 0.035, step * -0.045) * ANGLES(RAD(step * 20), 0, 0)
+        targets.leftHip = CF(0, leftPlant * 0.035, stepBack * -0.045) * ANGLES(RAD(stepBack * 20), 0, 0)
     elseif state == "Run" then
-        local step = math.sin(sine * 1.45)
+        local phase = sine * 1.52
+        local step = math.sin(phase)
         local stepBack = -step
-        local lift = math.max(0, math.cos(sine * 1.45))
-        local liftBack = math.max(0, -math.cos(sine * 1.45))
-        targets.root = CF(0, (lift + liftBack) * 0.03, 0) * ANGLES(RAD(-8), 0, 0)
-        targets.waist = CF(0, 0, 0) * ANGLES(RAD(4), RAD(step * 2.2), 0)
-        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-6), RAD(-step * 1.2), 0)
-        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 26 - 14), 0, RAD(9))
-        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 26 - 14), 0, RAD(-9))
-        targets.rightHip = CF(0, lift * 0.06, 0) * ANGLES(RAD(step * 46), 0, 0)
-        targets.leftHip = CF(0, liftBack * 0.06, 0) * ANGLES(RAD(stepBack * 46), 0, 0)
+        local rightPlant = math.max(0, math.cos(phase))
+        local leftPlant = math.max(0, -math.cos(phase))
+        targets.root = CF(0, (rightPlant + leftPlant) * 0.024, 0) * ANGLES(RAD(-6.5), 0, 0)
+        targets.waist = CF(0, 0, 0) * ANGLES(RAD(3.2), RAD(step * 1.6), 0)
+        targets.neck = CF(0, 0, 0) * ANGLES(RAD(-5.5), RAD(-step * 0.8), 0)
+        targets.rightShoulder = CF(0, 0, 0) * ANGLES(RAD(stepBack * 20 - 10), 0, RAD(5))
+        targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(step * 20 - 10), 0, RAD(-5))
+        targets.rightHip = CF(0, rightPlant * 0.05, step * -0.08) * ANGLES(RAD(step * 38), 0, 0)
+        targets.leftHip = CF(0, leftPlant * 0.05, stepBack * -0.08) * ANGLES(RAD(stepBack * 38), 0, 0)
     elseif state == "Jump" then
         targets.root = CF(0, 0, 0) * ANGLES(RAD(-10), 0, 0)
         targets.neck = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
@@ -615,7 +670,7 @@ function AnimController:TargetPose(state)
         targets.leftShoulder = CF(0, 0, 0) * ANGLES(RAD(18), 0, RAD(-45))
         targets.rightHip = CF(0, 0, 0) * ANGLES(RAD(-8), 0, 0)
         targets.leftHip = CF(0, 0, 0) * ANGLES(RAD(12), 0, 0)
-    elseif state == "AirWalk" then
+    elseif state == "Airwalk" then
         local drift = math.sin(sine * 1.35)
         targets.root = CF(0, drift * 0.08, 0) * ANGLES(RAD(-4), 0, RAD(drift * 1.2))
         targets.waist = CF(0, 0, 0) * ANGLES(RAD(-3), RAD(drift * 2), 0)
@@ -693,7 +748,7 @@ function AnimController:Update(dt)
         self.State = self:AutoState()
     end
 
-    if self.State == "AirWalk" then
+    if self.State == "Airwalk" then
         local camera = workspace.CurrentCamera
         local look = camera and camera.CFrame.LookVector or root.CFrame.LookVector
         local right = camera and camera.CFrame.RightVector or root.CFrame.RightVector
@@ -820,6 +875,13 @@ local function sideMangaCaption(text, duration)
 end
 
 local function kurohitsugiBox(center, lifetime)
+    local denseCore = makePart("Kurohitsugi Dense Black Interior", Vector3.new(12.7, 17.7, 12.7), center * CF(0, 9, 0), Color3.new(0, 0, 0), Enum.Material.Neon, 0.04)
+    tween(denseCore, lifetime or 0.95, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 0.12})
+    task.delay(lifetime or 0.95, function()
+        tween(denseCore, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1})
+        Debris:AddItem(denseCore, 0.34)
+    end)
+
     local specs = {
         {Vector3.new(13, 0.22, 13), CF(0, 0.1, 0)},
         {Vector3.new(13, 0.22, 13), CF(0, 18, 0)},
@@ -830,8 +892,8 @@ local function kurohitsugiBox(center, lifetime)
     }
 
     for i, spec in ipairs(specs) do
-        local panel = makePart("Hado 90 Black Coffin Box Face", spec[1], center * spec[2], i <= 2 and DARK or Color3.fromRGB(18, 7, 31), Enum.Material.ForceField, 0.48)
-        tween(panel, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transparency = 0.18})
+        local panel = makePart("Hado 90 Black Coffin Box Face", spec[1], center * spec[2], i <= 2 and Color3.new(0, 0, 0) or Color3.fromRGB(8, 0, 14), Enum.Material.Neon, 0.02)
+        tween(panel, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transparency = 0.02})
         task.delay(lifetime or 0.78, function()
             tween(panel, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1})
             Debris:AddItem(panel, 0.34)
@@ -866,7 +928,7 @@ local function kurohitsugiInnerPrison(center, lifetime)
         end
     end
 
-    local core = makePart("Inner Kurohitsugi Captive Box", Vector3.new(size, size, size), center * CF(0, 8.8, 0), Color3.fromRGB(34, 7, 56), Enum.Material.ForceField, 0.52)
+    local core = makePart("Inner Kurohitsugi Captive Box", Vector3.new(size, size, size), center * CF(0, 8.8, 0), Color3.fromRGB(9, 0, 16), Enum.Material.Neon, 0.08)
     tween(core, lifetime or 0.9, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 1, Size = Vector3.new(size * 0.6, size * 0.6, size * 0.6)})
     Debris:AddItem(core, (lifetime or 0.9) + 0.1)
 end
@@ -1051,6 +1113,7 @@ end
 
 local function kyokaSuigetsu()
     cutsceneBars(0.9)
+    cinematicCutscene("KYOKA SUIGETSU", "You were never looking at me.", 0.82)
     sideMangaCaption([[Yokoso...
 Look closer.]], 1.25)
     playBodyAnimation("kyoka", 0.9)
@@ -1078,6 +1141,7 @@ end
 
 local function kurohitsugi()
     cutsceneBars(1.25)
+    cinematicCutscene("HADO 90", "Kurohitsugi // Kara Tabut", 1.05)
     sideMangaCaption([[Hado 90
 Black Coffin]], 1.35)
     playBodyAnimation("coffin", 1.05)
@@ -1166,6 +1230,7 @@ Pierce.]], 0.95)
 end
 
 local function shunpo()
+    cinematicCutscene("SHUNPO", "A step outside perception.", 0.58)
     sideMangaCaption("Too slow.", 0.85)
     playBodyAnimation("shunpo", 0.7)
     makeSound("Shunpo", "rbxassetid://9126098978", 0.58, 1.55, root)
@@ -1230,7 +1295,7 @@ end
 
 local function createAirwalkControls()
     local gui = Instance.new("ScreenGui")
-    gui.Name = "RobloxGlop_AirWalk_Controls"
+    gui.Name = "RobloxGlop_Airwalk_Controls"
     gui.ResetOnSpawn = false
     gui.Enabled = false
     gui.Parent = playerGui
@@ -1276,7 +1341,7 @@ local function setAirwalk(enabled)
     airwalkDirection = Vector3.zero
     airwalkGui.Enabled = enabled
     if enabled then
-        AnimController:SetState("AirWalk")
+        AnimController:SetState("Airwalk")
         humanoid.PlatformStand = true
         sideMangaCaption([[Airwalk
 activated]], 0.95)
