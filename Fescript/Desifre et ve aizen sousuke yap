@@ -33,7 +33,7 @@ local airwalkDirection = Vector3.zero
 local lastJumpRequest = 0
 local AnimController = {Motors = {}, BaseC0 = {}, State = "Idle", StateEndsAt = 0, Sine = 0, Alpha = 0, Connected = false}
 local cleanupBin = Instance.new("Folder")
-cleanupBin.Name = "RobloxGlop_Aizen_FE_VFX"
+cleanupBin.Name = "Aizen_VFX"
 cleanupBin.Parent = workspace
 local TRANSLATIONS = {
 	tr = {
@@ -337,7 +337,7 @@ local function blackSpeedLines(origin, direction, count, lifetime)
 		local startPosition = origin + offset - direction.Unit * rng:NextNumber(1, 4)
 		local endPosition = startPosition + direction.Unit * rng:NextNumber(8, 18)
 		task.delay(i * 0.006, function()
-			beamBetween("Black Flash Step Line", startPosition, endPosition, Color3.new(0, 0, 0), rng:NextNumber(0.045, 0.11), lifetime or 0.22)
+			beamBetween("Step Line", startPosition, endPosition, Color3.new(0, 0, 0), rng:NextNumber(0.045, 0.11), lifetime or 0.22)
 		end)
 	end
 end
@@ -352,7 +352,7 @@ local function hadoGroundLoop(center, duration)
 		if rng:NextNumber() < 0.42 then
 			local offset = Vector3.new(rng:NextNumber(-7, 7), 0, rng:NextNumber(-7, 7))
 			local base = center.Position + offset
-			beamBetween("Hado 90 Ground Lightning", base, base + Vector3.new(rng:NextNumber(-1, 1), rng:NextNumber(5, 12), rng:NextNumber(-1, 1)), ACCENT, 0.09, 0.18)
+			beamBetween("Ground Bolt", base, base + Vector3.new(rng:NextNumber(-1, 1), rng:NextNumber(5, 12), rng:NextNumber(-1, 1)), ACCENT, 0.09, 0.18)
 			orb(base + Vector3.new(0, 0.25, 0), rng:NextNumber(0.45, 0.9), Color3.fromRGB(95, 24, 170), 0.22)
 		end
 	end)
@@ -366,7 +366,7 @@ local function kurohitsugiMeshSequence(center)
 	local ids = {MESH_KURO_1, MESH_KURO_2, MESH_KURO_3, MESH_KURO_4}
 	for i, meshId in ipairs(ids) do
 		task.delay((i - 1) * 0.16, function()
-			meshVFX("Kurohitsugi Mesh Phase " .. i, meshId, center * CF(0, 0.25, 0), Vector3.new(11 + i * 1.3, 11 + i * 1.3, 11 + i * 1.3), i == 1 and GOLD or ACCENT, 0.3, i == 1 and 0.05 or 0.16)
+			meshVFX("Kuro Mesh " .. i, meshId, center * CF(0, i * 2.2, 0), Vector3.new(13 + i * 1.5, 13 + i * 1.5, 13 + i * 1.5), i == 1 and GOLD or ACCENT, 0.65, i == 1 and 0 or 0.06)
 		end)
 	end
 end
@@ -382,7 +382,7 @@ local function giantPurpleExplosion(position)
 		local startPosition = position + Vector3.new(rng:NextNumber(-10, 10), rng:NextNumber(1, 16), rng:NextNumber(-10, 10))
 		local endPosition = position + Vector3.new(rng:NextNumber(-18, 18), rng:NextNumber(-2, 20), rng:NextNumber(-18, 18))
 		task.delay(i * 0.01, function()
-			beamBetween("Final Kurohitsugi Explosion Line", startPosition, endPosition, i % 2 == 0 and WHITE or ACCENT, 0.16, 0.38)
+			beamBetween("Final Line", startPosition, endPosition, i % 2 == 0 and WHITE or ACCENT, 0.16, 0.38)
 		end)
 	end
 end
@@ -681,7 +681,7 @@ function AnimController:Update(dt)
 	if not character or not root or not humanoid or humanoid.Health <= 0 then
 		return
 	end
-	self.Sine += dt * (self.Change * 8)
+	self.Sine += dt * 8
 	local locked = self.StateEndsAt > os.clock()
 	if not locked then
 		self.State = self:AutoState()
@@ -711,6 +711,12 @@ local function installProceduralAnimationEngine()
 	if animate then
 		animate.Disabled = true
 	end
+	local animator = humanoid:FindFirstChildOfClass("Animator")
+	if animator then
+		for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
+			track:Stop(0)
+		end
+	end
 	AnimController:RefreshMotors()
 	if not AnimController.Connected then
 		AnimController.Connected = true
@@ -718,18 +724,6 @@ local function installProceduralAnimationEngine()
 			AnimController:Update(dt)
 		end)
 	end
-	player.CharacterAdded:Connect(function(newCharacter)
-		task.wait(0.45)
-		character = newCharacter
-		humanoid = character:WaitForChild("Humanoid")
-		root = character:WaitForChild("HumanoidRootPart")
-		local newAnimate = character:FindFirstChild("Animate")
-		if newAnimate then
-			newAnimate.Disabled = true
-		end
-		AnimController:RefreshMotors()
-		AnimController:SetState("Idle")
-	end)
 end
 local function playBodyAnimation(style, duration)
 	local states = {
@@ -756,7 +750,7 @@ end
 local function blackCoffinMangaBurst(center, count)
 	for i = 1, count do
 		local height = rng:NextNumber(5, 21)
-		local blade = makePart("Manga Ink Kurohitsugi Spike", Vector3.new(0.18, height, 0.18), center * CFrame.new(rng:NextNumber(-6, 6), height / 2, rng:NextNumber(-6, 6)), i % 2 == 0 and Color3.new(0, 0, 0) or ACCENT, Enum.Material.Neon, 0.04)
+		local blade = makePart("Ink Spike", Vector3.new(0.18, height, 0.18), center * CFrame.new(rng:NextNumber(-6, 6), height / 2, rng:NextNumber(-6, 6)), i % 2 == 0 and Color3.new(0, 0, 0) or ACCENT, Enum.Material.Neon, 0.04)
 		blade.CFrame = blade.CFrame * CFrame.Angles(rng:NextNumber(-0.35, 0.35), rng:NextNumber(-3.14, 3.14), rng:NextNumber(-0.35, 0.35))
 		tween(blade, 0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1, Size = Vector3.new(0.02, height * 1.2, 0.02)})
 		Debris:AddItem(blade, 0.58)
@@ -799,7 +793,7 @@ local function sideMangaCaption(text, duration)
 	end)
 end
 local function kurohitsugiBox(center, lifetime)
-	local denseCore = makePart("Kurohitsugi Dense Black Interior", Vector3.new(12.7, 17.7, 12.7), center * CF(0, 9, 0), Color3.new(0, 0, 0), Enum.Material.Neon, 0.04)
+	local denseCore = makePart("Black Interior", Vector3.new(12.7, 17.7, 12.7), center * CF(0, 9, 0), Color3.new(0, 0, 0), Enum.Material.Neon, 0.04)
 	tween(denseCore, lifetime or 0.95, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 0.12})
 	task.delay(lifetime or 0.95, function()
 		tween(denseCore, 0.28, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1})
@@ -814,7 +808,7 @@ local function kurohitsugiBox(center, lifetime)
 		{Vector3.new(13, 18, 0.22), CF(0, 9, -6.5)},
 	}
 	for i, spec in ipairs(specs) do
-		local panel = makePart("Hado 90 Black Coffin Box Face", spec[1], center * spec[2], i <= 2 and Color3.new(0, 0, 0) or Color3.fromRGB(8, 0, 14), Enum.Material.Neon, 0.02)
+		local panel = makePart("Coffin Face", spec[1], center * spec[2], i <= 2 and Color3.new(0, 0, 0) or Color3.fromRGB(8, 0, 14), Enum.Material.Neon, 0.02)
 		tween(panel, 0.18, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, {Transparency = 0.02})
 		task.delay(lifetime or 0.78, function()
 			tween(panel, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In, {Transparency = 1})
@@ -825,14 +819,14 @@ local function kurohitsugiBox(center, lifetime)
 		local angle = (math.pi * 2 / 12) * i
 		local startPosition = (center * CF(math.cos(angle) * 6.7, 0.2, math.sin(angle) * 6.7)).Position
 		local endPosition = (center * CF(math.cos(angle) * 6.7, 18, math.sin(angle) * 6.7)).Position
-		beamBetween("Kurohitsugi White Edge", startPosition, endPosition, WHITE, 0.07, lifetime or 0.78)
+		beamBetween("White Edge", startPosition, endPosition, WHITE, 0.07, lifetime or 0.78)
 	end
 end
 local function kurohitsugiInnerPrison(center, lifetime)
 	local size = 5.4
 	for x = -1, 1, 2 do
 		for z = -1, 1, 2 do
-			beamBetween("Inner Coffin Vertical Seal", (center * CF(x * size / 2, 3, z * size / 2)).Position, (center * CF(x * size / 2, 14.5, z * size / 2)).Position, GOLD, 0.09, lifetime or 0.9)
+			beamBetween("Vertical Seal", (center * CF(x * size / 2, 3, z * size / 2)).Position, (center * CF(x * size / 2, 14.5, z * size / 2)).Position, GOLD, 0.09, lifetime or 0.9)
 		end
 	end
 	for y = 4, 14, 5 do
@@ -843,10 +837,10 @@ local function kurohitsugiInnerPrison(center, lifetime)
 			(center * CF(-size / 2, y, size / 2)).Position,
 		}
 		for i = 1, #corners do
-			beamBetween("Inner Coffin Square Seal", corners[i], corners[(i % #corners) + 1], i == 1 and WHITE or GOLD, 0.08, lifetime or 0.9)
+			beamBetween("Square Seal", corners[i], corners[(i % #corners) + 1], i == 1 and WHITE or GOLD, 0.08, lifetime or 0.9)
 		end
 	end
-	local core = makePart("Inner Kurohitsugi Captive Box", Vector3.new(size, size, size), center * CF(0, 8.8, 0), Color3.fromRGB(9, 0, 16), Enum.Material.Neon, 0.08)
+	local core = makePart("Captive Box", Vector3.new(size, size, size), center * CF(0, 8.8, 0), Color3.fromRGB(9, 0, 16), Enum.Material.Neon, 0.08)
 	tween(core, lifetime or 0.9, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {Transparency = 1, Size = Vector3.new(size * 0.6, size * 0.6, size * 0.6)})
 	Debris:AddItem(core, (lifetime or 0.9) + 0.1)
 end
@@ -1052,7 +1046,7 @@ Black Coffin]], 1.35)
 		local angle = (math.pi * 2 / 16) * i
 		local x = math.cos(angle) * 6.2
 		local z = math.sin(angle) * 6.2
-		local pillar = makePart("Hado 90 Kurohitsugi Wall", Vector3.new(0.5, 0.2, 0.5), center * CFrame.new(x, 0, z), DARK, Enum.Material.Neon, 0.08)
+		local pillar = makePart("Coffin Wall", Vector3.new(0.5, 0.2, 0.5), center * CFrame.new(x, 0, z), DARK, Enum.Material.Neon, 0.08)
 		pillars[#pillars + 1] = pillar
 		task.delay(i * 0.018, function()
 			tween(pillar, 0.42, Enum.EasingStyle.Back, Enum.EasingDirection.Out, {
@@ -1077,7 +1071,7 @@ Black Coffin]], 1.35)
 			local slashStart = center.Position + Vector3.new(rng:NextNumber(-6, 6), rng:NextNumber(2, 19), rng:NextNumber(-6, 6))
 			local slashEnd = slashStart + Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(-7, 1), rng:NextNumber(-4, 4))
 			task.delay(i * 0.012, function()
-				beamBetween("Kurohitsugi Severing Line", slashStart, slashEnd, i % 3 == 0 and GOLD or ACCENT, 0.12, 0.3)
+				beamBetween("Severing Line", slashStart, slashEnd, i % 3 == 0 and GOLD or ACCENT, 0.12, 0.3)
 			end)
 		end
 		for _, pillar in ipairs(pillars) do
@@ -1479,12 +1473,31 @@ local function installTools()
 	createTool("Shunpo", "", 3, shunpo)
 	createTool("Reiatsu Crush", "", 7, reiatsuCrush)
 end
+local function deathReset()
+	humanoid.Died:Connect(function()
+		airwalkActive=false
+		airwalkDirection=Vector3.zero
+		cleanupBin:ClearAllChildren()
+		AnimController:SetState("Idle")
+	end)
+end
 installProceduralAnimationEngine()
 installTools()
 installKeyboardShortcuts()
 installAirwalkControls()
 installAmbientAura()
 installPassiveDominion()
+deathReset()
+player.CharacterAdded:Connect(function(newCharacter)
+	task.wait(0.35)
+	character = newCharacter
+	humanoid = character:WaitForChild("Humanoid")
+	root = character:WaitForChild("HumanoidRootPart")
+	installProceduralAnimationEngine()
+	installTools()
+	installAmbientAura()
+	deathReset()
+end)
 createIntroGui(function()
 	local text = TRANSLATIONS[selectedLanguage]
 	print("[RobloxGlop FE Aizen] " .. text.ready .. " " .. text.tip)
