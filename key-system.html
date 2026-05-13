@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Aizen FE Access</title>
 <style>
-body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,#4c1d95 0,#090512 38%,#020106 100%);font-family:Inter,Arial,sans-serif;color:#f8f7ff}.card{width:min(92vw,660px);padding:34px;border:1px solid #8b5cf655;border-radius:28px;background:#11091fcc;box-shadow:0 0 70px #7c3aed55;text-align:center;backdrop-filter:blur(18px)}h1{font-size:42px;margin:0 0 8px}.muted{color:#c4b5fd}.key{margin:24px 0;padding:18px;border-radius:16px;background:#05020d;border:1px solid #a855f777;font:800 22px JetBrains Mono,monospace;letter-spacing:.06em;color:#fff;word-break:break-word}.steps{display:grid;gap:10px;margin:22px 0}.step{padding:12px;border:1px solid #ffffff14;border-radius:14px;background:#ffffff0a;color:#c4b5fd}.step.done{border-color:#34d39988;color:#34d399}.smart{margin:16px 0;padding:12px;border:1px solid #a855f744;border-radius:14px;background:#2e106511;color:#d8b4fe;font-size:13px;line-height:1.55}button,a.btn{border:0;border-radius:14px;padding:14px 22px;margin:6px;background:linear-gradient(135deg,#6d28d9,#d946ef);color:#fff;font-weight:900;cursor:pointer;text-decoration:none;display:inline-block}button:disabled{opacity:.45;cursor:not-allowed}small{display:block;margin-top:18px;color:#a78bfa}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,#4c1d95 0,#090512 38%,#020106 100%);font-family:Inter,Arial,sans-serif;color:#f8f7ff}.card{width:min(92vw,700px);padding:34px;border:1px solid #8b5cf655;border-radius:28px;background:#11091fcc;box-shadow:0 0 70px #7c3aed55;text-align:center;backdrop-filter:blur(18px)}h1{font-size:42px;margin:0 0 8px}.muted{color:#c4b5fd}.key{margin:24px 0;padding:18px;border-radius:16px;background:#05020d;border:1px solid #a855f777;font:800 22px JetBrains Mono,monospace;letter-spacing:.06em;color:#fff;word-break:break-word}.steps{display:grid;gap:10px;margin:22px 0}.step{padding:12px;border:1px solid #ffffff14;border-radius:14px;background:#ffffff0a;color:#c4b5fd}.step.done{border-color:#34d39988;color:#34d399}.smart{margin:16px 0;padding:12px;border:1px solid #a855f744;border-radius:14px;background:#2e106511;color:#d8b4fe;font-size:13px;line-height:1.55}button,a.btn{border:0;border-radius:14px;padding:14px 22px;margin:6px;background:linear-gradient(135deg,#6d28d9,#d946ef);color:#fff;font-weight:900;cursor:pointer;text-decoration:none;display:inline-block}button:disabled{opacity:.45;cursor:not-allowed}small{display:block;margin-top:18px;color:#a78bfa}
 </style>
 </head>
 <body>
@@ -18,35 +18,91 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial
 <div id="result" class="key" style="display:none"></div>
 <button id="copy" style="display:none">COPY KEY</button>
 <a id="scriptLink" class="btn" style="display:none" href="/aizen/script">OPEN SCRIPT ACCESS</a>
-<small id="hint">Routes: /aizen/key1 through /aizen/key50. Every visit gives one random key from the 50-key pool.</small>
+<small id="hint">Routes: /aizen/key1 through /aizen/key50. Each route always returns its own fixed key (route locked).</small>
 </main>
 <script>
-const keys=["AIZEN-PRISM-01", "KYOKA-MIRROR-02", "HADO90-VOID-03", "REIATSU-CROWN-04", "RAIKOHO-SPARK-05", "SHUNPO-PHASE-06", "SOUL-KING-07", "GOTEI-SHADOW-08", "SENKAIMON-EDGE-09", "ULTRA-HYPNOSIS-10", "BLACK-COFFIN-11", "PURE-ILLUSION-12", "VOID-SIGIL-13", "ROYAL-REIATSU-14", "LIGHTNING-ARC-15", "FLASH-STEP-16", "SPIRIT-THREAD-17", "GLASS-BREAK-18", "MANGA-CUT-19", "ASCENDANT-20", "ETERNAL-LOTUS-21", "MOONLESS-22", "PURPLE-SEAL-23", "WHITE-EDGE-24", "STORM-LANCE-25", "AFTERIMAGE-26", "CAPTAIN-AURA-27", "FIFTH-SEAT-28", "HYPNOTIC-BLADE-29", "CALM-KING-30", "SILENT-THRONE-31", "DARK-PALACE-32", "COFFIN-BLOOM-33", "FINAL-CHANT-34", "RAI-IMPACT-35", "BLUR-WALK-36", "CRYSTAL-SOUL-37", "VOID-GATE-38", "ABSOLUTE-39", "NO-ESCAPE-40", "WELCOME-LORD-41", "SWORD-SHINE-42", "NIGHT-ORCHID-43", "PRESSURE-44", "THUNDER-45", "STEP-BEYOND-46", "FALL-KNEEL-47", "KINGS-ORDER-48", "LAST-SIGHT-49", "PERFECT-AIZEN-50"]
+const keys=[
+"X7K2MP","Q9L3NR","W5T8VS","R1Y6UB","A8C4DW","M3F9EJ","P2H6KT","Z4J7LM","N5V1QR","B8X3SW",
+"G2Y9TR","K6M4UZ","D1P5WA","L7R2CV","E3S8BX","F9T1NY","J4U6HD","O2V5JG","C6W3KQ","T8Z7LP",
+"V1A5MR","W4B8NS","X9C2PT","Y2D6QU","Z7E3RV","A3F5SW","B6G8TX","C1H4UY","D5I7VZ","E8J2WA",
+"F4K9XB","G7L1YC","H2M5ZD","I6N8AE","J3P2BF","K9Q4CG","L1R7DH","M5S3EI","N8T6FJ","O2U9GK",
+"P6V1HL","Q3W4IM","R7X8JN","S1Y5KO","T4Z2LP","U8A9MQ","V2B3NR","W6C7OS","X9D1PT","Y3E5QU"
+];
 const params=new URLSearchParams(location.search);
 const path=location.pathname.toLowerCase();
 const mode=path.includes('/script')?'script':'key';
 const routeMatch=path.match(/\/key([1-9]|[1-4][0-9]|50)(?:\/|$)/);
 const routeNumber=routeMatch?Number(routeMatch[1]):1;
 const validSet=new Set(keys);
-const requested=(params.get('key')||'').toUpperCase().replace(/\s+/g,'');
-let exactKey=validSet.has(requested)?requested:keys[Math.floor(Math.random()*keys.length)];
+const requestedRaw=(params.get('key')||'').toUpperCase().replace(/\s+/g,'');
+const requested=requestedRaw.replace(/^KEY\d+-/,'');
+const submittedRaw=(params.get('submitted')||'').toUpperCase().replace(/\s+/g,'');
+const submitted=submittedRaw.replace(/^KEY\d+-/,'');
+
+const keyByRoute=Object.freeze(keys.map((key,index)=>({route:index+1,key})));
+
+function getRouteByKey(keyValue){
+  const index=keys.indexOf(keyValue);
+  return index===-1?null:index+1;
+}
+
+function isKnownKey(keyValue){
+  return validSet.has(keyValue);
+}
+
+function getRouteKey(route){
+  const safeRoute=Math.max(1,Math.min(50,route));
+  return keyByRoute[safeRoute-1].key;
+}
+
+const routeKey=getRouteKey(routeNumber);
+const exactKey=validSet.has(requested)?requested:routeKey;
+const submittedIsValid=isKnownKey(submitted);
+const submittedRoute=submittedIsValid?getRouteByKey(submitted):null;
+
 title.textContent=mode==='script'?'AIZEN SCRIPT ACCESS':`AIZEN KEY ${routeNumber} ACCESS`;
-desc.textContent=mode==='script'?'Pass the steps to reach script access. Refresh starts over.':'Pass the steps to reveal one random key from the 50-key pool. Refresh starts over.';
-smart.innerHTML=mode==='script'?'Smart scan: script access mode detected. Complete the steps first.':`Smart scan: route <b>/aizen/key${routeNumber}</b> detected. ${validSet.has(requested)?'A valid URL key override was detected.':'Random 1/50 key generation is ready. No 24-hour memory is used.'}`;
+desc.textContent=mode==='script'
+  ?'Pass the steps to reach script access. Refresh starts over.'
+  :'Pass the steps to reveal your exact route key. Each route always returns its own fixed key.';
+smart.innerHTML=mode==='script'
+  ?`Smart scan: script access mode detected. ${submitted? (submittedIsValid?`Submitted key is recognized from <b>/aizen/key${submittedRoute}</b>.`:'Submitted key is not in the 50-key list.'):'Add ?submitted=A8C4DW (or KEY5-A8C4DW) in URL to verify instantly.'}`
+  :`Smart scan: route <b>/aizen/key${routeNumber}</b> detected. Fixed mapping active: <b>/aizen/key${routeNumber}</b> always returns <b>${routeKey}</b>.`;
+
 const stepNames=['Wait 5 seconds','Confirm website visit','Scan requested key route','Final security check','Reveal exact key'];
 let step=0,value='';
 steps.innerHTML=stepNames.map((s,i)=>`<div class="step" id="s${i}">${i+1}. ${s}</div>`).join('');
+
 function finish(){
-  value=mode==='script'?'SCRIPT ACCESS UNLOCKED — return to Roblox and paste any fresh website key.':exactKey;
-  result.textContent=value;result.style.display='block';copy.style.display='inline-block';if(mode==='key')scriptLink.style.display='inline-block';action.style.display='none';
+  value=mode==='script'
+    ?'SCRIPT ACCESS UNLOCKED — return to Roblox and paste any fresh website key.'
+    :exactKey;
+  result.textContent=value;
+  result.style.display='block';
+  copy.style.display='inline-block';
+  if(mode==='key')scriptLink.style.display='inline-block';
+  action.style.display='none';
 }
+
 function next(){
   if(step>0)document.getElementById('s'+(step-1)).classList.add('done');
-  if(step>=stepNames.length){finish();return}
-  action.disabled=true;action.textContent='WAIT...';let left=step===0?5:2;
-  const tick=setInterval(()=>{action.textContent=`${stepNames[step]} (${left}s)`;if(left--<=0){clearInterval(tick);action.disabled=false;action.textContent=step+1===stepNames.length?'FINISH':'CONTINUE';step++}},1000);
+  if(step>=stepNames.length){finish();return;}
+  action.disabled=true;
+  action.textContent='WAIT...';
+  let left=step===0?5:2;
+  const tick=setInterval(()=>{
+    action.textContent=`${stepNames[step]} (${left}s)`;
+    if(left--<=0){
+      clearInterval(tick);
+      action.disabled=false;
+      action.textContent=step+1===stepNames.length?'FINISH':'CONTINUE';
+      step++;
+    }
+  },1000);
 }
-action.onclick=next;copy.onclick=()=>navigator.clipboard.writeText(value);next();
+
+action.onclick=next;
+copy.onclick=()=>navigator.clipboard.writeText(value);
+next();
 </script>
 </body>
 </html>
