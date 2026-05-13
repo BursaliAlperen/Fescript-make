@@ -32,7 +32,10 @@ local activeCooldowns = {}
 local selectedLanguage = "en"
 local airwalkActive = false
 local airwalkDirection = Vector3.zero
+	airwalkVerticalMode = 0
 local lastJumpRequest = 0
+local airwalkVerticalMode = 0
+local shiftLockEnabled = false
 local ANIMS={kyoka=54584713,coffin=48138189,raikoho=93648331,shunpo=193307200,reiatsu=220910360}
 local AnimController = {Motors = {}, BaseC0 = {}, State = "Idle", StateEndsAt = 0, Sine = 0, Alpha = 0, Connected = false}
 local cleanupBin = Instance.new("Folder")
@@ -653,7 +656,10 @@ function AnimController:Update(dt)
 		local camera = workspace.CurrentCamera
 		local look = camera and camera.CFrame.LookVector or root.CFrame.LookVector
 		local right = camera and camera.CFrame.RightVector or root.CFrame.RightVector
-		local move = (look * airwalkDirection.Z) + (right * airwalkDirection.X) + Vector3.new(0, airwalkDirection.Y, 0)
+		local baseInput = humanoid and humanoid.MoveDirection or Vector3.zero
+		local localX = baseInput:Dot(right)
+		local localZ = baseInput:Dot(look)
+		local move = (look * (airwalkDirection.Z + localZ)) + (right * (airwalkDirection.X + localX)) + Vector3.new(0, airwalkDirection.Y, 0)
 		root.AssemblyLinearVelocity = move * 34 + Vector3.new(0, math.sin(os.clock() * 3) * 1.2, 0)
 		local flatLook = Vector3.new(look.X, 0, look.Z)
 		if flatLook.Magnitude > 0.05 then
@@ -945,6 +951,36 @@ local function cooldown(tool, seconds)
 	end)
 	return true
 end
+
+local function setShiftLock(enabled)
+	shiftLockEnabled = enabled
+	if player then
+		player.DevEnableMouseLock = enabled
+	end
+	if UserInputService.MouseBehavior ~= Enum.MouseBehavior.Default then
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+	end
+	notify("Aizen FE", enabled and "Shift Lock enabled" or "Shift Lock disabled", 3)
+end
+
+local function smoothLookAt(fromPos, lookPos, duration)
+	local cam = workspace.CurrentCamera
+	if not cam then return end
+	local originalType, originalCFrame = cam.CameraType, cam.CFrame
+	cam.CameraType = Enum.CameraType.Scriptable
+	task.spawn(function()
+		local start = os.clock()
+		while os.clock() - start < duration do
+			local alpha = math.clamp((os.clock() - start) / duration, 0, 1)
+			local eased = alpha * alpha * (3 - 2 * alpha)
+			cam.CFrame = cam.CFrame:Lerp(CFrame.new(fromPos, lookPos), eased)
+			RunService.RenderStepped:Wait()
+		end
+		cam.CFrame = originalCFrame
+		cam.CameraType = originalType
+	end)
+end
+
 local function createTool(name, icon, cooldownSeconds, callback)
 	local tool = Instance.new("Tool")
 	tool.Name = name
@@ -988,17 +1024,18 @@ Look closer.]], 1.25)
 	end
 end
 local function kurohitsugi()
-	cutsceneBars(2.35)
+	cutsceneBars(3.8)
 	cinematicCutscene("HADO 90", "Kurohitsugi // Black Coffin", 1.7)
 	sideMangaCaption([[Hado 90
 Black Coffin]], 1.35)
-	playBodyAnimation("coffin", 1.95)
+	playBodyAnimation("coffin", 2.8)
 	flash(DARK, 0.3, 0.7)
 	cameraPulse(0.18, 1.1)
 	publicPose("Hado 90", 2.1, Vector3.new(0, 11, 0))
 	local center = root.CFrame * CFrame.new(0, 0, -14)
 	focusCam((root.CFrame*CF(1.4,1.5,-1.8)).Position,(character:FindFirstChild("Head") or root).Position+Vector3.new(0,0.15,0),3.35)
-	orb((root.CFrame*CF(1.4,1.4,-1.8)).Position,1.1,ACCENT,0.6)
+	task.delay(0.35,function() orb((root.CFrame*CF(1.4,1.6,-1.8)).Position,1.35,WHITE,0.9) end)
+	orb((root.CFrame*CF(1.4,1.4,-1.8)).Position,1.1,ACCENT,0.9)
 	sigil(center * CFrame.Angles(math.rad(90), 0, 0), 9, DARK, 0.9, 20)
 	hadoGroundLoop(center, 1.05)
 	kurohitsugiMeshSequence(center)
@@ -1023,11 +1060,13 @@ Black Coffin]], 1.35)
 			})
 		end)
 	end
-	task.delay(1.45, function()
+	task.delay(2.15, function()
 		orb(center.Position + Vector3.new(0, 9, 0), 5.2, Color3.fromRGB(52, 17, 91), 0.6)
 		blackCoffinMangaBurst(center, 34)
 		distortionBarrier(0.7, 19, 5)
+		smoothLookAt(center.Position+Vector3.new(0,17,24), center.Position+Vector3.new(0,8,0), 1.7)
 		focusCam(center.Position+Vector3.new(0,17,24),center.Position+Vector3.new(0,8,0),1.45)
+		task.delay(0.75, function() smoothLookAt(center.Position+Vector3.new(0,11,18), (character:FindFirstChild("Head") or root).Position + Vector3.new(0,2.8,0), 1.15) end)
 		giantPurpleExplosion(center.Position + Vector3.new(0, 8, 0))
 		orb(center.Position+Vector3.new(0,8,0),9,ACCENT,0.85)
 		ring(center*CF(0,8,0)*ANGLES(RAD(90),0,0),22,WHITE,0.95,0.18)
@@ -1187,8 +1226,8 @@ local function setAirwalk(enabled)
 	if enabled then
 		AnimController:SetState("Airwalk")
 		humanoid.PlatformStand = true
-		sideMangaCaption([[Airwalk
-activated]], 0.95)
+		sideMangaCaption([[Airwalk enabled
+Double jump to change vertical mode]], 1.1)
 		distortionBarrier(0.45, 10, 3)
 	else
 		humanoid.PlatformStand = false
@@ -1201,7 +1240,13 @@ local function installAirwalkControls()
 	UserInputService.JumpRequest:Connect(function()
 		local now = os.clock()
 		if now - lastJumpRequest < 0.35 then
-			setAirwalk(not airwalkActive)
+			if not airwalkActive then
+				setAirwalk(true)
+			else
+				airwalkVerticalMode = (airwalkVerticalMode + 1) % 3
+				airwalkDirection = Vector3.new(airwalkDirection.X, airwalkVerticalMode == 1 and 1 or (airwalkVerticalMode == 2 and -1 or 0), airwalkDirection.Z)
+				notify("Airwalk", airwalkVerticalMode == 0 and "Vertical hold: Neutral" or (airwalkVerticalMode == 1 and "Vertical hold: Up" or "Vertical hold: Down"), 2.5)
+			end
 		end
 		lastJumpRequest = now
 	end)
@@ -1249,6 +1294,8 @@ local function installKeyboardShortcuts()
 			shunpo()
 		elseif input.KeyCode == Enum.KeyCode.B then
 			reiatsuCrush()
+		elseif input.KeyCode == Enum.KeyCode.LeftShift then
+			setShiftLock(not shiftLockEnabled)
 		end
 	end)
 end
