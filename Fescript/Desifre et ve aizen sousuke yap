@@ -918,9 +918,13 @@ local function kyokaBehindTeleport()
 	local behind = targetRoot.CFrame * CFrame.new(0, 0, 5.2)
 	glassShatterBurst(before, root.CFrame.LookVector, 24)
 	ghostClone(Vector3.zero, 0.55)
-	root.CFrame = CFrame.new(behind.Position, targetRoot.Position)
+	for i = 1, 4 do
+		root.CFrame = root.CFrame:Lerp(CFrame.new(behind.Position, targetRoot.Position), i / 4)
+		RunService.RenderStepped:Wait()
+	end
 	glassShatterBurst(root.Position + Vector3.new(0, 2, 0), -root.CFrame.LookVector, 18)
 	collapseTarget(targetModel, 1.25)
+	markAndFlingTarget(targetModel, root.Position, 84)
 	sideMangaCaption([[Behind you.]], 0.9)
 	return true
 end
@@ -1011,7 +1015,9 @@ Look closer.]], 1.25)
 	flash(ACCENT, 0.18, 0.45)
 	cameraPulse(0.08, 0.35)
 	bladeTrail(1.15)
-	kyokaBehindTeleport()
+	if not kyokaBehindTeleport() then
+		flingFrontTarget(90)
+	end
 	publicPose("Kyoka", 1.1, root.CFrame.LookVector * 8 + Vector3.new(0, 14, 0))
 	local origin = root.CFrame
 	sigil(origin * CFrame.Angles(math.rad(90), 0, 0), 5.5, ACCENT, 0.75, 16)
@@ -1285,6 +1291,42 @@ local function installAirwalkControls()
 		end
 	end)
 end
+
+local function createShiftLockButton()
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "Aizen_ShiftLock_Button"
+	gui.ResetOnSpawn = false
+	gui.Parent = playerGui
+	local button = Instance.new("TextButton")
+	button.Name = "ShiftLockToggle"
+	button.AnchorPoint = Vector2.new(1, 1)
+	button.Position = UDim2.new(1, -22, 1, -22)
+	button.Size = UDim2.fromOffset(120, 40)
+	button.BackgroundColor3 = Color3.fromRGB(20, 10, 38)
+	button.TextColor3 = WHITE
+	button.TextScaled = true
+	button.Font = Enum.Font.GothamBlack
+	button.Text = "SHIFTLOCK: OFF"
+	button.Parent = gui
+	Instance.new("UICorner", button).CornerRadius = UDim.new(0, 10)
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = ACCENT
+	stroke.Thickness = 2
+	stroke.Parent = button
+	button.MouseButton1Click:Connect(function()
+		setShiftLock(not shiftLockEnabled)
+		button.Text = shiftLockEnabled and "SHIFTLOCK: ON" or "SHIFTLOCK: OFF"
+		tween(button, 0.16, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {BackgroundColor3 = shiftLockEnabled and ACCENT or Color3.fromRGB(20, 10, 38)})
+	end)
+end
+
+local function flingFrontTarget(power)
+	local model = select(1, findFrontTarget(60, 0.12))
+	if model then
+		markAndFlingTarget(model, root.Position, power or 120)
+	end
+end
+
 local function installKeyboardShortcuts()
 	UserInputService.InputBegan:Connect(function(input, processed)
 		if processed or not root then
@@ -1516,6 +1558,7 @@ local function startKit()
 	installAirwalkControls()
 	installAmbientAura()
 	installPassiveDominion()
+	createShiftLockButton()
 	deathReset()
 	player.CharacterAdded:Connect(function(newCharacter)
 		task.wait(0.35)
