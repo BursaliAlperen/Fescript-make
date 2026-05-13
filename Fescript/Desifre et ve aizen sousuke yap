@@ -32,18 +32,53 @@ local activeCooldowns = {}
 local selectedLanguage = "en"
 local airwalkActive = false
 local airwalkDirection = Vector3.zero
+	airwalkVerticalMode = 0
 local lastJumpRequest = 0
+local airwalkVerticalMode = 0
+local shiftLockEnabled = false
+local cameraSequenceToken = 0
 local ANIMS={kyoka=54584713,coffin=48138189,raikoho=93648331,shunpo=193307200,reiatsu=220910360}
 local AnimController = {Motors = {}, BaseC0 = {}, State = "Idle", StateEndsAt = 0, Sine = 0, Alpha = 0, Connected = false}
 local cleanupBin = Instance.new("Folder")
 cleanupBin.Name = "Aizen_VFX"
 cleanupBin.Parent = workspace
 local KEY_BASE_URL="https://robloxglop.onrender.com/aizen"
-local KEY_LIST={"AIZEN-PRISM-01","KYOKA-MIRROR-02","HADO90-VOID-03","REIATSU-CROWN-04","RAIKOHO-SPARK-05","SHUNPO-PHASE-06","SOUL-KING-07","GOTEI-SHADOW-08","SENKAIMON-EDGE-09","ULTRA-HYPNOSIS-10","BLACK-COFFIN-11","PURE-ILLUSION-12","VOID-SIGIL-13","ROYAL-REIATSU-14","LIGHTNING-ARC-15","FLASH-STEP-16","SPIRIT-THREAD-17","GLASS-BREAK-18","MANGA-CUT-19","ASCENDANT-20","ETERNAL-LOTUS-21","MOONLESS-22","PURPLE-SEAL-23","WHITE-EDGE-24","STORM-LANCE-25","AFTERIMAGE-26","CAPTAIN-AURA-27","FIFTH-SEAT-28","HYPNOTIC-BLADE-29","CALM-KING-30","SILENT-THRONE-31","DARK-PALACE-32","COFFIN-BLOOM-33","FINAL-CHANT-34","RAI-IMPACT-35","BLUR-WALK-36","CRYSTAL-SOUL-37","VOID-GATE-38","ABSOLUTE-39","NO-ESCAPE-40","WELCOME-LORD-41","SWORD-SHINE-42","NIGHT-ORCHID-43","PRESSURE-44","THUNDER-45","STEP-BEYOND-46","FALL-KNEEL-47","KINGS-ORDER-48","LAST-SIGHT-49","PERFECT-AIZEN-50"}
-local KEY_ROUTE=rng:NextInteger(1,#KEY_LIST)
+local KEY_LIST={"X7K2MP","Q9L3NR","W5T8VS","R1Y6UB","A8C4DW","M3F9EJ","P2H6KT","Z4J7LM","N5V1QR","B8X3SW","G2Y9TR","K6M4UZ","D1P5WA","L7R2CV","E3S8BX","F9T1NY","J4U6HD","O2V5JG","C6W3KQ","T8Z7LP","V1A5MR","W4B8NS","X9C2PT","Y2D6QU","Z7E3RV","A3F5SW","B6G8TX","C1H4UY","D5I7VZ","E8J2WA","F4K9XB","G7L1YC","H2M5ZD","I6N8AE","J3P2BF","K9Q4CG","L1R7DH","M5S3EI","N8T6FJ","O2U9GK","P6V1HL","Q3W4IM","R7X8JN","S1Y5KO","T4Z2LP","U8A9MQ","V2B3NR","W6C7OS","X9D1PT","Y3E5QU"}
+local KEY_CACHE_FILE = "aizen_key_route_cache.json"
+local KEY_CACHE_TTL = 600
+
+local function readCachedRoute()
+	if not isfile or not readfile or not isfile(KEY_CACHE_FILE) then
+		return nil
+	end
+	local ok, data = pcall(function()
+		return game:GetService("HttpService"):JSONDecode(readfile(KEY_CACHE_FILE))
+	end)
+	if not ok or type(data) ~= "table" then return nil end
+	if type(data.route) ~= "number" or type(data.expiresAt) ~= "number" then return nil end
+	if os.time() >= data.expiresAt then return nil end
+	if data.route < 1 or data.route > #KEY_LIST then return nil end
+	return data.route
+end
+
+local function writeCachedRoute(route)
+	if not writefile then return end
+	pcall(function()
+		local payload = game:GetService("HttpService"):JSONEncode({route = route, expiresAt = os.time() + KEY_CACHE_TTL})
+		writefile(KEY_CACHE_FILE, payload)
+	end)
+end
+
+local KEY_ROUTE=readCachedRoute() or rng:NextInteger(1,#KEY_LIST)
+writeCachedRoute(KEY_ROUTE)
 local KEY_WEBSITE=KEY_BASE_URL.."/key"..tostring(KEY_ROUTE)
 local KEY_SET={}
-for _,key in ipairs(KEY_LIST) do KEY_SET[key]=true end
+for _,key in ipairs(KEY_LIST) do
+	KEY_SET[key]=true
+end
+for index,key in ipairs(KEY_LIST) do
+	KEY_SET["KEY"..index.."-"..key]=true
+end
 local TRANSLATIONS={en={button="EN",title="Aizen FE",loading="script loading...",pick="Enter access key",ready="Welcome.",chat="welcome",tip="Z Kyoka X Hado90 C Raikoho V Shunpo B Reiatsu"}}
 local function refreshCharacter(newCharacter)
 	character = newCharacter
@@ -74,13 +109,13 @@ local function createKeyGate(onUnlock)
 	local card=Instance.new("Frame");card.AnchorPoint=Vector2.new(0.5,0.5);card.Position=UDim2.fromScale(0.5,0.5);card.Size=UDim2.fromOffset(520,286);card.BackgroundColor3=Color3.fromRGB(13,8,26);card.BorderSizePixel=0;card.Parent=shade;Instance.new("UICorner",card).CornerRadius=UDim.new(0,18)
 	local stroke=Instance.new("UIStroke");stroke.Color=ACCENT;stroke.Thickness=2;stroke.Parent=card
 	local title=Instance.new("TextLabel");title.BackgroundTransparency=1;title.Position=UDim2.fromOffset(24,20);title.Size=UDim2.new(1,-48,0,42);title.Font=Enum.Font.GothamBlack;title.Text="AIZEN FE ACCESS";title.TextColor3=WHITE;title.TextScaled=true;title.Parent=card
-	local info=Instance.new("TextLabel");info.BackgroundTransparency=1;info.Position=UDim2.fromOffset(28,66);info.Size=UDim2.new(1,-56,0,38);info.Font=Enum.Font.GothamSemibold;info.Text="Get one random website key from the 50-key pool on startup.";info.TextColor3=GOLD;info.TextScaled=true;info.Parent=card
-	local box=Instance.new("TextBox");box.PlaceholderText="PASTE THE REQUESTED KEY";box.Text="";box.ClearTextOnFocus=false;box.Position=UDim2.fromOffset(34,116);box.Size=UDim2.new(1,-68,0,44);box.Font=Enum.Font.GothamBlack;box.TextScaled=true;box.TextColor3=WHITE;box.BackgroundColor3=Color3.fromRGB(25,16,42);box.Parent=card;Instance.new("UICorner",box).CornerRadius=UDim.new(0,10)
-	local get=Instance.new("TextButton");get.Text="GET RANDOM KEY";get.Position=UDim2.fromOffset(34,174);get.Size=UDim2.new(0.48,-38,0,42);get.Font=Enum.Font.GothamBlack;get.TextScaled=true;get.TextColor3=WHITE;get.BackgroundColor3=ACCENT;get.Parent=card;Instance.new("UICorner",get).CornerRadius=UDim.new(0,10)
+	local info=Instance.new("TextLabel");info.BackgroundTransparency=1;info.Position=UDim2.fromOffset(28,66);info.Size=UDim2.new(1,-56,0,38);info.Font=Enum.Font.GothamSemibold;info.Text="Open the copied /keyN page and use the exact 6-character code shown there. Route is locked for 10 minutes.";info.TextColor3=GOLD;info.TextScaled=true;info.Parent=card
+	local box=Instance.new("TextBox");box.PlaceholderText="PASTE KEY (EXAMPLE: A8C4DW)";box.Text="";box.ClearTextOnFocus=false;box.Position=UDim2.fromOffset(34,116);box.Size=UDim2.new(1,-68,0,44);box.Font=Enum.Font.GothamBlack;box.TextScaled=true;box.TextColor3=WHITE;box.BackgroundColor3=Color3.fromRGB(25,16,42);box.Parent=card;Instance.new("UICorner",box).CornerRadius=UDim.new(0,10)
+	local get=Instance.new("TextButton");get.Text="OPEN KEY PAGE";get.Position=UDim2.fromOffset(34,174);get.Size=UDim2.new(0.48,-38,0,42);get.Font=Enum.Font.GothamBlack;get.TextScaled=true;get.TextColor3=WHITE;get.BackgroundColor3=ACCENT;get.Parent=card;Instance.new("UICorner",get).CornerRadius=UDim.new(0,10)
 	local unlock=get:Clone();unlock.Text="UNLOCK";unlock.Position=UDim2.new(0.52,4,0,174);unlock.Parent=card
 	local status=info:Clone();status.Position=UDim2.fromOffset(28,218);status.Size=UDim2.new(1,-56,0,58);status.Text="";status.TextColor3=WHITE;status.Parent=card
-	get.MouseButton1Click:Connect(function()if setclipboard then setclipboard(KEY_WEBSITE)end;status.Text="Copied key page: "..KEY_WEBSITE end)
-	unlock.MouseButton1Click:Connect(function()local key=string.upper((box.Text or ""):gsub("%s+",""));if KEY_SET[key] then gui:Destroy();onUnlock() else status.Text="Invalid key. Open GET RANDOM KEY and complete the website steps." end end)
+	get.MouseButton1Click:Connect(function()if setclipboard then setclipboard(KEY_WEBSITE)end;status.Text="Copied route URL: "..KEY_WEBSITE.." (locked for 10 minutes)." end)
+	unlock.MouseButton1Click:Connect(function()local raw=string.upper((box.Text or ""):gsub("%s+",""));local key=raw:gsub("^KEY%d+-","");if KEY_SET[raw] or KEY_SET[key] then gui:Destroy();onUnlock() else status.Text="Invalid key. Open KEY PAGE and paste the exact code from that route." end end)
 end
 local function sendChatMessage(message)
 	if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
@@ -333,17 +368,17 @@ local function kurohitsugiMeshSequence(center)
 end
 local function giantPurpleExplosion(position)
 	screenFade(Color3.fromRGB(35, 0, 58), 0.08, 0.08, 0.24)
-	for i = 1, 14 do
+	for i = 1, 22 do
 		task.delay(i * 0.025, function()
-			ring(CFrame.new(position) * CFrame.Angles(math.rad(90), 0, 0), 4 + i * 2.2, i % 2 == 0 and ACCENT or WHITE, 0.55, 0.12)
+			ring(CFrame.new(position) * CFrame.Angles(math.rad(90), 0, 0), 5 + i * 2.65, i % 2 == 0 and ACCENT or WHITE, 0.9, 0.16)
 			orb(position + Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(0, 7), rng:NextNumber(-4, 4)), 1.3 + i * 0.18, i % 3 == 0 and WHITE or ACCENT, 0.45)
 		end)
 	end
-	for i = 1, 32 do
+	for i = 1, 56 do
 		local startPosition = position + Vector3.new(rng:NextNumber(-10, 10), rng:NextNumber(1, 16), rng:NextNumber(-10, 10))
 		local endPosition = position + Vector3.new(rng:NextNumber(-18, 18), rng:NextNumber(-2, 20), rng:NextNumber(-18, 18))
 		task.delay(i * 0.01, function()
-			beamBetween("Final Line", startPosition, endPosition, i % 2 == 0 and WHITE or ACCENT, 0.16, 0.38)
+			beamBetween("Final Line", startPosition, endPosition, i % 2 == 0 and WHITE or ACCENT, 0.22, 0.55)
 		end)
 	end
 end
@@ -622,7 +657,10 @@ function AnimController:Update(dt)
 		local camera = workspace.CurrentCamera
 		local look = camera and camera.CFrame.LookVector or root.CFrame.LookVector
 		local right = camera and camera.CFrame.RightVector or root.CFrame.RightVector
-		local move = (look * airwalkDirection.Z) + (right * airwalkDirection.X) + Vector3.new(0, airwalkDirection.Y, 0)
+		local baseInput = humanoid and humanoid.MoveDirection or Vector3.zero
+		local localX = baseInput:Dot(right)
+		local localZ = baseInput:Dot(look)
+		local move = (look * (airwalkDirection.Z + localZ)) + (right * (airwalkDirection.X + localX)) + Vector3.new(0, airwalkDirection.Y, 0)
 		root.AssemblyLinearVelocity = move * 34 + Vector3.new(0, math.sin(os.clock() * 3) * 1.2, 0)
 		local flatLook = Vector3.new(look.X, 0, look.Z)
 		if flatLook.Magnitude > 0.05 then
@@ -880,9 +918,13 @@ local function kyokaBehindTeleport()
 	local behind = targetRoot.CFrame * CFrame.new(0, 0, 5.2)
 	glassShatterBurst(before, root.CFrame.LookVector, 24)
 	ghostClone(Vector3.zero, 0.55)
-	root.CFrame = CFrame.new(behind.Position, targetRoot.Position)
+	for i = 1, 4 do
+		root.CFrame = root.CFrame:Lerp(CFrame.new(behind.Position, targetRoot.Position), i / 4)
+		RunService.RenderStepped:Wait()
+	end
 	glassShatterBurst(root.Position + Vector3.new(0, 2, 0), -root.CFrame.LookVector, 18)
 	collapseTarget(targetModel, 1.25)
+	markAndFlingTarget(targetModel, root.Position, 84)
 	sideMangaCaption([[Behind you.]], 0.9)
 	return true
 end
@@ -914,6 +956,38 @@ local function cooldown(tool, seconds)
 	end)
 	return true
 end
+
+local function setShiftLock(enabled)
+	shiftLockEnabled = enabled
+	if player then
+		player.DevEnableMouseLock = enabled
+	end
+	if UserInputService.MouseBehavior ~= Enum.MouseBehavior.Default then
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+	end
+	notify("Aizen FE", enabled and "Shift Lock enabled" or "Shift Lock disabled", 3)
+end
+
+local function smoothLookAt(fromPos, lookPos, duration)
+	local cam = workspace.CurrentCamera
+	if not cam then return end
+	cameraSequenceToken += 1
+	local token = cameraSequenceToken
+	cam.CameraType = Enum.CameraType.Scriptable
+	task.spawn(function()
+		local start = os.clock()
+		while os.clock() - start < duration and token == cameraSequenceToken do
+			local alpha = math.clamp((os.clock() - start) / duration, 0, 1)
+			local eased = alpha * alpha * (3 - 2 * alpha)
+			cam.CFrame = cam.CFrame:Lerp(CFrame.new(fromPos, lookPos), eased)
+			RunService.RenderStepped:Wait()
+		end
+		if token == cameraSequenceToken then
+			cam.CameraType = Enum.CameraType.Custom
+		end
+	end)
+end
+
 local function createTool(name, icon, cooldownSeconds, callback)
 	local tool = Instance.new("Tool")
 	tool.Name = name
@@ -941,7 +1015,9 @@ Look closer.]], 1.25)
 	flash(ACCENT, 0.18, 0.45)
 	cameraPulse(0.08, 0.35)
 	bladeTrail(1.15)
-	kyokaBehindTeleport()
+	if not kyokaBehindTeleport() then
+		flingFrontTarget(90)
+	end
 	publicPose("Kyoka", 1.1, root.CFrame.LookVector * 8 + Vector3.new(0, 14, 0))
 	local origin = root.CFrame
 	sigil(origin * CFrame.Angles(math.rad(90), 0, 0), 5.5, ACCENT, 0.75, 16)
@@ -957,17 +1033,18 @@ Look closer.]], 1.25)
 	end
 end
 local function kurohitsugi()
-	cutsceneBars(2.35)
+	cutsceneBars(3.8)
 	cinematicCutscene("HADO 90", "Kurohitsugi // Black Coffin", 1.7)
 	sideMangaCaption([[Hado 90
 Black Coffin]], 1.35)
-	playBodyAnimation("coffin", 1.95)
+	playBodyAnimation("coffin", 2.8)
 	flash(DARK, 0.3, 0.7)
 	cameraPulse(0.18, 1.1)
 	publicPose("Hado 90", 2.1, Vector3.new(0, 11, 0))
 	local center = root.CFrame * CFrame.new(0, 0, -14)
 	focusCam((root.CFrame*CF(1.4,1.5,-1.8)).Position,(character:FindFirstChild("Head") or root).Position+Vector3.new(0,0.15,0),3.35)
-	orb((root.CFrame*CF(1.4,1.4,-1.8)).Position,1.1,ACCENT,0.6)
+	task.delay(0.35,function() orb((root.CFrame*CF(1.4,1.6,-1.8)).Position,1.35,WHITE,0.9) end)
+	orb((root.CFrame*CF(1.4,1.4,-1.8)).Position,1.1,ACCENT,0.9)
 	sigil(center * CFrame.Angles(math.rad(90), 0, 0), 9, DARK, 0.9, 20)
 	hadoGroundLoop(center, 1.05)
 	kurohitsugiMeshSequence(center)
@@ -992,11 +1069,13 @@ Black Coffin]], 1.35)
 			})
 		end)
 	end
-	task.delay(1.45, function()
+	task.delay(2.15, function()
 		orb(center.Position + Vector3.new(0, 9, 0), 5.2, Color3.fromRGB(52, 17, 91), 0.6)
 		blackCoffinMangaBurst(center, 34)
 		distortionBarrier(0.7, 19, 5)
+		smoothLookAt(center.Position+Vector3.new(0,17,24), center.Position+Vector3.new(0,8,0), 1.7)
 		focusCam(center.Position+Vector3.new(0,17,24),center.Position+Vector3.new(0,8,0),1.45)
+		task.delay(0.75, function() smoothLookAt(center.Position+Vector3.new(0,11,18), (character:FindFirstChild("Head") or root).Position + Vector3.new(0,2.8,0), 1.15) end)
 		giantPurpleExplosion(center.Position + Vector3.new(0, 8, 0))
 		orb(center.Position+Vector3.new(0,8,0),9,ACCENT,0.85)
 		ring(center*CF(0,8,0)*ANGLES(RAD(90),0,0),22,WHITE,0.95,0.18)
@@ -1007,7 +1086,7 @@ Black Coffin]], 1.35)
 				markAndFlingTarget(model, center.Position, 92)
 			end
 		end
-		for i = 1, 32 do
+		for i = 1, 56 do
 			local slashStart = center.Position + Vector3.new(rng:NextNumber(-6, 6), rng:NextNumber(2, 19), rng:NextNumber(-6, 6))
 			local slashEnd = slashStart + Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(-7, 1), rng:NextNumber(-4, 4))
 			task.delay(i * 0.012, function()
@@ -1156,11 +1235,14 @@ local function setAirwalk(enabled)
 	if enabled then
 		AnimController:SetState("Airwalk")
 		humanoid.PlatformStand = true
-		sideMangaCaption([[Airwalk
-activated]], 0.95)
+		sideMangaCaption([[Airwalk enabled
+Double jump to change vertical mode]], 1.1)
 		distortionBarrier(0.45, 10, 3)
 	else
 		humanoid.PlatformStand = false
+		airwalkDirection = Vector3.zero
+		airwalkVerticalMode = 0
+		if root then root.AssemblyLinearVelocity = Vector3.zero end
 		AnimController:SetState("Idle")
 		sideMangaCaption([[Airwalk
 off]], 0.65)
@@ -1170,7 +1252,13 @@ local function installAirwalkControls()
 	UserInputService.JumpRequest:Connect(function()
 		local now = os.clock()
 		if now - lastJumpRequest < 0.35 then
-			setAirwalk(not airwalkActive)
+			if not airwalkActive then
+				setAirwalk(true)
+			else
+				airwalkVerticalMode = (airwalkVerticalMode + 1) % 3
+				airwalkDirection = Vector3.new(airwalkDirection.X, airwalkVerticalMode == 1 and 1 or (airwalkVerticalMode == 2 and -1 or 0), airwalkDirection.Z)
+				notify("Airwalk", airwalkVerticalMode == 0 and "Vertical hold: Neutral" or (airwalkVerticalMode == 1 and "Vertical hold: Up" or "Vertical hold: Down"), 2.5)
+			end
 		end
 		lastJumpRequest = now
 	end)
@@ -1203,6 +1291,42 @@ local function installAirwalkControls()
 		end
 	end)
 end
+
+local function createShiftLockButton()
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "Aizen_ShiftLock_Button"
+	gui.ResetOnSpawn = false
+	gui.Parent = playerGui
+	local button = Instance.new("TextButton")
+	button.Name = "ShiftLockToggle"
+	button.AnchorPoint = Vector2.new(1, 1)
+	button.Position = UDim2.new(1, -22, 1, -22)
+	button.Size = UDim2.fromOffset(120, 40)
+	button.BackgroundColor3 = Color3.fromRGB(20, 10, 38)
+	button.TextColor3 = WHITE
+	button.TextScaled = true
+	button.Font = Enum.Font.GothamBlack
+	button.Text = "SHIFTLOCK: OFF"
+	button.Parent = gui
+	Instance.new("UICorner", button).CornerRadius = UDim.new(0, 10)
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = ACCENT
+	stroke.Thickness = 2
+	stroke.Parent = button
+	button.MouseButton1Click:Connect(function()
+		setShiftLock(not shiftLockEnabled)
+		button.Text = shiftLockEnabled and "SHIFTLOCK: ON" or "SHIFTLOCK: OFF"
+		tween(button, 0.16, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, {BackgroundColor3 = shiftLockEnabled and ACCENT or Color3.fromRGB(20, 10, 38)})
+	end)
+end
+
+local function flingFrontTarget(power)
+	local model = select(1, findFrontTarget(60, 0.12))
+	if model then
+		markAndFlingTarget(model, root.Position, power or 120)
+	end
+end
+
 local function installKeyboardShortcuts()
 	UserInputService.InputBegan:Connect(function(input, processed)
 		if processed or not root then
@@ -1218,6 +1342,10 @@ local function installKeyboardShortcuts()
 			shunpo()
 		elseif input.KeyCode == Enum.KeyCode.B then
 			reiatsuCrush()
+		elseif input.KeyCode == Enum.KeyCode.LeftShift then
+			setShiftLock(not shiftLockEnabled)
+		elseif input.KeyCode == Enum.KeyCode.F and airwalkActive then
+			setAirwalk(false)
 		end
 	end)
 end
@@ -1430,6 +1558,7 @@ local function startKit()
 	installAirwalkControls()
 	installAmbientAura()
 	installPassiveDominion()
+	createShiftLockButton()
 	deathReset()
 	player.CharacterAdded:Connect(function(newCharacter)
 		task.wait(0.35)
